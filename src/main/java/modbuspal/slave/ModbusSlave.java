@@ -26,11 +26,11 @@ import java.util.logging.Logger;
 
 /**
  * Modelization of a modbus slave
+ *
  * @author nnovic
  */
 public final class ModbusSlave
-implements ModbusPalXML, ModbusConst
-{
+        implements ModbusPalXML, ModbusConst {
     private ModbusSlaveAddress slaveId;
     private boolean enabled;
     private final ModbusRegisters holdingRegisters = new ModbusRegisters();
@@ -44,33 +44,31 @@ implements ModbusPalXML, ModbusConst
     private final ModbusPduProcessor[] pduProcessors = new ModbusPduProcessor[128];
     private final InstanceCounter<ModbusPduProcessor> pduProcessorInstances = new InstanceCounter<>();
 
-    private ModbusSlave()
-    {
+    private ModbusSlave() {
         clearFunctions();
     }
 
     /**
      * Creates a new ModbusSlave, with the specified slave address.
+     *
      * @param id slave address assigned to this ModbusSlave.
      */
-    public ModbusSlave(ModbusSlaveAddress a)
-    {
+    public ModbusSlave(ModbusSlaveAddress id) {
         this();
-        slaveId = a;
-        customName = "Slave " + a.toString();
+        slaveId = id;
+        customName = "Slave " + id.toString();
         enabled = true;
-
     }
 
 
     /**
      * Creates a new instance of ModbusSlave, by loading the settings
      * in the provided DOM node.
-     * @param mpp the modbuspal project containing the current project data
+     *
+     * @param mpp       the modbuspal project containing the current project data
      * @param slaveNode the DOM node where the settings to load are stored.
      */
-    public ModbusSlave(ModbusPalProject mpp, Node slaveNode)
-    {
+    public ModbusSlave(ModbusPalProject mpp, Node slaveNode) {
         this();
         load(mpp, slaveNode, false);
     }
@@ -78,11 +76,10 @@ implements ModbusPalXML, ModbusConst
     /**
      * Clears all the content of this slave.
      */
-    public void clear()
-    {
+    public void clear() {
         // remove listeners
         // listeners.clear();
-        
+
         // propage clear
         holdingRegisters.clear();
         coils.clear();
@@ -93,23 +90,22 @@ implements ModbusPalXML, ModbusConst
 
     /**
      * Gets the name defined for this slave
+     *
      * @return the name of this slave.
      */
-    public String getName()
-    {
+    public String getName() {
         return customName;
     }
 
 
     /**
      * Gets the ModbusPduProcessor associated with the specified function code.
+     *
      * @param functionCode the function code
      * @return the ModbusPduProcessor associated with the specified funcion code.
      */
-    public ModbusPduProcessor getPduProcessor(byte functionCode)
-    {
-        if( functionCode>=0x80)
-        {
+    public ModbusPduProcessor getPduProcessor(byte functionCode) {
+        if (functionCode >= 0x80) {
             throw new ArrayIndexOutOfBoundsException(functionCode);
         }
         return pduProcessors[functionCode];
@@ -117,11 +113,11 @@ implements ModbusPalXML, ModbusConst
 
     /**
      * Checks if a ModbusPduProcessor is used by this modbus slave.
+     *
      * @param mpp the ModbusPduProcessor to check
      * @return true if the ModbusPduProcessor is used by thsi modbus slave.
      */
-    public boolean containsPduProcessorInstance(ModbusPduProcessor mpp)
-    {
+    public boolean containsPduProcessorInstance(ModbusPduProcessor mpp) {
         return pduProcessorInstances.contains(mpp);
     }
 
@@ -133,25 +129,19 @@ implements ModbusPalXML, ModbusConst
      * duplicates. Also, note that the instances returned are only those modified
      * by the user, by means of scripts. It won't return the predefined standard
      * functions, such holding registers and coils.
+     *
      * @return an array containing the ModbusPduProcessor defined in this slave
      */
-    public ModbusPduProcessor[] getPduProcessorInstances()
-    {
+    public ModbusPduProcessor[] getPduProcessorInstances() {
         Set<ModbusPduProcessor> instances = pduProcessorInstances.getInstanceSet();
         ModbusPduProcessor[] output = new ModbusPduProcessor[0];
         return instances.toArray(output);
     }
 
-    void clearFunctions()
-    {
-        for(int i=0; i<pduProcessors.length; i++)
-        {
-            setPduProcessor( (byte)i,null);
+    void clearFunctions() {
+        for (int i = 0; i < pduProcessors.length; i++) {
+            setPduProcessor((byte) i, null);
         }
-        /*for(byte i : USER_DEFINED_FUNCTION_CODES)
-        {
-            setPduProcessor(i,null);
-        }*/
         pduProcessors[FC_READ_COILS] = coils;
         pduProcessors[FC_READ_DISCRETE_INPUTS] = coils;
         pduProcessors[FC_READ_HOLDING_REGISTERS] = holdingRegisters;
@@ -165,15 +155,14 @@ implements ModbusPalXML, ModbusConst
 
     /**
      * Defines a new ModbusPduProcessor for the specified function code.
+     *
      * @param functionCode the function code
-     * @param mspp the new ModbusPduProcessor for the specified function code.
+     * @param mspp         the new ModbusPduProcessor for the specified function code.
      * @return the old ModbusPduProcessor that was defined for the specified function code.
      */
-    public ModbusPduProcessor setPduProcessor(byte functionCode, ModbusPduProcessor mspp)
-    {
-        // reject if function code is is the range reserverd for exception codes
-        if( functionCode>=0x80)
-        {
+    public ModbusPduProcessor setPduProcessor(byte functionCode, ModbusPduProcessor mspp) {
+        // reject if function code is in the range reserved for exception codes
+        if (functionCode >= 0x80) {
             throw new ArrayIndexOutOfBoundsException(functionCode);
         }
 
@@ -182,16 +171,14 @@ implements ModbusPalXML, ModbusConst
         //
 
         ModbusPduProcessor old = pduProcessors[functionCode];
-        if( old!=null )
-        {
+        if (old != null) {
             // remove reference for the given function code
-            pduProcessors[functionCode]=null;
+            pduProcessors[functionCode] = null;
             pduProcessorInstances.removeInstance(old);
 
             // if there is no more instances of the old processor
             // being used, its "reset" method must be called:
-            if( pduProcessorInstances.getInstanceCount(old)==0 )
-            {
+            if (pduProcessorInstances.getInstanceCount(old) == 0) {
                 old.reset();
             }
         }
@@ -202,10 +189,8 @@ implements ModbusPalXML, ModbusConst
         // the main reason for that is when notifyPduProcessorChanged() is
         // triggered, the ModbusSlaveDialog will call the getPduPane() function,
         // but the panel is most likely to be created in the init() function.
-        if( mspp!=null )
-        {
-            if( pduProcessorInstances.getInstanceCount(mspp)==0 )
-            {
+        if (mspp != null) {
+            if (pduProcessorInstances.getInstanceCount(mspp) == 0) {
                 mspp.init();
             }
         }
@@ -219,22 +204,22 @@ implements ModbusPalXML, ModbusConst
         //
         // set the new processor for the specified function code
         //
-        
-        pduProcessors[functionCode]=mspp;
+
+        pduProcessors[functionCode] = mspp;
 
         // if the new processor is not null, and if the new processor
         // is a new instance, then its 'init' method must be called.
-        if( mspp!=null )
-        {
+        if (mspp != null) {
             pduProcessorInstances.addInstance(mspp);
         }
-        
+
         return old;
     }
 
     /**
      * Remove all pdu processors with the specified class name from this
      * slave.
+     *
      * @param classname
      */
     public void removeAllFunctions(String classname) {
@@ -251,8 +236,7 @@ implements ModbusPalXML, ModbusConst
      * @deprecated use getHoldingRegisters().getValues() instead
      */
     @Deprecated
-    public byte getHoldingRegisters(int startingAddress, int quantity, byte[] buffer, int offset)
-    {
+    public byte getHoldingRegisters(int startingAddress, int quantity, byte[] buffer, int offset) {
         return holdingRegisters.getValues(startingAddress, quantity, buffer, offset);
     }
 
@@ -265,18 +249,17 @@ implements ModbusPalXML, ModbusConst
      * @deprecated use getHoldingRegisters().setValues() instead
      */
     @Deprecated
-    public byte setHoldingRegisters(int startingAddress, int quantity, byte[] buffer, int offset)
-    {
+    public byte setHoldingRegisters(int startingAddress, int quantity, byte[] buffer, int offset) {
         return holdingRegisters.setValues(startingAddress, quantity, buffer, offset);
     }
 
 
     /**
      * Returns the object that stores the holding registers for this modbus slave.
+     *
      * @return the object that stores the holding registers for this modbus slave.
      */
-    public ModbusRegisters getHoldingRegisters()
-    {
+    public ModbusRegisters getHoldingRegisters() {
         return holdingRegisters;
     }
 
@@ -289,8 +272,7 @@ implements ModbusPalXML, ModbusConst
      * @deprecated use getCoils().getValues() instead
      */
     @Deprecated
-    public byte getCoils(int startingAddress, int quantity, byte[] buffer, int offset)
-    {
+    public byte getCoils(int startingAddress, int quantity, byte[] buffer, int offset) {
         return coils.getValues(startingAddress, quantity, buffer, offset);
     }
 
@@ -303,8 +285,7 @@ implements ModbusPalXML, ModbusConst
      * @deprecated use getCoils().setValues() instead
      */
     @Deprecated
-    public byte setCoils(int startingAddress, int quantity, byte[] buffer, int offset)
-    {
+    public byte setCoils(int startingAddress, int quantity, byte[] buffer, int offset) {
         return coils.setValues(startingAddress, quantity, buffer, offset);
     }
 
@@ -315,37 +296,36 @@ implements ModbusPalXML, ModbusConst
      * @deprecated use getCoils().setValue() instead
      */
     @Deprecated
-    public byte setCoil(int address, int value)
-    {
-        byte rc = coils.setValue(address,value);
+    public byte setCoil(int address, int value) {
+        byte rc = coils.setValue(address, value);
         return rc;
     }
 
     /**
      * Returns the object that stores the coils for this modbus slave.
+     *
      * @return the object that stores the coils for this modbus slave.
      */
-    public ModbusCoils getCoils()
-    {
+    public ModbusCoils getCoils() {
         return coils;
     }
 
     /**
      * Gets the implementation defined for this slave.
+     *
      * @return one of IMPLEMENTATION_MODBUS or IMPLEMENTATION_JBUS
      */
-    public int getImplementation()
-    {
+    public int getImplementation() {
         return modbusImplementation;
     }
 
     /**
      * Returns the list of automations that are used by this modbus slave.
-     * @return array of strings containing the classnames of the automations 
+     *
+     * @return array of strings containing the classnames of the automations
      * used by this slave.
      */
-    public String[] getRequiredAutomations()
-    {
+    public String[] getRequiredAutomations() {
         ArrayList<String> automationNames = new ArrayList<>();
         Collection<String> tmpNames;
 
@@ -372,8 +352,7 @@ implements ModbusPalXML, ModbusConst
         return automationNames.toArray(retval);
     }
 
-    boolean hasBindings()
-    {
+    boolean hasBindings() {
         boolean retval = false;
         retval |= holdingRegisters.hasBindings();
         retval |= coils.hasBindings();
@@ -384,28 +363,24 @@ implements ModbusPalXML, ModbusConst
     /**
      * Clears all the bindings defined in this slave and matching the specified
      * class name
+     *
      * @param classname the class name of the bindings to remove
      */
-    public void removeAllBindings(String classname)
-    {
+    public void removeAllBindings(String classname) {
         holdingRegisters.removeAllBindings(classname);
         coils.removeAllBindings(classname);
     }
 
-    private void loadHoldingRegisters(Node node)
-    {
-        if( node == null )
-        {
+    private void loadHoldingRegisters(Node node) {
+        if (node == null) {
             return;
         }
         holdingRegisters.load(node);
     }
 
 
-    private void loadCoils(Node node)
-    {
-        if( node == null )
-        {
+    private void loadCoils(Node node) {
+        if (node == null) {
             return;
         }
         coils.load(node);
@@ -413,24 +388,18 @@ implements ModbusPalXML, ModbusConst
 
     private void loadFunctions(
             InstantiableManager<ModbusPduProcessor> ffactory,
-            Node node)
-    {
-        if(node==null)
-        {
+            Node node) {
+        if (node == null) {
             return;
         }
-        
+
         NodeList list = node.getChildNodes();
-        for(int i=0; i<list.getLength(); i++)
-        {
+        for (int i = 0; i < list.getLength(); i++) {
             Node fNode = list.item(i);
-            if( fNode.getNodeName().compareToIgnoreCase(XML_FUNCTION_INSTANCE_TAG)==0 )
-            {
+            if (fNode.getNodeName().compareToIgnoreCase(XML_FUNCTION_INSTANCE_TAG) == 0) {
                 try {
                     loadFunctionInstance(ffactory, fNode);
-                } catch (InstantiationException ex) {
-                    Logger.getLogger(ModbusSlave.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (IllegalAccessException ex) {
+                } catch (InstantiationException | IllegalAccessException ex) {
                     Logger.getLogger(ModbusSlave.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
@@ -438,104 +407,88 @@ implements ModbusPalXML, ModbusConst
     }
 
 
-    private void notifyModbusSlaveEnabled(boolean enabled)
-    {
-       for(ModbusSlaveListener l:listeners )
-       {
-           l.modbusSlaveEnabled(this,enabled);
-       }
+    private void notifyModbusSlaveEnabled(boolean enabled) {
+        for (ModbusSlaveListener l : listeners) {
+            l.modbusSlaveEnabled(this, enabled);
+        }
     }
 
-    private void notifyModbusImplChanged()
-    {
-       for(ModbusSlaveListener l:listeners )
-       {
-           l.modbusSlaveImplChanged(this,modbusImplementation);
-       }
+    private void notifyModbusImplChanged() {
+        for (ModbusSlaveListener l : listeners) {
+            l.modbusSlaveImplChanged(this, modbusImplementation);
+        }
     }
 
-    private void notifyNameChanged()
-    {
-       for(ModbusSlaveListener l:listeners )
-       {
-           l.modbusSlaveNameChanged(this,customName);
-       }
+    private void notifyNameChanged() {
+        for (ModbusSlaveListener l : listeners) {
+            l.modbusSlaveNameChanged(this, customName);
+        }
     }
 
-    private void notifyPduProcessorChanged(byte functionCode, ModbusPduProcessor old, ModbusPduProcessor mspp)
-    {
-         for(ModbusSlaveListener l:listeners )
-       {
-           l.modbusSlavePduProcessorChanged(this,functionCode,old,mspp);
-       }
+    private void notifyPduProcessorChanged(byte functionCode, ModbusPduProcessor old, ModbusPduProcessor mspp) {
+        for (ModbusSlaveListener l : listeners) {
+            l.modbusSlavePduProcessorChanged(this, functionCode, old, mspp);
+        }
     }
 
     private void saveHoldingRegisters(OutputStream out, boolean withBindings)
-    throws IOException
-    {
-        String openTag = "<"+XML_HOLDING_REGISTERS_TAG+">\r\n";
-        out.write( openTag.getBytes() );
+            throws IOException {
+        String openTag = "<" + XML_HOLDING_REGISTERS_TAG + ">\r\n";
+        out.write(openTag.getBytes());
 
         holdingRegisters.save(out, withBindings);
 
-        String closeTag = "</"+XML_HOLDING_REGISTERS_TAG+">\r\n";
-        out.write( closeTag.getBytes() );
+        String closeTag = "</" + XML_HOLDING_REGISTERS_TAG + ">\r\n";
+        out.write(closeTag.getBytes());
     }
 
 
     private void saveCoils(OutputStream out, boolean withBindings)
-    throws IOException
-    {
-        String openTag = "<"+XML_COILS_TAG+">\r\n";
-        out.write( openTag.getBytes() );
+            throws IOException {
+        String openTag = "<" + XML_COILS_TAG + ">\r\n";
+        out.write(openTag.getBytes());
 
         coils.save(out, withBindings);
 
-        String closeTag = "</"+XML_COILS_TAG+">\r\n";
-        out.write( closeTag.getBytes() );
+        String closeTag = "</" + XML_COILS_TAG + ">\r\n";
+        out.write(closeTag.getBytes());
     }
 
     private void saveFunctions(OutputStream out)
-    throws IOException
-    {
+            throws IOException {
         ModbusPduProcessor[] instances = getPduProcessorInstances();
 
-        if( instances!=null )
-        {
-            if( instances.length>0)
-            {
-                String openTag = "<"+XML_FUNCTIONS_TAG+">\r\n";
-                out.write( openTag.getBytes() );
+        if (instances != null) {
+            if (instances.length > 0) {
+                String openTag = "<" + XML_FUNCTIONS_TAG + ">\r\n";
+                out.write(openTag.getBytes());
 
-                for(int i=0; i<instances.length; i++)
-                {
+                for (int i = 0; i < instances.length; i++) {
                     StringBuilder tag = new StringBuilder("<instance");
                     tag.append(" class=\"").append(instances[i].getClassName()).append("\"");
                     tag.append(">\r\n");
-                    out.write( tag.toString().getBytes() );
+                    out.write(tag.toString().getBytes());
 
-                    for(int j=0; j<pduProcessors.length;j++)
-                    {
-                        if( pduProcessors[j]==instances[i])
-                        {
+                    for (int j = 0; j < pduProcessors.length; j++) {
+                        if (pduProcessors[j] == instances[i]) {
                             tag = new StringBuilder("<function ");
                             tag.append("code=\"").append(j).append("\" />\r\n");
-                            out.write( tag.toString().getBytes() );
+                            out.write(tag.toString().getBytes());
                         }
                     }
 
                     tag = new StringBuilder("<settings>\r\n");
-                    out.write( tag.toString().getBytes() );
+                    out.write(tag.toString().getBytes());
                     instances[i].savePduProcessorSettings(out);
                     tag = new StringBuilder("</settings>\r\n");
-                    out.write( tag.toString().getBytes() );
+                    out.write(tag.toString().getBytes());
 
                     tag = new StringBuilder("</instance>\r\n");
-                    out.write( tag.toString().getBytes() );
+                    out.write(tag.toString().getBytes());
                 }
 
-                String closeTag = "</"+XML_FUNCTIONS_TAG+">\r\n";
-                out.write( closeTag.getBytes() );
+                String closeTag = "</" + XML_FUNCTIONS_TAG + ">\r\n";
+                out.write(closeTag.getBytes());
             }
         }
     }
@@ -545,66 +498,66 @@ implements ModbusPalXML, ModbusConst
 
     /**
      * Checks if this slave is enabled or disabled
+     *
      * @return true if enabled, false if disabled
      */
-    public boolean isEnabled()
-    {
+    public boolean isEnabled() {
         return enabled;
     }
 
     /**
-     * Overwrites the settings and values of this slave with those defined in 
-     * the specified DOM node. The existing settings for: slave id, enabled status, 
+     * Overwrites the settings and values of this slave with those defined in
+     * the specified DOM node. The existing settings for: slave id, enabled status,
      * name, or not modified, though. Functions and tuning settings won't be loaded.
+     *
      * @param node the DOM node where the settings to load are stored
-     * @see #load(modbuspal.main.ModbusPalProject, org.w3c.dom.Node) 
+     * @see #load(modbuspal.main.ModbusPalProject, org.w3c.dom.Node)
      * @deprecated some settings can't be loaded by this method
      */
     @Deprecated
-    public void load(Node node)
-    {
-        load(null,node);
+    public void load(Node node) {
+        load(null, node);
     }
 
     /**
-     * Overwrites the settings and values of this slave with those defined in 
+     * Overwrites the settings and values of this slave with those defined in
      * the specified DOM node. Functions and tuning settings won't be loaded.
-     * @param node the DOM node where the settings to load are stored
+     *
+     * @param node       the DOM node where the settings to load are stored
      * @param importMode if true, the loading from the DOM will take care not to
-     * overwrite the existing values of: slave id, enabled status, name.
-     * @see #load(modbuspal.main.ModbusPalProject, org.w3c.dom.Node, boolean) 
+     *                   overwrite the existing values of: slave id, enabled status, name.
+     * @see #load(modbuspal.main.ModbusPalProject, org.w3c.dom.Node, boolean)
      * @deprecated some settings can't be loaded by this method
      */
     @Deprecated
-    public void load(Node node, boolean importMode)
-    {
-        load(null,node,importMode);
+    public void load(Node node, boolean importMode) {
+        load(null, node, importMode);
     }
 
     /**
-     * Overwrites the settings and values of this slave with those defined in 
-     * the specified DOM node. The existing settings for: slave id, enabled status, 
+     * Overwrites the settings and values of this slave with those defined in
+     * the specified DOM node. The existing settings for: slave id, enabled status,
      * name, or not modified, though.
-     * @param mpp the modbuspal project from which additional information can be retrieved.
-     * if null, functions and tuning settings won't be loaded.
+     *
+     * @param mpp  the modbuspal project from which additional information can be retrieved.
+     *             if null, functions and tuning settings won't be loaded.
      * @param node the DOM node where the settings to load are stored
      */
-    public void load(ModbusPalProject mpp, Node node)
-    {
-        load(mpp, node,true);
+    public void load(ModbusPalProject mpp, Node node) {
+        load(mpp, node, true);
     }
 
     /**
-     * Overwrites the settings and values of this slave with those defined in 
+     * Overwrites the settings and values of this slave with those defined in
      * the specified DOM node.
-     * @param mpp the modbuspal project from which additional information can be retrieved.
-     * if null, functions and tuning settings won't be loaded.
-     * @param node the DOM node where the settings to load are stored
+     *
+     * @param mpp        the modbuspal project from which additional information can be retrieved.
+     *                   if null, functions and tuning settings won't be loaded.
+     * @param node       the DOM node where the settings to load are stored
      * @param importMode if true, the loading from the DOM will take care not to
-     * overwrite the existing values of: slave id, enabled status, name.
+     *                   overwrite the existing values of: slave id, enabled status, name.
      */
-    public void load(ModbusPalProject mpp, Node node, boolean importMode)
-    {
+    public void load(ModbusPalProject mpp, Node node, boolean importMode) {
         // in case the slave contains old data, clear it:
         clear();
 
@@ -612,18 +565,14 @@ implements ModbusPalXML, ModbusConst
         // load the attributes of the slave
         //
 
-        if(!importMode)
-        {
+        if (!importMode) {
             String id2 = XMLTools.getAttribute(XML_SLAVE_ID2_ATTRIBUTE, node);
-            if( id2 != null )
-            {
+            if (id2 != null) {
                 //slaveId = Integer.valueOf(id2);
                 throw new UnsupportedOperationException("not yet implemented");
-            }
-            else
-            {
+            } else {
                 String id = XMLTools.getAttribute(XML_SLAVE_ID_ATTRIBUTE, node);
-                slaveId = new ModbusSlaveAddress(Integer.valueOf(id));
+                slaveId = ModbusSlaveAddress.parse(id);
             }
 
             String en = XMLTools.getAttribute(XML_SLAVE_ENABLED_ATTRIBUTE, node);
@@ -634,15 +583,11 @@ implements ModbusPalXML, ModbusConst
         }
 
         String impl = XMLTools.getAttribute(XML_SLAVE_IMPLEMENTATION_ATTRIBUTE, node);
-        if( impl != null )
-        {
-            
-            if( impl.compareToIgnoreCase(XML_SLAVE_IMPLEMENTATION_MODBUS_VALUE)==0 )
-            {
+        if (impl != null) {
+
+            if (impl.compareToIgnoreCase(XML_SLAVE_IMPLEMENTATION_MODBUS_VALUE) == 0) {
                 setImplementation(IMPLEMENTATION_MODBUS);
-            }
-            else if( impl.compareToIgnoreCase(XML_SLAVE_IMPLEMENTATION_JBUS_VALUE)==0 )
-            {
+            } else if (impl.compareToIgnoreCase(XML_SLAVE_IMPLEMENTATION_JBUS_VALUE) == 0) {
                 setImplementation(IMPLEMENTATION_JBUS);
             }
         }
@@ -667,7 +612,7 @@ implements ModbusPalXML, ModbusConst
         // ensure compatibility with old format:
         //
 
-        if(mpp==null) {
+        if (mpp == null) {
             return;
         }
 
@@ -688,31 +633,24 @@ implements ModbusPalXML, ModbusConst
 
     /**
      * Changes the name of the modbus slave.
+     *
      * @param name new name of the modbus slave
      */
-    public void setName(String name)
-    {
+    public void setName(String name) {
         customName = name;
         notifyNameChanged();
     }
 
 
-
-
-
-    private String xmlOpenTag()
-    {
+    private String xmlOpenTag() {
         StringBuilder openTag = new StringBuilder();
-        openTag.append( "<slave "+ XML_SLAVE_ID_ATTRIBUTE +"=\"" );
+        openTag.append("<slave " + XML_SLAVE_ID_ATTRIBUTE + "=\"");
         openTag.append(slaveId);
 
         openTag.append("\" enabled=\"");
-        if( enabled )
-        {
+        if (enabled) {
             openTag.append("true");
-        }
-        else
-        {
+        } else {
             openTag.append("false");
         }
 
@@ -720,8 +658,7 @@ implements ModbusPalXML, ModbusConst
         openTag.append(customName);
 
         openTag.append("\" implementation=\"");
-        switch(modbusImplementation)
-        {
+        switch (modbusImplementation) {
             default:
             case IMPLEMENTATION_MODBUS:
                 openTag.append("modbus");
@@ -739,80 +676,76 @@ implements ModbusPalXML, ModbusConst
     /**
      * Saves the values and settings of this modbus slave into the provided
      * output stream, using XML format.
-     * @param out the output stream
+     *
+     * @param out          the output stream
      * @param withBindings if true, the description of the bindings will be written, too
-     * @throws IOException 
+     * @throws IOException
      */
     public void save(OutputStream out, boolean withBindings)
-    throws IOException
-    {
+            throws IOException {
         String openTag = xmlOpenTag();
-        out.write( openTag.getBytes() );
+        out.write(openTag.getBytes());
 
         saveHoldingRegisters(out, withBindings);
-        saveCoils(out,withBindings);
+        saveCoils(out, withBindings);
         saveFunctions(out);
         saveTuning(out);
-        
+
         String closeTag = "</slave>\r\n";
-        out.write( closeTag.getBytes() );
+        out.write(closeTag.getBytes());
     }
 
-    
+
     /**
      * Enables or disables this modbus slave.
+     *
      * @param b true to enable, false to disable
      */
-    public void setEnabled(boolean b)
-    {
+    public void setEnabled(boolean b) {
         enabled = b;
         notifyModbusSlaveEnabled(enabled);
     }
 
     /**
      * returns the MODBUS id associated with this slave
+     *
      * @return id of this slave.
      */
-    public ModbusSlaveAddress getSlaveId()
-    {
+    public ModbusSlaveAddress getSlaveId() {
         return slaveId;
     }
 
 
-
     /**
      * Adds a ModbusSlaveListener to the list of listeners
+     *
      * @param l the listener to add
      */
-    public void addModbusSlaveListener(ModbusSlaveListener l)
-    {
-        if(!listeners.contains(l))
-        {
+    public void addModbusSlaveListener(ModbusSlaveListener l) {
+        if (!listeners.contains(l)) {
             listeners.add(l);
         }
     }
 
     /**
      * Removes a Modbus
-     * @param l 
+     *
+     * @param l
      */
-    public void removeModbusSlaveListener(ModbusSlaveListener l)
-    {
-        if(listeners.contains(l))
-        {
+    public void removeModbusSlaveListener(ModbusSlaveListener l) {
+        if (listeners.contains(l)) {
             listeners.remove(l);
         }
     }
 
     /**
      * Changes the implementation for this slave.
+     *
      * @param impl one of IMPLEMENTATION_MODBUS or IMPLEMENTATION_JBUS
      */
-    public void setImplementation(int impl)
-    {
+    public void setImplementation(int impl) {
         modbusImplementation = impl;
-        switch(impl)
-        {
+        switch (impl) {
             default:
             case IMPLEMENTATION_MODBUS:
                 holdingRegisters.setOffset(1);
@@ -829,8 +762,7 @@ implements ModbusPalXML, ModbusConst
     private void loadFunctionInstance(
             InstantiableManager<ModbusPduProcessor> ffactory,
             Node node)
-    throws InstantiationException, IllegalAccessException
-    {
+            throws InstantiationException, IllegalAccessException {
         //
         // load attributes
         //
@@ -848,8 +780,7 @@ implements ModbusPalXML, ModbusConst
         //
 
         List<Node> list = XMLTools.getNodes(node.getChildNodes(), XML_FUNCTION_TAG);
-        for(Node iNode:list)
-        {
+        for (Node iNode : list) {
             String code = XMLTools.getAttribute(XML_FUNCTION_CODE_ATTRIBUTE, iNode);
             setPduProcessor(Byte.valueOf(code), mpp);
         }
@@ -871,65 +802,59 @@ implements ModbusPalXML, ModbusConst
      * defined by the "min reply delay" and "max reply delay" parameters.
      * The duration will be applied between the moment ModbusPal receives
      * a request and the moment the reply (if any) is sent
-     * @return a duration in milliseconds, delay between a modbus request 
+     *
+     * @return a duration in milliseconds, delay between a modbus request
      * and the reply.
      */
-    public long getReplyDelay() 
-    {
-        double range = maxReplyDelay-minReplyDelay;
-        if(range<0)
-        {
+    public long getReplyDelay() {
+        double range = maxReplyDelay - minReplyDelay;
+        if (range < 0) {
             return minReplyDelay;
         }
-        return minReplyDelay + (long)(Math.random()*range);
+        return minReplyDelay + (long) (Math.random() * range);
     }
 
     private void saveTuning(OutputStream out)
-    throws IOException
-    {
+            throws IOException {
         StringBuilder tag = new StringBuilder();
         tag.append("<").append(XML_TUNING_TAG).append(">\r\n");
-        out.write( tag.toString().getBytes() );
+        out.write(tag.toString().getBytes());
 
         tag = new StringBuilder();
         tag.append("<").append(XML_REPLYDELAY_TAG);
         tag.append(" min=\"").append(minReplyDelay);
         tag.append("\" max=\"").append(maxReplyDelay);
         tag.append("\" />\r\n");
-        out.write( tag.toString().getBytes() );
+        out.write(tag.toString().getBytes());
 
         tag = new StringBuilder();
         tag.append("<").append(XML_ERRORRATES_TAG);
-        tag.append(" "+XML_ERRORRATES_NOREPLY_ATTRIBUTE+"=\"").append(noReplyRate).append("\"");
+        tag.append(" " + XML_ERRORRATES_NOREPLY_ATTRIBUTE + "=\"").append(noReplyRate).append("\"");
         tag.append(" />\r\n");
-        out.write( tag.toString().getBytes() );
+        out.write(tag.toString().getBytes());
 
         tag = new StringBuilder();
         tag.append("</").append(XML_TUNING_TAG).append(">\r\n");
-        out.write( tag.toString().getBytes() );
+        out.write(tag.toString().getBytes());
     }
 
-    private void loadTuning(Node node)
-    {
+    private void loadTuning(Node node) {
         NodeList list = node.getChildNodes();
 
         // look for "reply delay"
         Node rdNode = XMLTools.getNode(list, XML_REPLYDELAY_TAG);
-        if(rdNode!=null)
-        {
+        if (rdNode != null) {
             // look for min
             long min = 0;
             String minValue = XMLTools.getAttribute(XML_REPLYDELAY_MIN_ATTRIBUTE, rdNode);
-            if(minValue!=null)
-            {
+            if (minValue != null) {
                 min = Long.parseLong(minValue);
             }
 
             // look for max
             long max = 0;
             String maxValue = XMLTools.getAttribute(XML_REPLYDELAY_MAX_ATTRIBUTE, rdNode);
-            if(maxValue!=null)
-            {
+            if (maxValue != null) {
                 max = Long.parseLong(maxValue);
             }
             setReplyDelay(min, max);
@@ -937,35 +862,32 @@ implements ModbusPalXML, ModbusConst
 
         // look for "error rates"
         Node erNode = XMLTools.getNode(list, XML_ERRORRATES_TAG);
-        if(erNode!=null)
-        {
+        if (erNode != null) {
             // look for no_reply
             float no_reply = 0f;
             String noReplyValue = XMLTools.getAttribute(XML_ERRORRATES_NOREPLY_ATTRIBUTE, erNode);
-            if(noReplyValue!=null)
-            {
+            if (noReplyValue != null) {
                 no_reply = Float.parseFloat(noReplyValue);
             }
             setErrorRates(no_reply);
-        }    }
+        }
+    }
 
-    private void clearTuning()
-    {
-        setReplyDelay(0,0);
+    private void clearTuning() {
+        setReplyDelay(0, 0);
         setErrorRates(0f);
     }
 
     /**
      * Sets up the min and max values for the "reply delay".
+     *
      * @param min minimum delay in milliseconds
      * @param max maximum delay in milliseconds
-     * @throws IllegalArgumentException 
+     * @throws IllegalArgumentException
      */
     public void setReplyDelay(long min, long max)
-    throws IllegalArgumentException
-    {
-        if( (min<0) || (max<min) )
-        {
+            throws IllegalArgumentException {
+        if ((min < 0) || (max < min)) {
             throw new IllegalArgumentException();
         }
         minReplyDelay = min;
@@ -979,60 +901,55 @@ implements ModbusPalXML, ModbusConst
      * value between 0f and 1f. 0f means "no error", or 0% of error. 1f means
      * "always in error", or 100% of error. 0.5f will generate errors randomly,
      * grossly 50% of the time.
+     *
      * @param noReply the rate at which this slave will fail to reply to a modbus request
-     * @throws IllegalArgumentException 
+     * @throws IllegalArgumentException
      */
     public void setErrorRates(float noReply)
-    throws IllegalArgumentException
-    {
-        if( (noReply<0) || (noReply>1) )
-        {
+            throws IllegalArgumentException {
+        if ((noReply < 0) || (noReply > 1)) {
             throw new IllegalArgumentException("no reply rate must be a value between 0 and 1");
         }
         noReplyRate = noReply;
         notifyErrorRatesChanged();
     }
 
-    private void notifyReplyDelayChanged()
-    {
-         for(ModbusSlaveListener l:listeners )
-       {
-           l.modbusSlaveReplyDelayChanged(this,minReplyDelay,maxReplyDelay);
-       }
+    private void notifyReplyDelayChanged() {
+        for (ModbusSlaveListener l : listeners) {
+            l.modbusSlaveReplyDelayChanged(this, minReplyDelay, maxReplyDelay);
+        }
     }
 
-    private void notifyErrorRatesChanged()
-    {
-         for(ModbusSlaveListener l:listeners )
-       {
-           l.modbusSlaveErrorRatesChanged(this,noReplyRate);
-       }
+    private void notifyErrorRatesChanged() {
+        for (ModbusSlaveListener l : listeners) {
+            l.modbusSlaveErrorRatesChanged(this, noReplyRate);
+        }
     }
-    
+
     /**
      * Gets the maximum reply delay for this slave
+     *
      * @return maximmum reply delay, in milliseconds
      */
-    public long getMaxReplyDelay()
-    {
+    public long getMaxReplyDelay() {
         return maxReplyDelay;
     }
 
     /**
      * Gets the minimum reply delay for this slave
+     *
      * @return minimum reply delay, in milliseconds
      */
-    public long getMinReplyDelay()
-    {
+    public long getMinReplyDelay() {
         return minReplyDelay;
     }
 
     /**
      * Gets the error rate for the "no reply" error.
+     *
      * @return "no reply" error rate, float value between 0f and 1f.
      */
-    public float getNoReplyErrorRate()
-    {
+    public float getNoReplyErrorRate() {
         return noReplyRate;
     }
 }

@@ -9,122 +9,97 @@ import modbuspal.main.ModbusConst;
 import java.net.InetAddress;
 
 /**
- *
  * @author JMC15
  */
-public class ModbusSlaveAddress
-{
+public class ModbusSlaveAddress {
 
-    public static ModbusSlaveAddress parse(String slaveAddress) 
-    {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public static ModbusSlaveAddress parse(String slaveAddress) {
+        var results = ModbusSlaveAddressParsers.tryAnyParser(slaveAddress);
+        if (results.size() != 1) {
+            throw new IllegalArgumentException("Invalid slave address: " + slaveAddress);
+        }
+        return results.getFirst();
     }
-    
-    
-    
+
+
     private int rtuAddress = -1;
     private InetAddress ipAddress = null;
-    
-    public ModbusSlaveAddress(InetAddress a, int n)
-    {
+
+    public ModbusSlaveAddress(InetAddress a, int n) {
         ipAddress = a;
-        
-        if( (n<ModbusConst.FIRST_MODBUS_SLAVE) || (n>ModbusConst.LAST_MODBUS_SLAVE) )
-        {
-            n= -1;
+
+        if ((n < ModbusConst.FIRST_MODBUS_SLAVE) || (n > ModbusConst.LAST_MODBUS_SLAVE)) {
+            n = -1;
         }
         rtuAddress = n;
     }
-    
-    public ModbusSlaveAddress(int n)
-    {
-        if( (n<ModbusConst.FIRST_MODBUS_SLAVE) || (n>ModbusConst.LAST_MODBUS_SLAVE) )
-        {
-            n= -1;
+
+    public ModbusSlaveAddress(int n) {
+        if ((n < ModbusConst.FIRST_MODBUS_SLAVE) || (n > ModbusConst.LAST_MODBUS_SLAVE)) {
+            n = -1;
         }
-        
+
         rtuAddress = n;
         ipAddress = null;
     }
-    
-    public ModbusSlaveAddress(InetAddress a)
-    {
+
+    public ModbusSlaveAddress(InetAddress a) {
         ipAddress = a;
-        rtuAddress = -1;        
+        rtuAddress = -1;
     }
-    
-    public InetAddress getIpAddress()
-    {
+
+    public InetAddress getIpAddress() {
         return ipAddress;
     }
-    
-    public void setIpAddress(InetAddress ip)
-    {
+
+    public void setIpAddress(InetAddress ip) {
         ipAddress = ip;
     }
-    
-    public int getRtuAddress()
-    {
+
+    public int getRtuAddress() {
         return rtuAddress;
     }
-    
-    public void setRtuAddress(int n)
-    {
-        if( (n<ModbusConst.FIRST_MODBUS_SLAVE) || (n>ModbusConst.LAST_MODBUS_SLAVE) )
-        {
-            n= -1;
-        }        
+
+    public void setRtuAddress(int n) {
+        if ((n < ModbusConst.FIRST_MODBUS_SLAVE) || (n > ModbusConst.LAST_MODBUS_SLAVE)) {
+            n = -1;
+        }
         rtuAddress = n;
     }
 
-    public String toBaseString()
-    {
-        return String.format("{ rtuAddress : %d, ipAddress : %s }", 
+    public String toBaseString() {
+        return String.format("{ rtuAddress : %d, ipAddress : %s }",
                 rtuAddress,
-                (ipAddress==null)?"null":ipAddress.toString());
+                (ipAddress == null) ? "null" : ipAddress.toString());
     }
-    
+
     @Override
-    public String toString() 
-    {
-        if( ipAddress!=null )
-        {
-            if( rtuAddress != -1 )
-            {
+    public String toString() {
+        if (ipAddress != null) {
+            if (rtuAddress != -1) {
                 return String.format("%s(%d)", ipAddress.getHostAddress(), rtuAddress);
-            }
-            else
-            {
+            } else {
                 return String.format("%s", ipAddress.getHostAddress());
             }
-        }
-        else if( rtuAddress != -1 )
-        {
+        } else if (rtuAddress != -1) {
             return String.format("%d", rtuAddress);
-        }
-        else
-        {
+        } else {
             return super.toString();
         }
     }
 
     @Override
-    public int hashCode() 
-    {
+    public int hashCode() {
         return toString().hashCode();
     }
 
     @Override
-    public boolean equals(Object o) 
-    {
-        if(o instanceof ModbusSlaveAddress other)
-        {
-            return toString().compareTo(other.toString())==0;
+    public boolean equals(Object o) {
+        if (o instanceof ModbusSlaveAddress other) {
+            return toString().compareTo(other.toString()) == 0;
         }
         return false;
     }
-    
-    
-    
-    
+
+
 }
