@@ -11,53 +11,56 @@
 
 package modbuspal.main;
 
-import java.awt.CardLayout;
-import javax.xml.parsers.ParserConfigurationException;
-import modbuspal.automation.AutomationPanel;
-import modbuspal.toolkit.NumericTextField;
-import modbuspal.slave.ModbusSlavePanel;
-import java.awt.Component;
-import java.awt.Dialog.ModalExclusionType;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.io.*;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
 import modbuspal.automation.Automation;
+import modbuspal.automation.AutomationPanel;
 import modbuspal.help.HelpViewer;
-import modbuspal.link.*;
+import modbuspal.link.ModbusLink;
+import modbuspal.link.ModbusLinkListener;
+import modbuspal.link.ModbusReplayLink;
+import modbuspal.link.ModbusTcpIpLink;
 import modbuspal.master.ModbusMasterDialog;
 import modbuspal.master.ModbusMasterTask;
 import modbuspal.recorder.ModbusPalRecorder;
-import modbuspal.script.ScriptManagerDialog;
 import modbuspal.slave.ModbusSlave;
 import modbuspal.slave.ModbusSlaveAddress;
+import modbuspal.slave.ModbusSlavePanel;
 import modbuspal.toolkit.GUITools;
+import modbuspal.toolkit.NumericTextField;
 import modbuspal.toolkit.XFileChooser;
 import org.xml.sax.SAXException;
 
+import javax.swing.*;
+import javax.xml.parsers.ParserConfigurationException;
+import java.awt.*;
+import java.awt.Dialog.ModalExclusionType;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * The core of the application
+ *
  * @author nnovic
  */
-public class ModbusPalPane
-extends JPanel
-implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
-{
-    /** Name and version of this application */
+public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener {
+    /**
+     * Name and version of this application
+     */
     public static final String APP_STRING = "ModbusPal 1.6b";
-    
-    /** Base registry key for the configuration of the application. */
+
+    /**
+     * Base registry key for the configuration of the application.
+     */
     public static final String BASE_REGISTRY_KEY = "modbuspal";
 
     private ArrayList<ModbusPalProjectListener> listeners = new ArrayList<ModbusPalProjectListener>();
-        
+
     private ModbusMasterDialog modbusMasterDialog = null;
-    ScriptManagerDialog scriptManagerDialog = null;
     private ModbusLink currentLink = null;
     private AppConsole console = null;
     ModbusPalProject modbusPalProject;
@@ -65,44 +68,40 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
 
     /**
      * Adds a ModbusPalProjectListener listener to the list of listeners.
+     *
      * @param l the listener to add
      */
-    public void addModbusPalProjectListener(ModbusPalProjectListener l)
-    {
-        if(listeners.contains(l)==false)
-        {
+    public void addModbusPalProjectListener(ModbusPalProjectListener l) {
+        if (listeners.contains(l) == false) {
             listeners.add(l);
         }
     }
 
     /**
      * Removes a ModbusPalProjectListener from the list of listeners
+     *
      * @param l the listener to remove
      */
-    public void removeModbusPalProjectListener(ModbusPalProjectListener l)
-    {
-        if(listeners.contains(l)==true)
-        {
+    public void removeModbusPalProjectListener(ModbusPalProjectListener l) {
+        if (listeners.contains(l) == true) {
             listeners.remove(l);
         }
     }
 
 
-
     /**
      * Defines the project that ModbusPal must execute.
+     *
      * @param project the project to execute.
      */
-    public void setProject(ModbusPalProject project)
-    {
+    public void setProject(ModbusPalProject project) {
         System.out.printf("Set project %s\r\n", project.getName());
 
         //- - - - - - - - - - - - - - -
         // Clear existing project
         //- - - - - - - - - - - - - - -
 
-        if( modbusPalProject!=null )
-        {
+        if (modbusPalProject != null) {
             modbusPalProject.removeModbusPalListener(this);
         }
 
@@ -121,34 +120,31 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
         //- - - - - - - - - - - - - -
 
         // Select the link tab:
-        for( int i=0; i<linksTabbedPane.getComponentCount(); i++ ) {
-            if( linksTabbedPane.getTitleAt(i).compareTo( project.selectedLink )==0 ) {
+        for (int i = 0; i < linksTabbedPane.getComponentCount(); i++) {
+            if (linksTabbedPane.getTitleAt(i).compareTo(project.selectedLink) == 0) {
                 linksTabbedPane.setSelectedIndex(i);
             }
         }
 
         // Init tcp/ip settings
-        portTextField.setText( project.linkTcpipPort );
+        portTextField.setText(project.linkTcpipPort);
 
         // Init serial settings
-        comPortComboBox.setSelectedItem( project.linkSerialComId );
-        baudRateComboBox.setSelectedItem( project.linkSerialBaudrate );
-        parityComboBox.setSelectedIndex( project.linkSerialParity );
-        stopBitsComboBox.setSelectedIndex( project.linkSerialStopBits );
-        xonxoffCheckBox.setSelected( project.linkSerialXonXoff );
-        rtsctsCheckBox.setSelected( project.linkSerialRtsCts );
+        comPortComboBox.setSelectedItem(project.linkSerialComId);
+        baudRateComboBox.setSelectedItem(project.linkSerialBaudrate);
+        xonxoffCheckBox.setSelected(project.linkSerialXonXoff);
+        rtsctsCheckBox.setSelected(project.linkSerialRtsCts);
 
         // Init record/replay settings
         setReplayFile(project.linkReplayFile);
 
-        
+
         //- - - - - - - - - - - - - -
         // Refresh list of slaves
         //- - - - - - - - - - - - - -
 
         slavesListPanel.removeAll();
-        for(ModbusSlave s : project.getModbusSlaves())
-        {
+        for (ModbusSlave s : project.getModbusSlaves()) {
             modbusSlaveAdded(s);
         }
 
@@ -158,26 +154,16 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
 
         automationsListPanel.removeAll();
         Automation[] automations = project.getAutomations();
-        for(int i=0; i<automations.length; i++)
-        {
+        for (int i = 0; i < automations.length; i++) {
             automationAdded(automations[i], i);
         }
 
-        //- - - - - - - - - - - - -
-        // Refresh list of scripts
-        //- - - - - - - - - - - - -
 
-        if(scriptManagerDialog!=null)
-        {
-            scriptManagerDialog.setProject(modbusPalProject);
-        }
-        
         // Refresh MASTER
-        if( modbusMasterDialog!=null)
-        {
+        if (modbusMasterDialog != null) {
             modbusMasterDialog.setProject(modbusPalProject);
         }
-        
+
         System.out.printf("[%s] Project set\r\n", modbusPalProject.getName());
 
         notifyModbusPalProjectChanged(old, modbusPalProject);
@@ -191,25 +177,18 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
     }
 
 
-
-    private void notifyModbusPalProjectChanged(ModbusPalProject oldProject, ModbusPalProject newProject)
-    {
-        for(ModbusPalProjectListener l:listeners)
-        {
+    private void notifyModbusPalProjectChanged(ModbusPalProject oldProject, ModbusPalProject newProject) {
+        for (ModbusPalProjectListener l : listeners) {
             l.modbusPalProjectChanged(oldProject, newProject);
         }
     }
 
 
-    public void saveProject()
-    throws FileNotFoundException, IOException
-    {
+    public void saveProject() throws FileNotFoundException, IOException {
         saveProject(modbusPalProject.projectFile);
     }
 
-    public void saveProject(File projectFile)
-    throws FileNotFoundException, IOException
-    {
+    public void saveProject(File projectFile) throws FileNotFoundException, IOException {
         System.out.printf("[%s] Save project\r\n", modbusPalProject.getName());
 
         // update selected link tab:
@@ -220,64 +199,43 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
         modbusPalProject.linkTcpipPort = portTextField.getText();
 
         // update serial settings
-        modbusPalProject.linkSerialComId = (String)comPortComboBox.getSelectedItem();
-        modbusPalProject.linkSerialBaudrate = (String)baudRateComboBox.getSelectedItem();
-        modbusPalProject.linkSerialParity = parityComboBox.getSelectedIndex();
-        modbusPalProject.linkSerialStopBits = stopBitsComboBox.getSelectedIndex();
+        modbusPalProject.linkSerialComId = (String) comPortComboBox.getSelectedItem();
+        modbusPalProject.linkSerialBaudrate = (String) baudRateComboBox.getSelectedItem();
         modbusPalProject.linkSerialXonXoff = xonxoffCheckBox.isSelected();
         modbusPalProject.linkSerialRtsCts = rtsctsCheckBox.isSelected();
 
         // update record/replay settings
-        modbusPalProject.linkReplayFile = (File)chosenRecordFileTextField.getClientProperty("record file");
+        modbusPalProject.linkReplayFile = (File) chosenRecordFileTextField.getClientProperty("record file");
 
         modbusPalProject.save(projectFile);
     }
 
 
-
-    private void setReplayFile(File src)
-    {
-        if( src!=null )
-        {
-            chosenRecordFileTextField.setText( src.getPath() );
+    private void setReplayFile(File src) {
+        if (src != null) {
+            chosenRecordFileTextField.setText(src.getPath());
             chosenRecordFileTextField.putClientProperty("record file", src);
-        }
-        else
-        {
+        } else {
             chosenRecordFileTextField.setText(null);
             chosenRecordFileTextField.putClientProperty("record file", null);
         }
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-    public ModbusPalPane()
-    {
+    public ModbusPalPane() {
         this(false);
     }
 
-    /** Creates new form ModbusPalPane */
-    public ModbusPalPane(boolean useInternalConsole)
-    {
+    /**
+     * Creates new form ModbusPalPane
+     */
+    public ModbusPalPane(boolean useInternalConsole) {
         initComponents();
 
-        if(useInternalConsole)
-        {
+        if (useInternalConsole) {
             installConsole();
             consoleToggleButton.setEnabled(true);
-        }
-        else
-        {
+        } else {
             consoleToggleButton.setToolTipText("Console is disabled");
         }
 
@@ -285,13 +243,12 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
         installCommPorts();
         //installScriptEngine();
 
-        setProject( new ModbusPalProject() );
+        setProject(new ModbusPalProject());
 
     }
 
 
-    private void installConsole()
-    {
+    private void installConsole() {
         try {
             console = new AppConsole();
             console.addWindowListener(this);
@@ -304,39 +261,26 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
     /**
      * Checks if 3rd-party RXTX library is available. It will
      * try to load the "gnu.io.CommPortIdentifier" class.
+     *
      * @return true if RXTX has been detected (the class could be loaded)
      */
-    public static boolean verifyRXTX()
-    {
-        // try to load the CommPortVerifier class
-        ClassLoader cl = ClassLoader.getSystemClassLoader();
-        try
-        {
-            Class c = cl.loadClass("gnu.io.CommPortIdentifier");
-            return true;
-        }
-        catch (Exception ex)
-        {
-            return false;
-        }
+    public static boolean verifyRXTX() {
+        return false;
     }
 
     /**
      * Checks if 3rd-party Jython library is available. It will
      * try to load the "org.python.util.PythonInterpreter" class.
+     *
      * @return true if Jython has been detected (the class could be loaded)
      */
-    public static boolean verifyPython()
-    {
+    public static boolean verifyPython() {
         // try to load the CommPortVerifier class
         ClassLoader cl = ClassLoader.getSystemClassLoader();
-        try
-        {
+        try {
             Class c = cl.loadClass("org.python.util.PythonInterpreter");
             return true;
-        }
-        catch (ClassNotFoundException ex)
-        {
+        } catch (ClassNotFoundException ex) {
             return false;
         }
     }
@@ -344,87 +288,54 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
     /**
      * Checks if 3rd-party JFreeChart library is available. It will
      * try to load the "org.jfree.chart.JFreeChart" class.
+     *
      * @return true if JFreeChart has been detected (the class could be loaded)
      */
-    public static boolean verifyJFreeChart()
-    {
+    public static boolean verifyJFreeChart() {
         // try to load the CommPortVerifier class
         ClassLoader cl = ClassLoader.getSystemClassLoader();
-        try
-        {
+        try {
             Class c = cl.loadClass("org.jfree.chart.JFreeChart");
             return true;
-        }
-        catch (ClassNotFoundException ex)
-        {
+        } catch (ClassNotFoundException ex) {
             return false;
         }
     }
 
-    private void installScriptEngine()
-    {
-
-        if( verifyPython() == true )
-        {
-            scriptManagerDialog = new ScriptManagerDialog();
-            scriptManagerDialog.addWindowListener(this);
-        }
-        else
-        {
-            scriptManagerDialog = null;
-        }
-    }
-
-    private void installRecorder()
-    {
+    private void installRecorder() {
         ModbusPalRecorder.touch();
     }
 
-    private void installCommPorts()
-    {
+    private void installCommPorts() {
         // check if RXTX Comm lib is available
-        if( verifyRXTX() == false )
-        {
-            CardLayout layout = (CardLayout)jPanel1.getLayout();
+        if (verifyRXTX() == false) {
+            CardLayout layout = (CardLayout) jPanel1.getLayout();
             layout.show(jPanel1, "disabled");
             return;
-        }        
-        
-        // detect the comm ports
-        ModbusSerialLink.enumerate();
-        
-        // get the list of comm ports (as strings)
-        // and put it in the swing list
-        comPortComboBox.setModel( ModbusSerialLink.getListOfCommPorts() );
-    }
-    
-   
-
-
-
-    @Override
-    public void pduProcessed()
-    {
-        ( (TiltLabel)tiltLabel ).tilt(TiltLabel.GREEN);
+        }
     }
 
 
     @Override
-    public void pduException()
-    {
-        ( (TiltLabel)tiltLabel ).tilt(TiltLabel.RED);
+    public void pduProcessed() {
+        ((TiltLabel) tiltLabel).tilt(TiltLabel.GREEN);
     }
 
 
     @Override
-    public void pduNotServiced()
-    {
-        ( (TiltLabel)tiltLabel ).tilt(TiltLabel.YELLOW);
+    public void pduException() {
+        ((TiltLabel) tiltLabel).tilt(TiltLabel.RED);
     }
 
 
-    
-    /** This method is called from within the constructor to
+    @Override
+    public void pduNotServiced() {
+        ((TiltLabel) tiltLabel).tilt(TiltLabel.YELLOW);
+    }
+
+
+    /**
+     * This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
      * always regenerated by the Form Editor.
@@ -513,20 +424,20 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
 
         serialSettingsPanel.setLayout(new java.awt.GridBagLayout());
 
-        comPortComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "COM 1" }));
+        comPortComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"COM 1"}));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 2, 2);
         serialSettingsPanel.add(comPortComboBox, gridBagConstraints);
 
         baudRateComboBox.setEditable(true);
-        baudRateComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "115200", "57600", "19200", "9600" }));
+        baudRateComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"115200", "57600", "19200", "9600"}));
         baudRateComboBox.setSelectedIndex(2);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.insets = new java.awt.Insets(5, 2, 2, 5);
         serialSettingsPanel.add(baudRateComboBox, gridBagConstraints);
 
-        parityComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "No parity", "Odd parity", "Even parity" }));
+        parityComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"No parity", "Odd parity", "Even parity"}));
         parityComboBox.setSelectedIndex(2);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -551,7 +462,7 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
         serialSettingsPanel.add(rtsctsCheckBox, gridBagConstraints);
 
         stopBitsComboBox.setEditable(true);
-        stopBitsComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "1 stop bit", "1.5 stop bits", "2 stop bits" }));
+        stopBitsComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"1 stop bit", "1.5 stop bits", "2 stop bits"}));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
@@ -838,7 +749,7 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
 
         slavesListPanel.setBackground(javax.swing.UIManager.getDefaults().getColor("List.background"));
         slavesListPanel.setLayout(null);
-        slavesListPanel.setLayout( new ListLayout() );
+        slavesListPanel.setLayout(new ListLayout());
         slaveListScrollPane.setViewportView(slavesListPanel);
 
         slavesListView.add(slaveListScrollPane, java.awt.BorderLayout.CENTER);
@@ -880,7 +791,7 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
 
         automationsListPanel.setBackground(javax.swing.UIManager.getDefaults().getColor("List.background"));
         automationsListPanel.setLayout(null);
-        automationsListPanel.setLayout( new ListLayout() );
+        automationsListPanel.setLayout(new ListLayout());
         automationListScrollPane.setViewportView(automationsListPanel);
 
         jPanel3.add(automationListScrollPane, java.awt.BorderLayout.CENTER);
@@ -891,94 +802,14 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
     }// </editor-fold>//GEN-END:initComponents
 
 
-    private void startSerialLink(boolean isMaster)
-    {
-        //- - - - - - - - - - - -
-        // GET BAUDRATE
-        //- - - - - - - - - - - -
-
-        int baudrate = 57600;
-
-        try
-        {
-            String selectedBaudrate = (String)baudRateComboBox.getSelectedItem();
-            baudrate = Integer.valueOf( selectedBaudrate );
-        }
-        catch(NumberFormatException ex)
-        {
-            runToggleButton.doClick();
-            ErrorMessage dialog = new ErrorMessage("Close");
-            dialog.setTitle("Baud rate error");
-            dialog.append("Baudrate is not a number.");
-            dialog.setVisible(true);
-            return;
-        }
-
-        //- - - - - - - - - -
-        // GET PARITY
-        //- - - - - - - - - -
-        int parity = parityComboBox.getSelectedIndex();
-
-        //- - - - - - - - - - -
-        // GET STOP BITS
-        //- - - - - - - - - - -
-
-        int stopBits = stopBitsComboBox.getSelectedIndex();
-
-        //- - - - - - - - - - -
-        // GET FLOW CONTROL
-        //- - - - - - - - - - -
-
-        boolean xonxoff = xonxoffCheckBox.isSelected();
-        boolean rtscts = rtsctsCheckBox.isSelected();
-
-        //- - - - - - - - - - - - -
-        // GET COMM PORT AND START
-        //- - - - - - - - - - - - -
-
-        try
-        {
-            int commPortIndex = comPortComboBox.getSelectedIndex();
-            currentLink = new ModbusSerialLink(modbusPalProject, commPortIndex, baudrate, parity, stopBits, xonxoff, rtscts);
-            
-            if(isMaster)
-            {
-                currentLink.startMaster(this);
-            }
-            else
-            {
-                currentLink.start(this);
-            }
-            
-            ((TiltLabel)tiltLabel).start();
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-            runToggleButton.doClick();
-            ErrorMessage dialog = new ErrorMessage("Close");
-            dialog.setTitle("TCP/IP error");
-            dialog.append("Cannot bind port " + portTextField.getText() + "\r\n");
-            dialog.append("The following exception occured:" + ex.getClass().getSimpleName() + "\r\n");
-            dialog.append("Message:"+ex.getLocalizedMessage());
-            dialog.setVisible(true);
-            return;
-        }
-
-    }
-    
-    private void startTcpIpLink(boolean isMaster)
-    {
+    private void startTcpIpLink(boolean isMaster) {
         //portTextField.setEnabled(false);
         int port = -1;
 
-        try
-        {
+        try {
             String portNumber = portTextField.getText();
             port = Integer.valueOf(portNumber);
-        }
-        catch(NumberFormatException ex)
-        {
+        } catch (NumberFormatException ex) {
             runToggleButton.doClick();
             ErrorMessage dialog = new ErrorMessage("Close");
             dialog.setTitle("TCP Port error");
@@ -987,69 +818,55 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
             return;
         }
 
-        try
-        {
+        try {
             System.out.printf("[%s] Start TCP/link (port=%d)\r\n", modbusPalProject.getName(), port);
             currentLink = new ModbusTcpIpLink(modbusPalProject, port);
-            
-            if( isMaster )
-            {
+
+            if (isMaster) {
                 currentLink.startMaster(this);
-            }
-            else
-            {
+            } else {
                 currentLink.start(this);
             }
-            
-            ((TiltLabel)tiltLabel).start();
-        }
-        catch (Exception ex)
-        {
+
+            ((TiltLabel) tiltLabel).start();
+        } catch (Exception ex) {
             ex.printStackTrace();
             runToggleButton.doClick();
             ErrorMessage dialog = new ErrorMessage("Close");
             dialog.setTitle("TCP/IP error");
             dialog.append("Cannot bind port " + portTextField.getText() + "\r\n");
             dialog.append("The following exception occured:" + ex.getClass().getSimpleName() + "\r\n");
-            dialog.append("Message:"+ex.getLocalizedMessage());
+            dialog.append("Message:" + ex.getLocalizedMessage());
             dialog.setVisible(true);
             return;
         }
     }
-    
-    private void startReplayLink(boolean isMaster)
-    {
+
+    private void startReplayLink(boolean isMaster) {
         File recordFile = null;
 
-        recordFile = (File)chosenRecordFileTextField.getClientProperty("record file");
-        if( recordFile==null )
-        {
+        recordFile = (File) chosenRecordFileTextField.getClientProperty("record file");
+        if (recordFile == null) {
             recordFile = chooseRecordFile();
         }
 
-        try
-        {
+        try {
             currentLink = new ModbusReplayLink(modbusPalProject, recordFile);
-            
-            if(isMaster)
-            {
+
+            if (isMaster) {
                 currentLink.startMaster(this);
-            }
-            else
-            {
+            } else {
                 currentLink.start(this);
             }
-            
-            ((TiltLabel)tiltLabel).start();
-        }
-        catch (Exception ex)
-        {
+
+            ((TiltLabel) tiltLabel).start();
+        } catch (Exception ex) {
             ex.printStackTrace();
             runToggleButton.doClick();
             ErrorMessage dialog = new ErrorMessage("Close");
             dialog.setTitle("Replay error");
             dialog.append("The following exception occured:" + ex.getClass().getSimpleName() + "\r\n");
-            dialog.append("Message:"+ex.getLocalizedMessage());
+            dialog.append("Message:" + ex.getLocalizedMessage());
             dialog.setVisible(true);
             return;
         }
@@ -1059,39 +876,24 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
      * Starts the currently selected link, as if the user has clicked
      * on the "Run" button.
      */
-    public void startLink()
-    {
+    public void startLink() {
         System.out.printf("[%s] Start link\r\n", modbusPalProject.getName());
-        GUITools.setAllEnabled(linksTabbedPane,false);
+        GUITools.setAllEnabled(linksTabbedPane, false);
 
         masterToggleButton.setEnabled(false);
         boolean isMaster = masterToggleButton.isSelected();
-        
+
         // if link is tcp/ip
-        if( linksTabbedPane.getSelectedComponent()==tcpIpSettingsPanel )
-        {
+        if (linksTabbedPane.getSelectedComponent() == tcpIpSettingsPanel) {
             startTcpIpLink(isMaster);
-        }
-
-        // if link is serial
-        else if( linksTabbedPane.getSelectedComponent()==jPanel1 )
-        {
-            startSerialLink(isMaster);
-        }
-
-        // if link is replay:
-        else if( linksTabbedPane.getSelectedComponent()==replaySettingsPanel )
-        {
+        } // if link is replay:
+        else if (linksTabbedPane.getSelectedComponent() == replaySettingsPanel) {
             startReplayLink(isMaster);
-        }
-
-        else
-        {
+        } else {
             throw new UnsupportedOperationException("not yet implemented");
         }
-        
-        if(isMaster)
-        {
+
+        if (isMaster) {
             // start the master
             modbusMasterDialog.start(currentLink);
         }
@@ -1102,50 +904,41 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
      * Stops the currently running link, as if the user has clicked on the
      * "Run" button.
      */
-    public void stopLink()
-    {
+    public void stopLink() {
         System.out.printf("[%s] Stop link\r\n", modbusPalProject.getName());
         boolean isMaster = masterToggleButton.isSelected();
-        
-        
-        if(isMaster)
-        {
+
+
+        if (isMaster) {
             // stop the master
             modbusMasterDialog.stop();
         }
-        
-        if( currentLink != null )
-        {
-            if(isMaster)
-            {
+
+        if (currentLink != null) {
+            if (isMaster) {
                 currentLink.stopMaster();
-            }
-            else
-            {
+            } else {
                 currentLink.stop();
             }
-            ((TiltLabel)tiltLabel).stop();
+            ((TiltLabel) tiltLabel).stop();
             currentLink = null;
         }
-        
-        if(modbusMasterDialog!=null)
-        {
-            if( modbusMasterDialog.isRunning() )
-            {
+
+        if (modbusMasterDialog != null) {
+            if (modbusMasterDialog.isRunning()) {
                 modbusMasterDialog.stop();
             }
         }
-               
-        
+
+
         masterToggleButton.setEnabled(true);
-        GUITools.setAllEnabled(linksTabbedPane,true);
+        GUITools.setAllEnabled(linksTabbedPane, true);
     }
 
 
-    public void setSerialLinkParameters(String port, int baudrate, int parity, boolean xonxoff, boolean rtscts)
-    {
-        comPortComboBox.setSelectedItem( port );
-        baudRateComboBox.setSelectedItem( String.valueOf(baudrate) );
+    public void setSerialLinkParameters(String port, int baudrate, int parity, boolean xonxoff, boolean rtscts) {
+        comPortComboBox.setSelectedItem(port);
+        baudRateComboBox.setSelectedItem(String.valueOf(baudrate));
         parityComboBox.setSelectedIndex(parity);
         xonxoffCheckBox.setSelected(xonxoff);
         rtsctsCheckBox.setSelected(rtscts);
@@ -1154,29 +947,27 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
 
     /**
      * this event is triggered when the user toggle the "run" button.
+     *
      * @param evt
      */
     private void runToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runToggleButtonActionPerformed
 
         // if run button is toggled, start the link
-        if( runToggleButton.isSelected() == true )
-        {
+        if (runToggleButton.isSelected() == true) {
             startLink();
         }
 
         // otherwise, stop the link
-        else
-        {
+        else {
             stopLink();
         }
-}//GEN-LAST:event_runToggleButtonActionPerformed
+    }//GEN-LAST:event_runToggleButtonActionPerformed
 
     private void addModbusSlaveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addModbusSlaveButtonActionPerformed
 
         AddSlaveDialog dialog = new AddSlaveDialog();
         dialog.setVisible(true);
-        if( dialog.isAdded() )
-        {
+        if (dialog.isAdded()) {
             //int id = dialog.getSlaveId();
             //String name = dialog.getSlaveName();
             //ModbusSlave slave = new ModbusSlave(id);
@@ -1185,8 +976,7 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
 
             ModbusSlaveAddress ids[] = dialog.getTargetList();
             String name = dialog.getTargetName();
-            for( int i=0; i<ids.length; i++ )
-            {
+            for (int i = 0; i < ids.length; i++) {
                 ModbusSlave slave = new ModbusSlave(ids[i]);
                 slave.setName(name);
                 modbusPalProject.addModbusSlave(slave);
@@ -1200,32 +990,29 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
         // a FileChooser so that the user can choose where to save
         // the current project.
         //
-        if( (modbusPalProject.projectFile==null) || (evt.getSource()==saveProjectAsButton) )
-        {
+        if ((modbusPalProject.projectFile == null) || (evt.getSource() == saveProjectAsButton)) {
             //JFileChooser saveDialog = new XFileChooser(XFileChooser.PROJECT_FILE);
             //saveDialog.showSaveDialog(this);
             File projectFile = selectProjectFileToSave(); //saveDialog.getSelectedFile();
 
             // if no project file is selected, do not save
             // the project (leave method)
-            if( projectFile == null )
-            {
+            if (projectFile == null) {
                 return;
             }
 
             // if project file already exists, ask "are you sure?"
-            if( projectFile.exists() )
-            {
+            if (projectFile.exists()) {
                 // TODO: ARE YOUR SURE?
             }
 
             modbusPalProject.projectFile = projectFile;
         }
 
-        WorkInProgressDialog dialog = new WorkInProgressDialog("Save project","Saving project...");
+        WorkInProgressDialog dialog = new WorkInProgressDialog("Save project", "Saving project...");
         Runnable loadTask = createProjectSavingTask(modbusPalProject.projectFile, dialog);
 
-        Thread saver = new Thread( loadTask );
+        Thread saver = new Thread(loadTask);
         saver.setName("saver");
         saver.start();
         GUITools.align(this, dialog);
@@ -1246,12 +1033,13 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
             // TODO: diplay an error message
             Logger.getLogger(ModbusPalPane.class.getName()).log(Level.SEVERE, null, ex);
         }*/
-}//GEN-LAST:event_saveProjectButtonActionPerformed
+    }//GEN-LAST:event_saveProjectButtonActionPerformed
 
     /**
      * This method will load the specified project file by creating a new
      * ModbusPalProject instance, will set it as the current project by calling
      * setProject(), and return it.
+     *
      * @param path complete pathname of the project file to load
      * @return the instance of ModbusPalProject, created after the specified
      * project file, that has been set as the current project.
@@ -1259,11 +1047,9 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
      * @throws SAXException
      * @throws IOException
      * @throws InstantiationException
-     * @throws IllegalAccessException 
+     * @throws IllegalAccessException
      */
-    public ModbusPalProject loadProject(String path)
-    throws ParserConfigurationException, SAXException, IOException, InstantiationException, IllegalAccessException
-    {
+    public ModbusPalProject loadProject(String path) throws ParserConfigurationException, SAXException, IOException, InstantiationException, IllegalAccessException {
         File projectFile = new File(path);
         return loadProject(projectFile);
     }
@@ -1272,6 +1058,7 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
      * This method will load the specified project file by creating a new
      * ModbusPalProject instance, will set it as the current project by calling
      * setProject(), and return it.
+     *
      * @param projectFile the project file to load
      * @return the instance of ModbusPalProject, created after the specified
      * project file, that has been set as the current project.
@@ -1281,9 +1068,7 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    public ModbusPalProject loadProject(File projectFile)
-    throws ParserConfigurationException, SAXException, IOException, InstantiationException, IllegalAccessException
-    {
+    public ModbusPalProject loadProject(File projectFile) throws ParserConfigurationException, SAXException, IOException, InstantiationException, IllegalAccessException {
         ModbusPalProject mpp = ModbusPalProject.load(projectFile);
         setProject(mpp);
         return mpp;
@@ -1292,31 +1077,25 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
     private void loadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadButtonActionPerformed
 
         File projectFile = selectProjectFileToOpen();
-        if( projectFile == null )
-        {
+        if (projectFile == null) {
             return;
         }
 
-        WorkInProgressDialog dialog = new WorkInProgressDialog("Load project","Loading project...");
+        WorkInProgressDialog dialog = new WorkInProgressDialog("Load project", "Loading project...");
         Runnable loadTask = createProjectLoadingTask(projectFile, dialog);
 
-        Thread loader = new Thread( loadTask );
+        Thread loader = new Thread(loadTask);
         loader.setName("loader");
         loader.start();
         GUITools.align(this, dialog);
         dialog.setVisible(true);
-}//GEN-LAST:event_loadButtonActionPerformed
-
-
-
-
-
+    }//GEN-LAST:event_loadButtonActionPerformed
 
 
     private void addAutomationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addAutomationButtonActionPerformed
-        
-        String name = Automation.DEFAULT_NAME + " #" + String.valueOf( modbusPalProject.idGenerator.createID() );
-        Automation automation = new Automation( name );
+
+        String name = Automation.DEFAULT_NAME + " #" + String.valueOf(modbusPalProject.idGenerator.createID());
+        Automation automation = new Automation(name);
         modbusPalProject.addAutomation(automation);
 
     }//GEN-LAST:event_addAutomationButtonActionPerformed
@@ -1324,39 +1103,34 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
     /**
      * this function is triggered when the user toggles the "master"
      * button.
+     *
      * @param evt
      */
     private void masterToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_masterToggleButtonActionPerformed
 
-        if( masterToggleButton.isSelected()==true )
-        {
-            if( modbusMasterDialog == null )
-            {
+        if (masterToggleButton.isSelected() == true) {
+            if (modbusMasterDialog == null) {
                 modbusMasterDialog = new ModbusMasterDialog(this);
                 modbusMasterDialog.addWindowListener(this);
             }
             modbusMasterDialog.setVisible(true);
-        }
-        else
-        {
-            if( modbusMasterDialog != null )
-            {
+        } else {
+            if (modbusMasterDialog != null) {
                 modbusMasterDialog.setVisible(false);
                 //modbusMasterDialog = null;
             }
         }
-}//GEN-LAST:event_masterToggleButtonActionPerformed
+    }//GEN-LAST:event_masterToggleButtonActionPerformed
 
     /**
      * Enables or disables the specified slave.
-     * @param id the MODBUS id of the slave
+     *
+     * @param id      the MODBUS id of the slave
      * @param enabled true to enable the slave, false to disable it
      */
-    public void setModbusSlaveEnabled(ModbusSlaveAddress id, boolean enabled)
-    {
+    public void setModbusSlaveEnabled(ModbusSlaveAddress id, boolean enabled) {
         ModbusSlave slave = modbusPalProject.getModbusSlave(id, modbusPalProject.isLeanModeEnabled());
-        if( slave!=null )
-        {
+        if (slave != null) {
             slave.setEnabled(enabled);
         }
     }
@@ -1365,15 +1139,14 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
     /**
      * This method is called when the user clicks on the "enable all" button
      * located in the "modbus slaves" frame.
+     *
      * @param evt
      */
     private void enableAllSlavesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_enableAllSlavesButtonActionPerformed
 
         ModbusSlave slaves[] = modbusPalProject.getModbusSlaves();
-        for(int i=0; i<slaves.length; i++)
-        {
-            if( slaves[i] != null )
-            {
+        for (int i = 0; i < slaves.length; i++) {
+            if (slaves[i] != null) {
                 slaves[i].setEnabled(true);
             }
         }
@@ -1381,15 +1154,13 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
 
     private void startAllAutomationsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startAllAutomationsButtonActionPerformed
         startAllAutomations();
-}//GEN-LAST:event_startAllAutomationsButtonActionPerformed
+    }//GEN-LAST:event_startAllAutomationsButtonActionPerformed
 
     private void disableAllSlavesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_disableAllSlavesButtonActionPerformed
 
         ModbusSlave slaves[] = modbusPalProject.getModbusSlaves();
-        for(int i=0; i<slaves.length; i++)
-        {
-            if( slaves[i] != null )
-            {
+        for (int i = 0; i < slaves.length; i++) {
+            if (slaves[i] != null) {
                 slaves[i].setEnabled(false);
             }
         }
@@ -1402,12 +1173,10 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
     /**
      * Starts all the automations of the project
      */
-    public void startAllAutomations()
-    {
+    public void startAllAutomations() {
         System.out.printf("[%s] Start all automations\r\n", modbusPalProject.getName());
         Automation automations[] = modbusPalProject.getAutomations();
-        for(int i=0; i<automations.length; i++)
-        {
+        for (int i = 0; i < automations.length; i++) {
             automations[i].start();
         }
     }
@@ -1415,53 +1184,25 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
     /**
      * Stops all the automations of the project
      */
-    public void stopAllAutomations()
-    {
+    public void stopAllAutomations() {
         System.out.printf("[%s] Stop all automations\r\n", modbusPalProject.getName());
         Automation automations[] = modbusPalProject.getAutomations();
-        for(int i=0; i<automations.length; i++)
-        {
+        for (int i = 0; i < automations.length; i++) {
             automations[i].stop();
         }
     }
 
     private void scriptsToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scriptsToggleButtonActionPerformed
 
-        if( scriptManagerDialog==null )
-        {
-            scriptsToggleButton.setSelected(false);
-            // create warning dialog
-            ErrorMessage dialog = new ErrorMessage("Close");
-            dialog.setTitle("Scripts disabled");
-            dialog.append("It seems that Jython is not present on your computer. Scripting is disabled.");
-            dialog.append("If you need to use your scripts, go to http://www.jython.org and install Jython on your system.");
-            dialog.setVisible(true);
-            return;
-        }
-
-        else
-        {
-            if( scriptsToggleButton.isSelected()==true )
-            {
-                GUITools.align(this, scriptManagerDialog);
-
-                scriptManagerDialog.setVisible(true);
-            }
-            else
-            {
-                scriptManagerDialog.setVisible(false);
-            }
-        }
     }//GEN-LAST:event_scriptsToggleButtonActionPerformed
 
     private void learnToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_learnToggleButtonActionPerformed
-        modbusPalProject.setLearnModeEnabled( learnToggleButton.isSelected() );
+        modbusPalProject.setLearnModeEnabled(learnToggleButton.isSelected());
     }//GEN-LAST:event_learnToggleButtonActionPerformed
 
     private void helpButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_helpButtonActionPerformed
 
-        if( helpViewer==null )
-        {
+        if (helpViewer == null) {
             helpViewer = new HelpViewer();
             helpViewer.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
             helpViewer.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -1499,29 +1240,23 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
 
     private void consoleToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_consoleToggleButtonActionPerformed
 
-        if( consoleToggleButton.isSelected()==true )
-        {
+        if (consoleToggleButton.isSelected() == true) {
             GUITools.align(this, console);
             console.setVisible(true);
-        }
-        else
-        {
+        } else {
             console.setVisible(false);
         }
     }//GEN-LAST:event_consoleToggleButtonActionPerformed
 
     private void recordToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_recordToggleButtonActionPerformed
 
-        if( recordToggleButton.isSelected() )
-        {
+        if (recordToggleButton.isSelected()) {
             try {
                 ModbusPalRecorder.start();
             } catch (IOException ex) {
                 Logger.getLogger(ModbusPalPane.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
-        else
-        {
+        } else {
             try {
                 ModbusPalRecorder.stop();
             } catch (IOException ex) {
@@ -1532,10 +1267,8 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
     }//GEN-LAST:event_recordToggleButtonActionPerformed
 
 
-
-    private File chooseRecordFile()
-    {
-        XFileChooser fc = new XFileChooser( XFileChooser.RECORDER_FILE );
+    private File chooseRecordFile() {
+        XFileChooser fc = new XFileChooser(XFileChooser.RECORDER_FILE);
         fc.showOpenDialog(this);
         File src = fc.getSelectedFile();
         modbusPalProject.linkReplayFile = src;
@@ -1562,9 +1295,8 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
     /**
      * Starts all automations and starts the currently selected link
      */
-    public void startAll()
-    {
-        System.out.printf("[%s] Start everything\r\n",modbusPalProject.getName());
+    public void startAll() {
+        System.out.printf("[%s] Start everything\r\n", modbusPalProject.getName());
         startAllAutomations();
         startLink();
     }
@@ -1572,8 +1304,7 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
     /**
      * Stops all the automations and stops the currently running link
      */
-    public void stopAll()
-    {
+    public void stopAll() {
         stopLink();
         stopAllAutomations();
     }
@@ -1635,75 +1366,56 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void windowOpened(WindowEvent e)
-    {
+    public void windowOpened(WindowEvent e) {
     }
 
     @Override
-    public void windowClosing(WindowEvent e)
-    {
+    public void windowClosing(WindowEvent e) {
     }
 
     @Override
-    public void windowClosed(WindowEvent e)
-    {
+    public void windowClosed(WindowEvent e) {
         Object source = e.getSource();
-        
-        if( source==modbusMasterDialog )
-        {
+
+        if (source == modbusMasterDialog) {
             masterToggleButton.setSelected(false);
-        }
-        else if( source==scriptManagerDialog )
-        {
-            scriptsToggleButton.setSelected(false);
-        }
-        else if( source==console )
-        {
+        } else if (source == console) {
             consoleToggleButton.setSelected(false);
         }
     }
 
     @Override
-    public void windowIconified(WindowEvent e)
-    {
+    public void windowIconified(WindowEvent e) {
     }
 
     @Override
-    public void windowDeiconified(WindowEvent e)
-    {
+    public void windowDeiconified(WindowEvent e) {
     }
 
     @Override
-    public void windowActivated(WindowEvent e)
-    {
+    public void windowActivated(WindowEvent e) {
     }
 
     @Override
-    public void windowDeactivated(WindowEvent e)
-    {
+    public void windowDeactivated(WindowEvent e) {
     }
 
     @Override
-    public void modbusSlaveAdded(ModbusSlave slave)
-    {
+    public void modbusSlaveAdded(ModbusSlave slave) {
         // add slave panel into the gui and refresh gui
-        ModbusSlavePanel panel = new ModbusSlavePanel(this,slave);
-        slavesListPanel.add( panel /*, new Integer(slave.getSlaveId())*/ );
+        ModbusSlavePanel panel = new ModbusSlavePanel(this, slave);
+        slavesListPanel.add(panel /*, new Integer(slave.getSlaveId())*/);
         slave.addModbusSlaveListener(panel);
         slaveListScrollPane.validate();
     }
 
 
-    private ModbusSlavePanel findModbusSlavePanel(ModbusSlaveAddress slaveId)
-    {
+    private ModbusSlavePanel findModbusSlavePanel(ModbusSlaveAddress slaveId) {
         Component panels[] = slavesListPanel.getComponents();
-        for( int i=0; i<panels.length; i++ )
-        {
-            if( panels[i] instanceof ModbusSlavePanel )
-            {
-                ModbusSlavePanel panel = (ModbusSlavePanel)panels[i];
-                if( panel.getSlaveId().equals(slaveId) )
-                {
+        for (int i = 0; i < panels.length; i++) {
+            if (panels[i] instanceof ModbusSlavePanel) {
+                ModbusSlavePanel panel = (ModbusSlavePanel) panels[i];
+                if (panel.getSlaveId().equals(slaveId)) {
                     return panel;
                 }
             }
@@ -1712,19 +1424,17 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
     }
 
     @Override
-    public void modbusSlaveRemoved(ModbusSlave slave)
-    {
+    public void modbusSlaveRemoved(ModbusSlave slave) {
         ModbusSlaveAddress slaveID = slave.getSlaveId();
 
         ModbusSlavePanel panel = findModbusSlavePanel(slaveID);
-        
-        if( panel != null )
-        {
+
+        if (panel != null) {
             // the dialog will be disconnect, so remove it to:
             panel.delete();
 
             // remove panel from the list
-            slavesListPanel.remove( panel );
+            slavesListPanel.remove(panel);
 
             // force the list to redo the layout
             slaveListScrollPane.validate();
@@ -1736,27 +1446,22 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
 
 
     @Override
-    public void automationAdded(Automation automation, int index)
-    {
+    public void automationAdded(Automation automation, int index) {
         // add slave panel into the gui and refresh gui
-        AutomationPanel panel = new AutomationPanel(automation, this );
+        AutomationPanel panel = new AutomationPanel(automation, this);
         //panel.requestFocus();
-        automationsListPanel.add( panel, new Integer(index) );
+        automationsListPanel.add(panel, Integer.valueOf(index));
         automationListScrollPane.validate();
         panel.focus();
     }
 
 
-    private AutomationPanel findAutomationPanel(Automation automation)
-    {
+    private AutomationPanel findAutomationPanel(Automation automation) {
         Component panels[] = automationsListPanel.getComponents();
-        for( int i=0; i<panels.length; i++ )
-        {
-            if( panels[i] instanceof AutomationPanel )
-            {
-                AutomationPanel panel = (AutomationPanel)panels[i];
-                if( panel.getAutomation()==automation )
-                {
+        for (int i = 0; i < panels.length; i++) {
+            if (panels[i] instanceof AutomationPanel) {
+                AutomationPanel panel = (AutomationPanel) panels[i];
+                if (panel.getAutomation() == automation) {
                     return panel;
                 }
             }
@@ -1766,17 +1471,15 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
 
 
     @Override
-    public void automationRemoved(Automation automation)
-    {
+    public void automationRemoved(Automation automation) {
         AutomationPanel panel = findAutomationPanel(automation);
 
-        if( panel != null )
-        {
+        if (panel != null) {
             // the dialog will be disconnect, so remove it too:
             panel.disconnect();
 
             // remove panel from the list
-            automationsListPanel.remove( panel );
+            automationsListPanel.remove(panel);
 
             // force the list to redo the layout
             automationListScrollPane.validate();
@@ -1787,12 +1490,10 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
     }
 
     @Override
-    public void linkBroken()
-    {
-        GUITools.setAllEnabled(linksTabbedPane,true);
+    public void linkBroken() {
+        GUITools.setAllEnabled(linksTabbedPane, true);
         runToggleButton.setSelected(false);
     }
-
 
 
     /**
@@ -1800,10 +1501,9 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
      * disposed of, because it will do some cleaning:
      * - stopping the running threads (automations, link)
      */
-    public void exit()
-    {
+    public void exit() {
         stopAll();
-        
+
         try {
             // stop recorder
             ModbusPalRecorder.stop();
@@ -1815,13 +1515,12 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
     }
 
     /**
-     * @see #showScriptManagerDialog()
      * @param tabIndex the index of the tab to display
+     * @see #showScriptManagerDialog()
      * @deprecated tabIndex is ignored. now there is only one list of scripts
      */
     @Deprecated
-    public void showScriptManagerDialog(int tabIndex)
-    {
+    public void showScriptManagerDialog(int tabIndex) {
         showScriptManagerDialog();
     }
 
@@ -1829,66 +1528,55 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
      * Summons the Script Manager Dialog, as if the user has just
      * clicked on the "Script" button.
      */
-    public void showScriptManagerDialog()
-    {
-        scriptManagerDialog.setModalExclusionType(ModalExclusionType.APPLICATION_EXCLUDE);
-        scriptManagerDialog.setVisible(true);
+    public void showScriptManagerDialog() {
         scriptsToggleButton.setSelected(true);
     }
 
     /**
      * Gets the ModbusPalProject currently being managed by this ModbusPalPane.
+     *
      * @return the current ModbusPalPane
-     */public ModbusPalProject getProject()
-    {
+     */
+    public ModbusPalProject getProject() {
         return modbusPalProject;
     }
 
     /**
-      * Shows or hides the the Slaves list. Some applications that embbeds 
-      * ModbusPal might find it nice to hide this list.
-      * @param b true to show the slaves list. false to hide it.
-      */
-    public void setSlavesListVisible(boolean b) 
-    {
+     * Shows or hides the the Slaves list. Some applications that embbeds
+     * ModbusPal might find it nice to hide this list.
+     *
+     * @param b true to show the slaves list. false to hide it.
+     */
+    public void setSlavesListVisible(boolean b) {
         slavesListView.setVisible(b);
     }
 
-    protected File selectProjectFileToOpen()
-    {
+    protected File selectProjectFileToOpen() {
         JFileChooser loadDialog = new XFileChooser(XFileChooser.PROJECT_FILE);
         loadDialog.showOpenDialog(null);
         File projectFile = loadDialog.getSelectedFile();
         return projectFile;
     }
 
-    protected File selectProjectFileToSave()
-    {
+    protected File selectProjectFileToSave() {
         JFileChooser loadDialog = new XFileChooser(XFileChooser.PROJECT_FILE);
         loadDialog.showSaveDialog(null);
         File projectFile = loadDialog.getSelectedFile();
         return projectFile;
     }
 
-    private Runnable createProjectLoadingTask(final File projectFile, final WorkInProgressDialog dialog)
-    {
-        return new Runnable()
-        {
+    private Runnable createProjectLoadingTask(final File projectFile, final WorkInProgressDialog dialog) {
+        return new Runnable() {
             @Override
-            public void run()
-            {
-                try
-                {
+            public void run() {
+                try {
                     loadProject(projectFile);
                     //TODO: setTitle(APP_STRING+" ("+projectFile.getName()+")");
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     Logger.getLogger(ModbusPalPane.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
-                if( dialog.isVisible() )
-                {
+                if (dialog.isVisible()) {
                     dialog.setVisible(false);
                 }
             }
@@ -1896,25 +1584,18 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
     }
 
 
-    private Runnable createProjectSavingTask(final File projectFile, final WorkInProgressDialog dialog)
-    {
-        return new Runnable()
-        {
+    private Runnable createProjectSavingTask(final File projectFile, final WorkInProgressDialog dialog) {
+        return new Runnable() {
             @Override
-            public void run()
-            {
-                try
-                {
+            public void run() {
+                try {
                     saveProject(projectFile);
                     //TODO: setTitle(APP_STRING+" ("+projectFile.getName()+")");
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     Logger.getLogger(ModbusPalPane.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
-                if( dialog.isVisible() )
-                {
+                if (dialog.isVisible()) {
                     dialog.setVisible(false);
                 }
             }
@@ -1922,14 +1603,12 @@ implements ModbusPalXML, WindowListener, ModbusPalListener, ModbusLinkListener
     }
 
     @Override
-    public void modbusMasterTaskRemoved(ModbusMasterTask mmt) 
-    {
+    public void modbusMasterTaskRemoved(ModbusMasterTask mmt) {
         //
     }
 
     @Override
-    public void modbusMasterTaskAdded(ModbusMasterTask mmt) 
-    {
+    public void modbusMasterTaskAdded(ModbusMasterTask mmt) {
         //
     }
 

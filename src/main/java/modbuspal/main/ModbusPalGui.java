@@ -12,14 +12,11 @@
 package modbuspal.main;
 
 import java.awt.BorderLayout;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.net.URL;
 import java.util.HashMap;
 import javax.swing.*;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
-import modbuspal.link.ModbusSerialLink;
+
 import modbuspal.toolkit.FileTools;
 
 /**
@@ -49,11 +46,6 @@ public class ModbusPalGui
     }
 
     
-    public static void install()
-    {
-        ModbusSerialLink.install();
-    }
-    
     /**
     * @param args the command line arguments
     */
@@ -73,12 +65,8 @@ public class ModbusPalGui
                 }
             }
         }
-        if( runInstall == true )
-        {
-            install();
-        }
-        
-        if( runGui == true )
+
+        if(runGui)
         {
             SwingUtilities.invokeLater(new Runnable() {
                 @Override

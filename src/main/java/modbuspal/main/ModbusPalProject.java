@@ -20,10 +20,7 @@ import modbuspal.automation.NullAutomation;
 import modbuspal.binding.Binding;
 import modbuspal.generator.Generator;
 import modbuspal.instanciator.InstantiableManager;
-import modbuspal.link.ModbusSerialLink;
 import modbuspal.master.ModbusMasterTask;
-import modbuspal.script.ScriptListener;
-import modbuspal.script.ScriptRunner;
 import modbuspal.slave.ModbusSlave;
 import modbuspal.slave.ModbusPduProcessor;
 import modbuspal.slave.ModbusSlaveAddress;
@@ -48,8 +45,6 @@ implements ModbusPalXML
     File projectFile = null;
     private final ArrayList<ModbusPalListener> listeners = new ArrayList<ModbusPalListener>(); // synchronized
     private final ArrayList<Automation> automations = new ArrayList<Automation>();
-    private final ArrayList<ScriptListener> scriptListeners = new ArrayList<ScriptListener>(); // synchronized
-    private final ArrayList<ScriptRunner> scripts = new ArrayList<ScriptRunner>();
     private final ArrayList<ModbusMasterTask> masterTasks = new ArrayList<ModbusMasterTask>();
     private boolean learnModeEnabled = false;
 
@@ -61,8 +56,6 @@ implements ModbusPalXML
     String linkTcpipPort = "502";
     String linkSerialComId = "none";
     String linkSerialBaudrate = "9600";
-    int linkSerialParity = ModbusSerialLink.PARITY_EVEN;
-    int linkSerialStopBits = ModbusSerialLink.STOP_BITS_1;
     boolean linkSerialXonXoff = false;
     boolean linkSerialRtsCts = false;
     File linkReplayFile = null;
@@ -123,44 +116,11 @@ implements ModbusPalXML
         System.out.println("load "+name);
         projectFile = source;
 
-        // scan the content of the xml file
-        // and load the script files (ScriptRunner objects are created)
-        loadScripts(doc, projectFile);
-
-        // execute startup scripts
-        for( ScriptRunner runner:scripts ) {
-            if( runner.getType()==ScriptRunner.SCRIPT_TYPE_BEFORE_INIT ) {
-                runner.execute();
-            }
-        }
-
         loadParameters(doc);
-
-        // load old fashioned "bindings" instantiators
-        for( ScriptRunner runner:scripts ) {
-            if( runner.getType()==ScriptRunner.SCRIPT_TYPE_OLD_BINDINGS ) {
-                importOldBindings(runner);
-            }
-        }
-
-        // load old fashioned "generators" isntanciators
-        // load old fashioned "bindings" instantiators
-        for( ScriptRunner runner:scripts ) {
-            if( runner.getType()==ScriptRunner.SCRIPT_TYPE_OLD_GENERATORS ) {
-                importOldGenerators(runner);
-            }
-        }
         
         loadAutomations(doc);
         loadSlaves(doc);
         loadBindings(doc,null);
-        
-        // execute startup scripts
-        for( ScriptRunner runner:scripts ) {
-            if( runner.getType()==ScriptRunner.SCRIPT_TYPE_AFTER_INIT ) {
-                runner.execute();
-            }
-        }
     }
     
     /**
@@ -218,32 +178,6 @@ implements ModbusPalXML
 
         // load "baudrate" attribute
         linkSerialBaudrate = XMLTools.getAttribute("baudrate", root);
-
-        // load "parity" attribute
-        String parity = XMLTools.getAttribute("parity", root);
-        if( parity!=null )
-        {
-            if( parity.compareTo("none")==0 ) {
-                linkSerialParity = ModbusSerialLink.PARITY_NONE;
-            } else if( parity.compareTo("odd")==0 ) {
-                linkSerialParity = ModbusSerialLink.PARITY_ODD;
-            } else {
-                linkSerialParity = ModbusSerialLink.PARITY_EVEN;
-            }
-        }
-
-        // load "stop bits" attribute
-        String stops = XMLTools.getAttribute("stops", root);
-        if( stops!=null )
-        {
-            if( stops.compareTo("1.5")==0 ) {
-                linkSerialStopBits = ModbusSerialLink.STOP_BITS_1_5;
-            } else if( parity.compareTo("2")==0 ) {
-                linkSerialStopBits = ModbusSerialLink.STOP_BITS_2;
-            } else {
-                linkSerialStopBits = ModbusSerialLink.STOP_BITS_1;
-            }
-        }
 
         // load flow control parameters
         Node flowControlNode = XMLTools.findChild(root, "flowcontrol");
@@ -478,84 +412,6 @@ implements ModbusPalXML
         slave.getHoldingRegisters().bind(registerAddress, binding);
     }
 
-
-
-
-    /**
-     * This method will only load "STARTUP" and "ON DEMAND" scripts.
-     * Generator and binding scripts are loaded in a separate procedure.
-     * @param doc
-     * @param projectFile
-     */
-    private void loadScripts(Document doc, File projectFile)
-    {
-        //-----------------------------
-        // OLD PROJECT FILE FORMAT
-        //-----------------------------
-
-        // look for "startup" scripts section
-        NodeList startup = doc.getElementsByTagName("startup");
-        for( int i=0; i<startup.getLength(); i++ )
-        {
-            loadScripts( startup.item(i), projectFile, ScriptRunner.SCRIPT_TYPE_AFTER_INIT );
-        }
-
-        // look for "ondemand" scripts section
-        NodeList ondemand = doc.getElementsByTagName("ondemand");
-        for( int i=0; i<ondemand.getLength(); i++ )
-        {
-            loadScripts( ondemand.item(i), projectFile, ScriptRunner.SCRIPT_TYPE_ON_DEMAND );
-        }
-
-        // loof for "bindings" script section
-        NodeList bindings = doc.getElementsByTagName("bindings");
-        for( int i=0; i<bindings.getLength(); i++ )
-        {
-            loadScripts( bindings.item(i), projectFile, ScriptRunner.SCRIPT_TYPE_OLD_BINDINGS );
-        }
-
-        // loof for "generators" script section
-        NodeList generators = doc.getElementsByTagName("generators");
-        for( int i=0; i<generators.getLength(); i++ )
-        {
-            loadScripts( generators.item(i), projectFile, ScriptRunner.SCRIPT_TYPE_OLD_GENERATORS );
-        }
-
-        //-----------------------------
-        // NEW PROJECT FILE FORMAT
-        //-----------------------------
-
-        NodeList scriptsList = doc.getElementsByTagName("scripts");
-        for( int i=0; i<scriptsList.getLength(); i++ )
-        {
-            loadScripts( scriptsList.item(i), projectFile, ScriptRunner.SCRIPT_TYPE_ON_DEMAND );
-        }
-
-    }
-
-
-    private void loadScripts(Node node, File projectFile, int assumedType)
-    {
-        // get list of sub nodes
-        NodeList nodes = node.getChildNodes();
-
-        for(int i=0; i<nodes.getLength(); i++ )
-        {
-            Node scriptNode = nodes.item(i);
-            if( scriptNode.getNodeName().compareTo("script")==0 )
-            {
-                ScriptRunner runner = ScriptRunner.create(scriptNode, this, projectFile, true, assumedType);
-                if( runner!=null )
-                {
-                    addScript(runner);
-                }
-            }
-        }
-    }
-
-
-
-
     //==========================================================================
     //
     // SAVE PROJECT
@@ -600,7 +456,6 @@ implements ModbusPalXML
         saveParameters(out);
         saveAutomations(out);
         saveSlaves(out);
-        saveScripts(out, projectFile);
 
         String closeTag = "</modbuspal_project>\r\n";
         out.write( closeTag.getBytes() );
@@ -640,9 +495,6 @@ implements ModbusPalXML
         // write tcp/ip settings
         saveTcpIpLinkParameters(out);
 
-        // write serial settings
-        saveSerialLinkParameters(out);
-
         // write replay settings
         saveReplayLinkParameters(out);
 
@@ -658,41 +510,6 @@ implements ModbusPalXML
         tag.append("port=\"").append(linkTcpipPort).append("\" ");
         tag.append("/>\r\n");
         out.write( tag.toString().getBytes() );
-    }
-
-    private void saveSerialLinkParameters(OutputStream out) throws IOException
-    {
-        StringBuilder openTag = new StringBuilder("<serial ");
-        openTag.append("com=\"").append(linkSerialComId).append("\" ");
-        openTag.append("baudrate=\"").append(linkSerialBaudrate).append("\" ");
-        switch(linkSerialParity)
-        {
-            case ModbusSerialLink.PARITY_NONE: openTag.append("parity=\"none\" "); break;
-            case ModbusSerialLink.PARITY_ODD: openTag.append("parity=\"odd\" "); break;
-            default:
-            case ModbusSerialLink.PARITY_EVEN: openTag.append("parity=\"even\" "); break;
-        }
-        switch(linkSerialStopBits)
-        {
-            default:
-            case ModbusSerialLink.STOP_BITS_1: openTag.append("stops=\"1\" "); break;
-            case ModbusSerialLink.STOP_BITS_1_5: openTag.append("stops=\"1.5\" "); break;
-            case ModbusSerialLink.STOP_BITS_2: openTag.append("stops=\"2\" "); break;
-        }
-        openTag.append(">\r\n");
-        out.write( openTag.toString().getBytes() );
-
-
-
-        StringBuilder flowControl = new StringBuilder("<flowcontrol ");
-        flowControl.append("xonxoff=\"").append(String.valueOf(linkSerialXonXoff)).append("\" ");
-        flowControl.append("rtscts=\"").append(String.valueOf(linkSerialRtsCts)).append("\" ");
-        flowControl.append("/>\r\n");
-
-        out.write( flowControl.toString().getBytes() );
-
-        String closeTag = "</serial>\r\n";
-        out.write( closeTag.getBytes() );
     }
 
 
@@ -739,36 +556,6 @@ implements ModbusPalXML
             slave.save(out, true);
         }
     }
-
-
-    private void saveScripts(OutputStream out, File projectFile)
-    throws IOException
-    {
-        if( scripts.isEmpty() )
-        {
-            return;
-        }
-
-        String openTag = "<scripts>\r\n";
-        out.write( openTag.getBytes() );
-
-        for(ScriptRunner runner:scripts)
-        {
-            runner.save(out,projectFile);
-        }
-
-        String closeTag = "</scripts>\r\n";
-        out.write(closeTag.getBytes());
-    }
-
-
-
-
-
-
-
-
-
 
     //==========================================================================
     //
@@ -1072,14 +859,6 @@ implements ModbusPalXML
     }
 
 
-    private void importOldGenerators(ScriptRunner runner)
-    {
-        runner.updateForOldGenerators();
-        runner.execute();
-    }
-
-
-
     //==========================================================================
     //
     // BINDINGS
@@ -1144,12 +923,6 @@ implements ModbusPalXML
     public InstantiableManager<Binding> getBindingFactory()
     {
         return bindingFactory;
-    }
-
-    private void importOldBindings(ScriptRunner runner)
-    {
-        runner.updateForOldBindings();
-        runner.execute();
     }
 
     //==========================================================================
@@ -1661,91 +1434,6 @@ implements ModbusPalXML
         return ms.getCoils().exist(startingAddress, quantity, learnModeEnabled);
     }*/
 
-
-
-
-
-
-
-
-
-    
-    //==========================================================================
-    //
-    // SCRIPTS MANAGEMENT
-    //
-    //==========================================================================
-
-    /**
-     * Adds the specified script file into the project.
-     * @param scriptFile the script file to add
-     */
-    public void addScript(File scriptFile)
-    {
-        ScriptRunner runner = ScriptRunner.create(this, scriptFile, ScriptRunner.SCRIPT_TYPE_ON_DEMAND);
-        addScript(runner);
-    }
-
-    private void addScript(ScriptRunner runner)
-    {
-        scripts.add(runner);
-        notifyScriptAdded(runner);
-    }
-
-    /**
-     * Removes the specified script from the project
-     * @param runner the script to remove
-     */
-    public void removeScript(ScriptRunner runner)
-    {
-        if( scripts.remove(runner)==true )
-        {
-            notifyScriptRemoved(runner);
-        }
-    }
-
-    private void notifyScriptAdded(ScriptRunner runner)
-    {
-        synchronized(scriptListeners)
-        {
-            for(ScriptListener l:scriptListeners)
-            {
-                l.scriptAdded(runner);
-            }
-        }
-    }
-
-    private void notifyScriptRemoved(ScriptRunner runner)
-    {
-        synchronized(scriptListeners)
-        {
-            for(ScriptListener l:scriptListeners)
-            {
-                l.scriptRemoved(runner);
-            }
-        }
-    }
-
-    /**
-     * Returns a list of the scripts currently defined in the project,
-     * filtered by type.
-     * @param type one of the ScriptRunner.SCRIPT_TYPE_xxx constants
-     * @return an Iterable encapsulating the list of scripts contained
-     * in the project, using the specified filter.
-     */
-    public Iterable<ScriptRunner> getScripts(int type)
-    {
-        ArrayList<ScriptRunner> output = new ArrayList<ScriptRunner>();
-        for(ScriptRunner sr:scripts )
-        {
-            if( (type==ScriptRunner.SCRIPT_TYPE_ANY) || (sr.getType()==type) )
-            {
-                output.add(sr);
-            }
-        }
-        return output;
-    }
-
     //==========================================================================
     //
     // LISTENERS
@@ -1781,38 +1469,6 @@ implements ModbusPalXML
             }
         }
     }
-
-    /**
-     * Adds a ScriptListener to the list of listeners
-     * @param l the listener to add
-     */    
-    public void addScriptListener(ScriptListener l)
-    {
-        synchronized(scriptListeners)
-        {
-            if( scriptListeners.contains(l)==false )
-            {
-                scriptListeners.add(l);
-            }
-        }
-    }
-
-    /**
-     * Removes a ScriptListener from the list of listeners
-     * @param l the listener to remove
-     */
-    public void removeScriptListener(ScriptListener l)
-    {
-        synchronized(scriptListeners)
-        {
-            if( scriptListeners.contains(l)==true )
-            {
-                scriptListeners.remove(l);
-            }
-        }
-    }
-
-
 
     //==========================================================================
     //
