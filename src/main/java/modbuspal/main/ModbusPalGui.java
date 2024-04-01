@@ -45,21 +45,17 @@ public class ModbusPalGui {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        boolean runInstall = false;
-        boolean runGui = true;
-
+    public static void main(String[] args) throws Exception {
         if (args.length >= 1) {
             for (String arg : args) {
-                if (arg.compareToIgnoreCase("-install") == 0) {
-                    runInstall = true;
-                    runGui = false;
-                    break;
+                if (arg.startsWith("-load=")) {
+                    String projectPath = arg.replace("-load=", "");
+                    ModbusPalPane pane = new ModbusPalPane(false);
+                    pane.loadProject(projectPath);
+                    pane.startAll();
                 }
             }
-        }
-
-        if (runGui) {
+        } else {
             SwingUtilities.invokeLater(() -> {
                 newFrame().setVisible(true);
             });

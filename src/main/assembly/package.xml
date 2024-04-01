@@ -26,6 +26,13 @@
                 <include>*</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <directory>${basedir}/src/main/</directory>
+            <includes>
+                <include>resources/**</include>
+            </includes>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
     </fileSets>
     <dependencySets>
         <dependencySet>
