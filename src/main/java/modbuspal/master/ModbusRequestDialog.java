@@ -462,19 +462,11 @@ extends javax.swing.JDialog
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
         okButton.setText("OK");
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
+        okButton.addActionListener(evt -> okButtonActionPerformed(evt));
         jPanel1.add(okButton);
 
         cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
+        cancelButton.addActionListener(evt -> cancelButtonActionPerformed(evt));
         jPanel1.add(cancelButton);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.SOUTH);
@@ -486,11 +478,7 @@ extends javax.swing.JDialog
         jPanel2.add(jSpinner1);
 
         implementationComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Modbus", "J-Bus" }));
-        implementationComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                implementationComboBoxActionPerformed(evt);
-            }
-        });
+        implementationComboBox.addActionListener(evt -> implementationComboBoxActionPerformed(evt));
         jPanel2.add(implementationComboBox);
 
         jLabel6.setText("Receive timeout:");

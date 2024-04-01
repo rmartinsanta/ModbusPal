@@ -36,13 +36,13 @@ implements ModbusPalXML, ModbusConst
     private final ModbusRegisters holdingRegisters = new ModbusRegisters();
     private final ModbusCoils coils = new ModbusCoils();
     private String customName;
-    private final ArrayList<ModbusSlaveListener> listeners = new ArrayList<ModbusSlaveListener>();
+    private final ArrayList<ModbusSlaveListener> listeners = new ArrayList<>();
     private int modbusImplementation = IMPLEMENTATION_MODBUS;
     private long minReplyDelay = 0L;
     private long maxReplyDelay = 0L;
     private float noReplyRate = 0f;
     private final ModbusPduProcessor[] pduProcessors = new ModbusPduProcessor[128];
-    private final InstanceCounter<ModbusPduProcessor> pduProcessorInstances = new InstanceCounter<ModbusPduProcessor>();
+    private final InstanceCounter<ModbusPduProcessor> pduProcessorInstances = new InstanceCounter<>();
 
     private ModbusSlave()
     {
@@ -346,7 +346,7 @@ implements ModbusPalXML, ModbusConst
      */
     public String[] getRequiredAutomations()
     {
-        ArrayList<String> automationNames = new ArrayList<String>();
+        ArrayList<String> automationNames = new ArrayList<>();
         Collection<String> tmpNames;
 
         // get the names of the automations that are required for

@@ -103,11 +103,7 @@ implements WindowListener, ModbusSlaveListener,AncestorListener
 
         nameTextField.setText(modbusSlave.getName());
         nameTextField.setPreferredSize(new java.awt.Dimension(120, 20));
-        nameTextField.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nameTextFieldActionPerformed(evt);
-            }
-        });
+        nameTextField.addActionListener(evt -> nameTextFieldActionPerformed(evt));
         nameTextField.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusLost(java.awt.event.FocusEvent evt) {
                 nameTextFieldFocusLost(evt);
@@ -124,41 +120,25 @@ implements WindowListener, ModbusSlaveListener,AncestorListener
         enableToggleButton.setSelected(modbusSlave.isEnabled());
         enableToggleButton.setToolTipText("Enable or disable this slave");
         enableToggleButton.setSelectedIcon(new javax.swing.ImageIcon(FileTools.getImage("/img/enabled.png"))); // NOI18N
-        enableToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                enableToggleButtonActionPerformed(evt);
-            }
-        });
+        enableToggleButton.addActionListener(evt -> enableToggleButtonActionPerformed(evt));
         add(enableToggleButton);
 
         showToggleButton.setIcon(new javax.swing.ImageIcon(FileTools.getImage("/img/show.png"))); // NOI18N
         showToggleButton.setToolTipText("Show or hide the editor of this slave");
         showToggleButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
-        showToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                showToggleButtonActionPerformed(evt);
-            }
-        });
+        showToggleButton.addActionListener(evt -> showToggleButtonActionPerformed(evt));
         add(showToggleButton);
 
         duplicateButton.setIcon(new javax.swing.ImageIcon(FileTools.getImage("/img/duplicate.png"))); // NOI18N
         duplicateButton.setToolTipText("Duplicate this slave");
         duplicateButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
-        duplicateButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                duplicateButtonActionPerformed(evt);
-            }
-        });
+        duplicateButton.addActionListener(evt -> duplicateButtonActionPerformed(evt));
         add(duplicateButton);
 
         deleteButton.setIcon(new javax.swing.ImageIcon(FileTools.getImage("/img/delete.png"))); // NOI18N
         deleteButton.setToolTipText("Delete this slave");
         deleteButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
-        deleteButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteButtonActionPerformed(evt);
-            }
-        });
+        deleteButton.addActionListener(evt -> deleteButtonActionPerformed(evt));
         add(deleteButton);
     }// </editor-fold>//GEN-END:initComponents
 

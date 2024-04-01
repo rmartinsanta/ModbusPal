@@ -29,7 +29,7 @@ extends javax.swing.JFrame
 implements HyperlinkListener
 {
 
-    private final HashMap<String,HelpViewerPane> panes = new HashMap<String,HelpViewerPane>();
+    private final HashMap<String,HelpViewerPane> panes = new HashMap<>();
 
     /** Creates new form HelpViewer */
     public HelpViewer() 
@@ -100,14 +100,12 @@ implements HyperlinkListener
     * @param args the command line arguments
     */
     public static void main(String[] args) {
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                HelpViewer hv = new HelpViewer();
-                hv.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                hv.setExtendedState(MAXIMIZED_BOTH);
-                hv.setVisible(true);
-                
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            HelpViewer hv = new HelpViewer();
+            hv.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            hv.setExtendedState(MAXIMIZED_BOTH);
+            hv.setVisible(true);
+
         });
     }
 

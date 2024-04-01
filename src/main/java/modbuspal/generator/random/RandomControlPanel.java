@@ -80,20 +80,12 @@ extends javax.swing.JPanel
 
         minRelativeCheckBox.setSelected(generator.relativeMin);
         minRelativeCheckBox.setText("relative");
-        minRelativeCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                minRelativeCheckBoxActionPerformed(evt);
-            }
-        });
+        minRelativeCheckBox.addActionListener(evt -> minRelativeCheckBoxActionPerformed(evt));
         add(minRelativeCheckBox, new java.awt.GridBagConstraints());
 
         maxRelativeCheckBox.setSelected(generator.relativeMax);
         maxRelativeCheckBox.setText("relative");
-        maxRelativeCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                maxRelativeCheckBoxActionPerformed(evt);
-            }
-        });
+        maxRelativeCheckBox.addActionListener(evt -> maxRelativeCheckBoxActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;

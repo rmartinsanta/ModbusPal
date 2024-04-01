@@ -106,11 +106,7 @@ extends javax.swing.JDialog
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.RIGHT));
 
         okButton.setText("OK");
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
+        okButton.addActionListener(evt -> okButtonActionPerformed(evt));
         jPanel1.add(okButton);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.SOUTH);

@@ -150,19 +150,11 @@ implements ModbusConst
         jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
         setFunctionsButton.setText("Set");
-        setFunctionsButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                setFunctionsButtonActionPerformed(evt);
-            }
-        });
+        setFunctionsButton.addActionListener(evt -> setFunctionsButtonActionPerformed(evt));
         jPanel2.add(setFunctionsButton);
 
         resetFunctoinsButton.setText("Reset");
-        resetFunctoinsButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                resetFunctoinsButtonActionPerformed(evt);
-            }
-        });
+        resetFunctoinsButton.addActionListener(evt -> resetFunctoinsButtonActionPerformed(evt));
         jPanel2.add(resetFunctoinsButton);
 
         add(jPanel2, java.awt.BorderLayout.NORTH);

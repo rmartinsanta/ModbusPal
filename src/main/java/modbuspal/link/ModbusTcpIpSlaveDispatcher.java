@@ -29,7 +29,7 @@ implements Runnable
 
 
 
-    private static final ArrayList<ModbusTcpIpSlaveDispatcher> dispatchers = new ArrayList<ModbusTcpIpSlaveDispatcher>();
+    private static final ArrayList<ModbusTcpIpSlaveDispatcher> dispatchers = new ArrayList<>();
 
     private static void register(ModbusTcpIpSlaveDispatcher dispatcher)
     {

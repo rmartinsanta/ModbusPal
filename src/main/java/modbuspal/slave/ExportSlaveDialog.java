@@ -67,11 +67,7 @@ extends javax.swing.JDialog
         getContentPane().add(jLabel1, gridBagConstraints);
 
         bindingsCheckBox.setText("Export with bindings");
-        bindingsCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bindingsCheckBoxActionPerformed(evt);
-            }
-        });
+        bindingsCheckBox.addActionListener(evt -> bindingsCheckBoxActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -87,11 +83,7 @@ extends javax.swing.JDialog
         getContentPane().add(automationsCheckBox, gridBagConstraints);
 
         okButton.setText("OK");
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
+        okButton.addActionListener(evt -> okButtonActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 3;

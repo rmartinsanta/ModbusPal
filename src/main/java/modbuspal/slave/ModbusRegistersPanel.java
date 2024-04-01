@@ -90,35 +90,19 @@ implements ModbusConst
         jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
         addRegistersButton.setText("Add");
-        addRegistersButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addRegistersButtonActionPerformed(evt);
-            }
-        });
+        addRegistersButton.addActionListener(evt -> addRegistersButtonActionPerformed(evt));
         jPanel2.add(addRegistersButton);
 
         removeRegistersButton.setText("Remove");
-        removeRegistersButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                removeRegistersButtonActionPerformed(evt);
-            }
-        });
+        removeRegistersButton.addActionListener(evt -> removeRegistersButtonActionPerformed(evt));
         jPanel2.add(removeRegistersButton);
 
         bindRegistersButton.setText("Bind");
-        bindRegistersButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                bindRegistersButtonActionPerformed(evt);
-            }
-        });
+        bindRegistersButton.addActionListener(evt -> bindRegistersButtonActionPerformed(evt));
         jPanel2.add(bindRegistersButton);
 
         unbindRegistersButton.setText("Unbind");
-        unbindRegistersButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                unbindRegistersButtonActionPerformed(evt);
-            }
-        });
+        unbindRegistersButton.addActionListener(evt -> unbindRegistersButtonActionPerformed(evt));
         jPanel2.add(unbindRegistersButton);
 
         add(jPanel2, java.awt.BorderLayout.NORTH);

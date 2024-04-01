@@ -131,11 +131,7 @@ extends javax.swing.JDialog
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
         clearButton.setText("Clear");
-        clearButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clearButtonActionPerformed(evt);
-            }
-        });
+        clearButton.addActionListener(evt -> clearButtonActionPerformed(evt));
         jPanel1.add(clearButton);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.NORTH);

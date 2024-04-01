@@ -72,9 +72,9 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
     protected String TXT_REGISTERS = "registers";
 
     private final ModbusValuesMap values = new ModbusValuesMap();
-    private final HashMap<Integer,String> names = new HashMap<Integer,String>(65536);
-    private final ArrayList<TableModelListener> tableModelListeners = new ArrayList<TableModelListener>();
-    private final HashMap<Integer,Binding> bindings = new HashMap<Integer,Binding>(65536);
+    private final HashMap<Integer,String> names = new HashMap<>(65536);
+    private final ArrayList<TableModelListener> tableModelListeners = new ArrayList<>();
+    private final HashMap<Integer,Binding> bindings = new HashMap<>(65536);
     private int addressOffset = 1;
 
     //==========================================================================
@@ -1181,7 +1181,7 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
      */
     Collection<String> getRequiredAutomations()
     {
-        ArrayList<String> automationNames = new ArrayList<String>();
+        ArrayList<String> automationNames = new ArrayList<>();
         Collection<Binding> en = bindings.values();
         for(Binding b:en)
         {

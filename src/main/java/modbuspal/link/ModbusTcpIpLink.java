@@ -47,7 +47,7 @@ implements ModbusLink, Runnable
         super(mpp);
         modbusPalProject = mpp;
         tcpPort = port;
-        clientSockets = new HashMap<ModbusSlaveAddress, Socket>();
+        clientSockets = new HashMap<>();
     }
 
     @Override

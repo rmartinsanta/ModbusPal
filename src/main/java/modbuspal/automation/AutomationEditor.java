@@ -91,24 +91,19 @@ implements AutomationEditionListener, AutomationExecutionListener, InstantiableM
     private void addGeneratorButton(final String className)
     {
         JButton button = new JButton( className );
-        button.addActionListener( new ActionListener()
-        {
-            @Override
-            public void actionPerformed(ActionEvent e)
+        button.addActionListener(e -> {
+            try
             {
-                try 
-                {
-                    Generator gen = generatorFactory.newInstance(className);
-                    automation.addGenerator(gen);
-                }
-                catch (InstantiationException ex)
-                {
-                    Logger.getLogger(AutomationEditor.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                catch (IllegalAccessException ex)
-                {
-                    Logger.getLogger(AutomationEditor.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                Generator gen = generatorFactory.newInstance(className);
+                automation.addGenerator(gen);
+            }
+            catch (InstantiationException ex)
+            {
+                Logger.getLogger(AutomationEditor.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            catch (IllegalAccessException ex)
+            {
+                Logger.getLogger(AutomationEditor.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
         generatorsPanel.add(button);
@@ -326,11 +321,7 @@ implements AutomationEditionListener, AutomationExecutionListener, InstantiableM
         controlsPanel.setLayout(new java.awt.GridBagLayout());
 
         playToggleButton.setText("Play");
-        playToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                playToggleButtonActionPerformed(evt);
-            }
-        });
+        playToggleButton.addActionListener(evt -> playToggleButtonActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -338,11 +329,7 @@ implements AutomationEditionListener, AutomationExecutionListener, InstantiableM
         controlsPanel.add(playToggleButton, gridBagConstraints);
 
         stopButton.setText("Stop");
-        stopButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                stopButtonActionPerformed(evt);
-            }
-        });
+        stopButton.addActionListener(evt -> stopButtonActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -351,11 +338,7 @@ implements AutomationEditionListener, AutomationExecutionListener, InstantiableM
 
         loopToggleButton.setSelected(automation.isLoopEnabled());
         loopToggleButton.setText("Loop");
-        loopToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                loopToggleButtonActionPerformed(evt);
-            }
-        });
+        loopToggleButton.addActionListener(evt -> loopToggleButtonActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
@@ -374,11 +357,7 @@ implements AutomationEditionListener, AutomationExecutionListener, InstantiableM
         genButtonsPanel.setLayout(new java.awt.GridBagLayout());
 
         removeInstanciatorButton.setText("...");
-        removeInstanciatorButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                removeInstanciatorButtonActionPerformed(evt);
-            }
-        });
+        removeInstanciatorButton.addActionListener(evt -> removeInstanciatorButtonActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -461,27 +440,15 @@ implements AutomationEditionListener, AutomationExecutionListener, InstantiableM
         importExportPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
         importButton.setText("Import");
-        importButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                importButtonActionPerformed(evt);
-            }
-        });
+        importButton.addActionListener(evt -> importButtonActionPerformed(evt));
         importExportPanel.add(importButton);
 
         exportButton.setText("Export");
-        exportButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportButtonActionPerformed(evt);
-            }
-        });
+        exportButton.addActionListener(evt -> exportButtonActionPerformed(evt));
         importExportPanel.add(exportButton);
 
         chartToggleButton.setText("Chart");
-        chartToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                chartToggleButtonActionPerformed(evt);
-            }
-        });
+        chartToggleButton.addActionListener(evt -> chartToggleButtonActionPerformed(evt));
         importExportPanel.add(chartToggleButton);
 
         getContentPane().add(importExportPanel, java.awt.BorderLayout.PAGE_START);
@@ -505,11 +472,7 @@ implements AutomationEditionListener, AutomationExecutionListener, InstantiableM
         jPanel2.add(jLabel1, gridBagConstraints);
 
         jButton1.setText("Why?");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
+        jButton1.addActionListener(evt -> jButton1ActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;

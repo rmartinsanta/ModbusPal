@@ -40,7 +40,7 @@ extends DefaultMutableTreeNode
     
     public List<ModbusSlaveAddress> getTargetList()
     {
-        ArrayList<ModbusSlaveAddress> output = new ArrayList<ModbusSlaveAddress>();
+        ArrayList<ModbusSlaveAddress> output = new ArrayList<>();
         Collections.addAll(output, targetList);
         return output;
     }

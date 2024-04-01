@@ -126,11 +126,7 @@ implements GeneratorListener
         buttonsPanel.setLayout(new java.awt.GridBagLayout());
 
         upButton.setText("Up");
-        upButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                upButtonActionPerformed(evt);
-            }
-        });
+        upButton.addActionListener(evt -> upButtonActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -138,11 +134,7 @@ implements GeneratorListener
         buttonsPanel.add(upButton, gridBagConstraints);
 
         deleteButton.setText("Delete");
-        deleteButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteButtonActionPerformed(evt);
-            }
-        });
+        deleteButton.addActionListener(evt -> deleteButtonActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
@@ -150,11 +142,7 @@ implements GeneratorListener
         buttonsPanel.add(deleteButton, gridBagConstraints);
 
         downButton.setText("Down");
-        downButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                downButtonActionPerformed(evt);
-            }
-        });
+        downButton.addActionListener(evt -> downButtonActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;

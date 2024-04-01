@@ -45,17 +45,12 @@ public class XMLTools
         DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 
-        docBuilder.setEntityResolver( new EntityResolver()
-        {
-            public InputSource resolveEntity(String publicId, String systemId)
-            throws SAXException, IOException
+        docBuilder.setEntityResolver((publicId, systemId) -> {
+            if( systemId.endsWith("modbuspal.dtd") )
             {
-                if( systemId.endsWith("modbuspal.dtd") )
-                {
-                    return new InputSource( ModbusPalPane.class.getResourceAsStream("modbuspal.dtd") );
-                }
-                return null;
+                return new InputSource( ModbusPalPane.class.getResourceAsStream("modbuspal.dtd") );
             }
+            return null;
         });
 
         // the parse will fail if xml doc doesn't match the dtd.
@@ -107,7 +102,7 @@ public class XMLTools
      */
     public static List<Node> getNodes(NodeList nodes,String nodeName)
     {
-        ArrayList<Node> list = new ArrayList<Node>();
+        ArrayList<Node> list = new ArrayList<>();
 
         for(int i=0; i<nodes.getLength(); i++ )
         {
@@ -168,7 +163,7 @@ public class XMLTools
      */
     public static Collection<Node> findChildren(Node root, String nodeName)
     {
-        ArrayList<Node> list = new ArrayList<Node>();
+        ArrayList<Node> list = new ArrayList<>();
 
         NodeList nodes = root.getChildNodes();
         for( int i=0; i<nodes.getLength(); i++ )

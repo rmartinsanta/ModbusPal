@@ -48,7 +48,7 @@ implements ModbusPalListener
     {
         modbusPalPane = p;
         setProject(p.getProject());
-        threads = new ArrayList<Thread>();
+        threads = new ArrayList<>();
         initComponents();
         initTree();
     }
@@ -262,11 +262,7 @@ implements ModbusPalListener
         setTitle("ModbusPal Master");
         setMinimumSize(new java.awt.Dimension(300, 300));
 
-        jTree1.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
-            public void valueChanged(javax.swing.event.TreeSelectionEvent evt) {
-                jTree1ValueChanged(evt);
-            }
-        });
+        jTree1.addTreeSelectionListener(evt -> jTree1ValueChanged(evt));
         jScrollPane1.setViewportView(jTree1);
 
         getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
@@ -274,27 +270,15 @@ implements ModbusPalListener
         buttonsPanel.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
         addButton.setText("Add task...");
-        addButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addButtonActionPerformed(evt);
-            }
-        });
+        addButton.addActionListener(evt -> addButtonActionPerformed(evt));
         buttonsPanel.add(addButton);
 
         removeButton.setText("Remove");
-        removeButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                removeButtonActionPerformed(evt);
-            }
-        });
+        removeButton.addActionListener(evt -> removeButtonActionPerformed(evt));
         buttonsPanel.add(removeButton);
 
         modifyButton.setText("Modify");
-        modifyButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                modifyButtonActionPerformed(evt);
-            }
-        });
+        modifyButton.addActionListener(evt -> modifyButtonActionPerformed(evt));
         buttonsPanel.add(modifyButton);
         modifyButton.getAccessibleContext().setAccessibleName("Modify");
 
@@ -446,14 +430,7 @@ implements ModbusPalListener
         // create a thread for eack task
         for(final ModbusMasterTask task : tasks)
         {
-            Thread t = new Thread( new Runnable()
-            {
-                @Override
-                public void run() 
-                {
-                    task.run(link);
-                }
-            });
+            Thread t = new Thread(() -> task.run(link));
             threads.add(t);
         }
         

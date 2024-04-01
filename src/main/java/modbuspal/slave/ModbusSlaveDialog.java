@@ -269,11 +269,7 @@ implements ModbusConst, ModbusSlaveListener
         noReplyRateSlider.setPaintLabels(true);
         noReplyRateSlider.setPaintTicks(true);
         noReplyRateSlider.setValue(0);
-        noReplyRateSlider.addChangeListener(new javax.swing.event.ChangeListener() {
-            public void stateChanged(javax.swing.event.ChangeEvent evt) {
-                noReplyRateSliderStateChanged(evt);
-            }
-        });
+        noReplyRateSlider.addChangeListener(evt -> noReplyRateSliderStateChanged(evt));
         jPanel5.add(noReplyRateSlider, new java.awt.GridBagConstraints());
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -293,36 +289,20 @@ implements ModbusConst, ModbusSlaveListener
         jPanel1.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
         importButton.setText("Import");
-        importButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                importButtonActionPerformed(evt);
-            }
-        });
+        importButton.addActionListener(evt -> importButtonActionPerformed(evt));
         jPanel1.add(importButton);
 
         exportButton.setText("Export");
-        exportButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportButtonActionPerformed(evt);
-            }
-        });
+        exportButton.addActionListener(evt -> exportButtonActionPerformed(evt));
         jPanel1.add(exportButton);
 
         implementationComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Modbus", "J-Bus" }));
         implementationComboBox.setSelectedIndex(modbusSlave.getImplementation());
-        implementationComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                implementationComboBoxActionPerformed(evt);
-            }
-        });
+        implementationComboBox.addActionListener(evt -> implementationComboBoxActionPerformed(evt));
         jPanel1.add(implementationComboBox);
 
         stayOnTopCheckBox.setText("Stay on top");
-        stayOnTopCheckBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                stayOnTopCheckBoxActionPerformed(evt);
-            }
-        });
+        stayOnTopCheckBox.addActionListener(evt -> stayOnTopCheckBoxActionPerformed(evt));
         jPanel1.add(stayOnTopCheckBox);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_START);

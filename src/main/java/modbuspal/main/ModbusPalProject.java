@@ -40,14 +40,14 @@ implements ModbusPalXML
 
     final IdGenerator idGenerator = new IdGenerator();
     File projectFile = null;
-    private final ArrayList<ModbusPalListener> listeners = new ArrayList<ModbusPalListener>(); // synchronized
-    private final ArrayList<Automation> automations = new ArrayList<Automation>();
-    private final ArrayList<ModbusMasterTask> masterTasks = new ArrayList<ModbusMasterTask>();
+    private final ArrayList<ModbusPalListener> listeners = new ArrayList<>(); // synchronized
+    private final ArrayList<Automation> automations = new ArrayList<>();
+    private final ArrayList<ModbusMasterTask> masterTasks = new ArrayList<>();
     private boolean learnModeEnabled = false;
 
-    final InstantiableManager<Generator> generatorFactory = new InstantiableManager<Generator>();
-    final InstantiableManager<Binding> bindingFactory = new InstantiableManager<Binding>();
-    final InstantiableManager<ModbusPduProcessor> functionFactory = new InstantiableManager<ModbusPduProcessor>();
+    final InstantiableManager<Generator> generatorFactory = new InstantiableManager<>();
+    final InstantiableManager<Binding> bindingFactory = new InstantiableManager<>();
+    final InstantiableManager<ModbusPduProcessor> functionFactory = new InstantiableManager<>();
     
     String selectedLink = "none";
     String linkTcpipPort = "502";
@@ -1040,7 +1040,7 @@ implements ModbusPalXML
      */
     public ModbusSlave[] findModbusSlaves(String name)
     {
-        ArrayList<ModbusSlave> found = new ArrayList<ModbusSlave>();
+        ArrayList<ModbusSlave> found = new ArrayList<>();
 
         for(ModbusSlave slave : getModbusSlaves())
         {

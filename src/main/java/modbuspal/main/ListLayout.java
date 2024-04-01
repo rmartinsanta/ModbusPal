@@ -16,7 +16,7 @@ public class ListLayout
 implements LayoutManager2
 {
     private Component[] indexedList = new Component[256];
-    private final ArrayList<Component> componentList = new ArrayList<Component>();
+    private final ArrayList<Component> componentList = new ArrayList<>();
     private static final int borderThickness = 5;
 
     public void addLayoutComponent(Component comp, Object constraints)

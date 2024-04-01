@@ -19,7 +19,7 @@ public class InstanceCounter<T>
 implements Iterable<T>
 {
 
-    private final HashMap<T,Integer> instances = new HashMap<T,Integer>();
+    private final HashMap<T,Integer> instances = new HashMap<>();
 
     /**
      * Adds an instance into this instance counter.

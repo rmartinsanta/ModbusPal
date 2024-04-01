@@ -26,7 +26,7 @@ import java.util.HashMap;
  */
 public class ModbusPalGui {
 
-    private static final HashMap<Object, ModbusPalPane> instances = new HashMap<Object, ModbusPalPane>();
+    private static final HashMap<Object, ModbusPalPane> instances = new HashMap<>();
 
     /**
      * this method will try to change the Look and Feel of the applcation,

@@ -280,7 +280,7 @@ public abstract class ModbusPalProject2
     {
         synchronized(knownSlaves)
         {
-            ArrayList<ModbusSlave> list = new ArrayList<ModbusSlave>();
+            ArrayList<ModbusSlave> list = new ArrayList<>();
             for(ModbusSlave slave : knownSlaves.values())
             {
                 if( slave != null )

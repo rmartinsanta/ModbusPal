@@ -20,17 +20,17 @@ public class InstantiableManager<T extends Instantiable<T>>
      * List of listeners that are interested in receiving events from this
      * manager.
      */
-    protected ArrayList<InstantiableManagerListener> listeners = new ArrayList<InstantiableManagerListener>();
+    protected ArrayList<InstantiableManagerListener> listeners = new ArrayList<>();
 
     /**
      * list of the names given to the instantiables managed by this object.
      */
-    protected ArrayList<String> instanciatorNames = new ArrayList<String>();
+    protected ArrayList<String> instanciatorNames = new ArrayList<>();
     
     /**
      * map storing the instantiables, using their names as keys.
      */
-    protected HashMap<String,T> instanciators = new HashMap<String,T>();
+    protected HashMap<String,T> instanciators = new HashMap<>();
 
 
 

@@ -20,9 +20,9 @@ import java.util.Arrays;
 public class AutomationListModel
 implements ListModel, ComboBoxModel
 {    
-    private final ArrayList<Automation> automations = new ArrayList<Automation>();
+    private final ArrayList<Automation> automations = new ArrayList<>();
     private String selectedAutomation = null;
-    private final ArrayList<ListDataListener> listeners = new ArrayList<ListDataListener>();
+    private final ArrayList<ListDataListener> listeners = new ArrayList<>();
 
     /**
      * Creates a new instance of AutomationListModel.

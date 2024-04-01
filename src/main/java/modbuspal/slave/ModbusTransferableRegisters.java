@@ -24,7 +24,7 @@ implements Transferable
 
     public static final DataFlavor DATA_FLAVOR = new DataFlavor(ModbusRegisters.class,"registers");
     public static final DataFlavor[] SUPPORTED_DATA_FLAVORS = { DATA_FLAVOR };
-    private final ArrayList<RegisterCopy> registers = new ArrayList<RegisterCopy>();
+    private final ArrayList<RegisterCopy> registers = new ArrayList<>();
 
 
     public ModbusTransferableRegisters(ModbusRegistersTable table)

@@ -163,11 +163,7 @@ extends javax.swing.JDialog
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         importButton.setText("Import");
-        importButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                importButtonActionPerformed(evt);
-            }
-        });
+        importButton.addActionListener(evt -> importButtonActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 3;

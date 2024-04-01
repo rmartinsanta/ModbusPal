@@ -122,7 +122,7 @@ extends javax.swing.JDialog
             }
             
             int count = 1 + (endIndex-startIndex);
-            ArrayList<ModbusSlaveAddress> output = new ArrayList<ModbusSlaveAddress>(count);
+            ArrayList<ModbusSlaveAddress> output = new ArrayList<>(count);
             for(int i=0; i<count; i++)
             {
                 ModbusSlaveAddress msa = new ModbusSlaveAddress(startIndex+i);
@@ -210,7 +210,7 @@ extends javax.swing.JDialog
             
             int[] startIp = parseIpv4(firstIp);
             int[] endIp = parseIpv4(lastIp);
-            ArrayList<ModbusSlaveAddress> output = new ArrayList<ModbusSlaveAddress>(count);
+            ArrayList<ModbusSlaveAddress> output = new ArrayList<>(count);
             for(int a = startIp[0]; a<= endIp[0]; a++ )
             {
                 for(int b = startIp[1]; b<= endIp[1]; b++ )
@@ -343,7 +343,7 @@ extends javax.swing.JDialog
             }
             
             int count = 1 + (endIndex-startIndex);
-            ArrayList<ModbusSlaveAddress> output = new ArrayList<ModbusSlaveAddress>(count);
+            ArrayList<ModbusSlaveAddress> output = new ArrayList<>(count);
             for(int i=0; i<count; i++)
             {
                 //byte[] ip = new byte[]{ (byte)a, (byte)b, (byte)c, (byte)d };
@@ -360,7 +360,7 @@ extends javax.swing.JDialog
     
     private List<ModbusSlaveAddress> parseSlaveIds()
     {
-        ArrayList<ModbusSlaveAddress> output = new ArrayList<ModbusSlaveAddress>();
+        ArrayList<ModbusSlaveAddress> output = new ArrayList<>();
         String rawList = slavesTextArea.getText();
         String[] chunks = rawList.split("[,\r\n]+");
         
@@ -454,11 +454,7 @@ extends javax.swing.JDialog
         getContentPane().setLayout(new java.awt.GridBagLayout());
 
         addButton.setText("Add");
-        addButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addButtonActionPerformed(evt);
-            }
-        });
+        addButton.addActionListener(evt -> addButtonActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 2;
@@ -466,11 +462,7 @@ extends javax.swing.JDialog
         getContentPane().add(addButton, gridBagConstraints);
 
         cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
+        cancelButton.addActionListener(evt -> cancelButtonActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 2;

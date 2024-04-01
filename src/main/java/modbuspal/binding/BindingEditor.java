@@ -111,7 +111,7 @@ extends javax.swing.JDialog
     private final ModbusPalProject modbusPalProject;
     private final AutomationListModel automations;
     private final BindingList bindings;
-    private final HashMap<String,Binding> bindingCache = new HashMap<String,Binding>();
+    private final HashMap<String,Binding> bindingCache = new HashMap<>();
     private final OrderList orderList = new OrderList();
 
     /** Creates new form BindingEditor 
@@ -204,19 +204,11 @@ extends javax.swing.JDialog
         buttonsPanel.add(orderComboBox);
 
         scriptedBindingsButton.setText("...");
-        scriptedBindingsButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                scriptedBindingsButtonActionPerformed(evt);
-            }
-        });
+        scriptedBindingsButton.addActionListener(evt -> scriptedBindingsButtonActionPerformed(evt));
         buttonsPanel.add(scriptedBindingsButton);
 
         okButton.setText("OK");
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
+        okButton.addActionListener(evt -> okButtonActionPerformed(evt));
         buttonsPanel.add(okButton);
 
         getContentPane().add(buttonsPanel, java.awt.BorderLayout.SOUTH);
@@ -239,11 +231,7 @@ extends javax.swing.JDialog
         bindingsPanel.setLayout(new java.awt.BorderLayout());
 
         bindingsList.setModel(bindings);
-        bindingsList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                bindingsListValueChanged(evt);
-            }
-        });
+        bindingsList.addListSelectionListener(evt -> bindingsListValueChanged(evt));
         bindingsScrollPane.setViewportView(bindingsList);
 
         bindingsPanel.add(bindingsScrollPane, java.awt.BorderLayout.CENTER);

@@ -30,16 +30,16 @@ public class Automation
      * default name of an automation
      */
     public final static String DEFAULT_NAME = "no name";
-    private final ArrayList<Generator> generators = new ArrayList<Generator>();
+    private final ArrayList<Generator> generators = new ArrayList<>();
     private double stepDelay = 1.0;
     private Thread thread = null;
     private boolean loop = true;
     private String uniqueName = "";
     private boolean suspended = false;
     private boolean quit = false;
-    private final ArrayList<AutomationEditionListener> automationEditionListeners = new ArrayList<AutomationEditionListener>();
-    private final InstanceCounter<AutomationExecutionListener> automationExecutionListeners = new InstanceCounter<AutomationExecutionListener>();
-    private final ArrayList<GeneratorListener> generatorListeners = new ArrayList<GeneratorListener>();
+    private final ArrayList<AutomationEditionListener> automationEditionListeners = new ArrayList<>();
+    private final InstanceCounter<AutomationExecutionListener> automationExecutionListeners = new InstanceCounter<>();
+    private final ArrayList<GeneratorListener> generatorListeners = new ArrayList<>();
     private double currentValue = 0.0;
     private double initialValue = 0.0;
 

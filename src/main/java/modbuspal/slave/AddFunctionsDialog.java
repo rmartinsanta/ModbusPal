@@ -36,7 +36,7 @@ extends javax.swing.JDialog
     extends AbstractListModel
     implements ComboBoxModel
     {
-        private final HashMap<String,ModbusPduProcessor> instances = new HashMap<String,ModbusPduProcessor>();
+        private final HashMap<String,ModbusPduProcessor> instances = new HashMap<>();
         private final String[] names;
         private String selectedInstance;
 
@@ -159,11 +159,7 @@ extends javax.swing.JDialog
         getContentPane().add(newRadioButton, gridBagConstraints);
 
         existingComboBox.setModel(listOfInstances);
-        existingComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                existingComboBoxActionPerformed(evt);
-            }
-        });
+        existingComboBox.addActionListener(evt -> existingComboBoxActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
@@ -171,11 +167,7 @@ extends javax.swing.JDialog
         getContentPane().add(existingComboBox, gridBagConstraints);
 
         newComboBox.setModel(listOfFunctions);
-        newComboBox.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                newComboBoxActionPerformed(evt);
-            }
-        });
+        newComboBox.addActionListener(evt -> newComboBoxActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
@@ -185,11 +177,7 @@ extends javax.swing.JDialog
         getContentPane().add(newComboBox, gridBagConstraints);
 
         okButton.setText("OK");
-        okButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                okButtonActionPerformed(evt);
-            }
-        });
+        okButton.addActionListener(evt -> okButtonActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
@@ -198,11 +186,7 @@ extends javax.swing.JDialog
         getContentPane().add(okButton, gridBagConstraints);
 
         cancelButton.setText("Cancel");
-        cancelButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                cancelButtonActionPerformed(evt);
-            }
-        });
+        cancelButton.addActionListener(evt -> cancelButtonActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;

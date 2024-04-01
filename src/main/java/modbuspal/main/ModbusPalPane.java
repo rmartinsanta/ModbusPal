@@ -56,7 +56,7 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
      */
     public static final String BASE_REGISTRY_KEY = "modbuspal";
 
-    private final ArrayList<ModbusPalProjectListener> listeners = new ArrayList<ModbusPalProjectListener>();
+    private final ArrayList<ModbusPalProjectListener> listeners = new ArrayList<>();
 
     private ModbusMasterDialog modbusMasterDialog = null;
     private ModbusLink currentLink = null;
@@ -477,11 +477,7 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
         jPanel5.add(jLabel3, gridBagConstraints);
 
         jButton1.setText("Why?");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
+        jButton1.addActionListener(evt -> jButton1ActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -501,11 +497,7 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
         replaySettingsPanel.add(jLabel2, gridBagConstraints);
 
         recordFileChooseButton.setText("Choose...");
-        recordFileChooseButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                recordFileChooseButtonActionPerformed(evt);
-            }
-        });
+        recordFileChooseButton.addActionListener(evt -> recordFileChooseButtonActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.insets = new java.awt.Insets(5, 2, 2, 5);
         replaySettingsPanel.add(recordFileChooseButton, gridBagConstraints);
@@ -531,11 +523,7 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
         runPanel.setLayout(new java.awt.GridBagLayout());
 
         runToggleButton.setText("Run");
-        runToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                runToggleButtonActionPerformed(evt);
-            }
-        });
+        runToggleButton.addActionListener(evt -> runToggleButtonActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -543,11 +531,7 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
         runPanel.add(runToggleButton, gridBagConstraints);
 
         learnToggleButton.setText("Learn");
-        learnToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                learnToggleButtonActionPerformed(evt);
-            }
-        });
+        learnToggleButton.addActionListener(evt -> learnToggleButtonActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -564,11 +548,7 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
         runPanel.add(tiltLabel, gridBagConstraints);
 
         recordToggleButton.setText("Record");
-        recordToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                recordToggleButtonActionPerformed(evt);
-            }
-        });
+        recordToggleButton.addActionListener(evt -> recordToggleButtonActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -602,11 +582,7 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
         projectPanel.setLayout(new java.awt.GridBagLayout());
 
         loadButton.setText("Load");
-        loadButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                loadButtonActionPerformed(evt);
-            }
-        });
+        loadButton.addActionListener(evt -> loadButtonActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -614,11 +590,7 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
         projectPanel.add(loadButton, gridBagConstraints);
 
         saveProjectButton.setText("Save");
-        saveProjectButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveProjectButtonActionPerformed(evt);
-            }
-        });
+        saveProjectButton.addActionListener(evt -> saveProjectButtonActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -626,21 +598,13 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
         projectPanel.add(saveProjectButton, gridBagConstraints);
 
         clearProjectButton.setText("Clear");
-        clearProjectButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                clearProjectButtonActionPerformed(evt);
-            }
-        });
+        clearProjectButton.addActionListener(evt -> clearProjectButtonActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         projectPanel.add(clearProjectButton, gridBagConstraints);
 
         saveProjectAsButton.setText("Save as");
-        saveProjectAsButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveProjectButtonActionPerformed(evt);
-            }
-        });
+        saveProjectAsButton.addActionListener(evt -> saveProjectButtonActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
@@ -657,31 +621,19 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
         toolsPanel.setLayout(new java.awt.GridBagLayout());
 
         masterToggleButton.setText("Master");
-        masterToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                masterToggleButtonActionPerformed(evt);
-            }
-        });
+        masterToggleButton.addActionListener(evt -> masterToggleButtonActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         toolsPanel.add(masterToggleButton, gridBagConstraints);
 
         scriptsToggleButton.setText("Scripts");
-        scriptsToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                scriptsToggleButtonActionPerformed(evt);
-            }
-        });
+        scriptsToggleButton.addActionListener(evt -> scriptsToggleButtonActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         toolsPanel.add(scriptsToggleButton, gridBagConstraints);
 
         helpButton.setText("Help");
-        helpButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                helpButtonActionPerformed(evt);
-            }
-        });
+        helpButton.addActionListener(evt -> helpButtonActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
@@ -690,11 +642,7 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
 
         consoleToggleButton.setText("Console");
         consoleToggleButton.setEnabled(false);
-        consoleToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                consoleToggleButtonActionPerformed(evt);
-            }
-        });
+        consoleToggleButton.addActionListener(evt -> consoleToggleButtonActionPerformed(evt));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
@@ -717,27 +665,15 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
         jPanel2.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
         addModbusSlaveButton.setText("Add");
-        addModbusSlaveButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addModbusSlaveButtonActionPerformed(evt);
-            }
-        });
+        addModbusSlaveButton.addActionListener(evt -> addModbusSlaveButtonActionPerformed(evt));
         jPanel2.add(addModbusSlaveButton);
 
         enableAllSlavesButton.setText("Enable all");
-        enableAllSlavesButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                enableAllSlavesButtonActionPerformed(evt);
-            }
-        });
+        enableAllSlavesButton.addActionListener(evt -> enableAllSlavesButtonActionPerformed(evt));
         jPanel2.add(enableAllSlavesButton);
 
         disableAllSlavesButton.setText("Disable all");
-        disableAllSlavesButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                disableAllSlavesButtonActionPerformed(evt);
-            }
-        });
+        disableAllSlavesButton.addActionListener(evt -> disableAllSlavesButtonActionPerformed(evt));
         jPanel2.add(disableAllSlavesButton);
 
         slavesListView.add(jPanel2, java.awt.BorderLayout.NORTH);
@@ -759,27 +695,15 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
         jPanel4.setLayout(new java.awt.FlowLayout(java.awt.FlowLayout.LEFT));
 
         addAutomationButton.setText("Add");
-        addAutomationButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addAutomationButtonActionPerformed(evt);
-            }
-        });
+        addAutomationButton.addActionListener(evt -> addAutomationButtonActionPerformed(evt));
         jPanel4.add(addAutomationButton);
 
         startAllAutomationsButton.setText("Start all");
-        startAllAutomationsButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                startAllAutomationsButtonActionPerformed(evt);
-            }
-        });
+        startAllAutomationsButton.addActionListener(evt -> startAllAutomationsButtonActionPerformed(evt));
         jPanel4.add(startAllAutomationsButton);
 
         stopAllAutomationsButton.setText("Stop all");
-        stopAllAutomationsButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                stopAllAutomationsButtonActionPerformed(evt);
-            }
-        });
+        stopAllAutomationsButton.addActionListener(evt -> stopAllAutomationsButtonActionPerformed(evt));
         jPanel4.add(stopAllAutomationsButton);
 
         jPanel3.add(jPanel4, java.awt.BorderLayout.NORTH);
@@ -1559,38 +1483,32 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
     }
 
     private Runnable createProjectLoadingTask(final File projectFile, final WorkInProgressDialog dialog) {
-        return new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    loadProject(projectFile);
-                    //TODO: setTitle(APP_STRING+" ("+projectFile.getName()+")");
-                } catch (Exception ex) {
-                    Logger.getLogger(ModbusPalPane.class.getName()).log(Level.SEVERE, null, ex);
-                }
+        return () -> {
+            try {
+                loadProject(projectFile);
+                //TODO: setTitle(APP_STRING+" ("+projectFile.getName()+")");
+            } catch (Exception ex) {
+                Logger.getLogger(ModbusPalPane.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
-                if (dialog.isVisible()) {
-                    dialog.setVisible(false);
-                }
+            if (dialog.isVisible()) {
+                dialog.setVisible(false);
             }
         };
     }
 
 
     private Runnable createProjectSavingTask(final File projectFile, final WorkInProgressDialog dialog) {
-        return new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    saveProject(projectFile);
-                    //TODO: setTitle(APP_STRING+" ("+projectFile.getName()+")");
-                } catch (Exception ex) {
-                    Logger.getLogger(ModbusPalPane.class.getName()).log(Level.SEVERE, null, ex);
-                }
+        return () -> {
+            try {
+                saveProject(projectFile);
+                //TODO: setTitle(APP_STRING+" ("+projectFile.getName()+")");
+            } catch (Exception ex) {
+                Logger.getLogger(ModbusPalPane.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
-                if (dialog.isVisible()) {
-                    dialog.setVisible(false);
-                }
+            if (dialog.isVisible()) {
+                dialog.setVisible(false);
             }
         };
     }

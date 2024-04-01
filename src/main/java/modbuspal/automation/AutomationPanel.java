@@ -143,31 +143,19 @@ implements WindowListener, AutomationExecutionListener, AncestorListener
         playToggleButton.setIcon(new javax.swing.ImageIcon(FileTools.getImage("/img/play.png"))); // NOI18N
         playToggleButton.setToolTipText("Start or stop this automation");
         playToggleButton.setSelectedIcon(new javax.swing.ImageIcon(FileTools.getImage("/img/stop.png"))); // NOI18N
-        playToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                playToggleButtonActionPerformed(evt);
-            }
-        });
+        playToggleButton.addActionListener(evt -> playToggleButtonActionPerformed(evt));
         add(playToggleButton);
 
         showToggleButton.setIcon(new javax.swing.ImageIcon(FileTools.getImage("/img/show.png"))); // NOI18N
         showToggleButton.setToolTipText("Show or hide the editor of this automation");
         showToggleButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
-        showToggleButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                showToggleButtonActionPerformed(evt);
-            }
-        });
+        showToggleButton.addActionListener(evt -> showToggleButtonActionPerformed(evt));
         add(showToggleButton);
 
         deleteButton.setIcon(new javax.swing.ImageIcon(FileTools.getImage("/img/delete.png"))); // NOI18N
         deleteButton.setToolTipText("Delete this automation");
         deleteButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
-        deleteButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                deleteButtonActionPerformed(evt);
-            }
-        });
+        deleteButton.addActionListener(evt -> deleteButtonActionPerformed(evt));
         add(deleteButton);
     }// </editor-fold>//GEN-END:initComponents
 
