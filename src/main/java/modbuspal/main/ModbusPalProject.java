@@ -154,10 +154,6 @@ implements ModbusPalXML
         Node tcpipNode = XMLTools.findChild(linkRoot, "tcpip");
         linkTcpipPort = XMLTools.getAttribute("port", tcpipNode);
 
-        // find child "serial" node and load parameters from it
-        Node serialNode = XMLTools.findChild(linkRoot, "serial");
-        loadSerialLinkParameters(serialNode);
-
         // find child "replay" node and load parameters from it
         Node replayNode = XMLTools.findChild(linkRoot, "replay");
         if( replayNode!=null )
@@ -165,27 +161,6 @@ implements ModbusPalXML
             loadReplayLinkParameters(replayNode);
         }
     }
-
-
-
-    private void loadSerialLinkParameters(Node root)
-    {
-        // load "com" attribute
-        linkSerialComId = XMLTools.getAttribute("com", root);
-
-        // load "baudrate" attribute
-        linkSerialBaudrate = XMLTools.getAttribute("baudrate", root);
-
-        // load flow control parameters
-        Node flowControlNode = XMLTools.findChild(root, "flowcontrol");
-        if( flowControlNode != null )
-        {
-            loadFlowControlParameters(flowControlNode);
-        }
-    }
-
-
-
 
     private void loadFlowControlParameters(Node root)
     {
