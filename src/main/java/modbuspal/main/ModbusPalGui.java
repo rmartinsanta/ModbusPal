@@ -46,11 +46,15 @@ public class ModbusPalGui {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws Exception {
+        boolean noGUI = false;
         if (args.length >= 1) {
             for (String arg : args) {
+                if(arg.equals("-nogui")) {
+                    noGUI = true;
+                }
                 if (arg.startsWith("-load=")) {
                     String projectPath = arg.replace("-load=", "");
-                    ModbusPalPane pane = new ModbusPalPane(false);
+                    ModbusPalPane pane = new ModbusPalPane(false, noGUI);
                     pane.loadProject(projectPath);
                     pane.startAll();
                 }

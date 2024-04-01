@@ -57,6 +57,7 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
     public static final String BASE_REGISTRY_KEY = "modbuspal";
 
     private final ArrayList<ModbusPalProjectListener> listeners = new ArrayList<>();
+    private final boolean noGUI;
 
     private ModbusMasterDialog modbusMasterDialog = null;
     private ModbusLink currentLink = null;
@@ -224,10 +225,15 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
         this(false);
     }
 
+    public ModbusPalPane(boolean useInternalConsole) {
+        this(useInternalConsole, false);
+    }
+
     /**
      * Creates new form ModbusPalPane
      */
-    public ModbusPalPane(boolean useInternalConsole) {
+    public ModbusPalPane(boolean useInternalConsole, boolean noGUI) {
+        this.noGUI = noGUI;
         initComponents();
 
         if (useInternalConsole) {
@@ -1322,8 +1328,9 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
     @Override
     public void modbusSlaveAdded(ModbusSlave slave) {
         // add slave panel into the gui and refresh gui
+        if(noGUI) return;
         ModbusSlavePanel panel = new ModbusSlavePanel(this, slave);
-        slavesListPanel.add(panel /*, new Integer(slave.getSlaveId())*/);
+        slavesListPanel.add(panel);
         slave.addModbusSlaveListener(panel);
         slaveListScrollPane.validate();
     }
@@ -1365,6 +1372,8 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
 
     @Override
     public void automationAdded(Automation automation, int index) {
+        if(noGUI) return;
+
         // add slave panel into the gui and refresh gui
         AutomationPanel panel = new AutomationPanel(automation, this);
         //panel.requestFocus();
