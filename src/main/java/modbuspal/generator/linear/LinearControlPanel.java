@@ -18,7 +18,7 @@ package modbuspal.generator.linear;
 public class LinearControlPanel
 extends javax.swing.JPanel
 {
-    private LinearGenerator generator;
+    private final LinearGenerator generator;
     
     /** Creates new form LinearControlPanel
      * @param gen the linear generator whose parameters are being displayed by this component

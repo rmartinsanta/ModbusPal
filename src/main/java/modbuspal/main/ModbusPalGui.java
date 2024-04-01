@@ -11,103 +11,85 @@
 
 package modbuspal.main;
 
-import java.awt.BorderLayout;
-import java.util.HashMap;
+import modbuspal.toolkit.FileTools;
+
 import javax.swing.*;
 import javax.swing.event.InternalFrameEvent;
 import javax.swing.event.InternalFrameListener;
-
-import modbuspal.toolkit.FileTools;
+import java.awt.*;
+import java.util.HashMap;
 
 /**
  * Utilitary methods for creating new instances of ModbusPal
+ *
  * @author nnovic
  */
-public class ModbusPalGui
-{
+public class ModbusPalGui {
 
-    private static final HashMap<Object,ModbusPalPane> instances = new HashMap<Object,ModbusPalPane>();
+    private static final HashMap<Object, ModbusPalPane> instances = new HashMap<Object, ModbusPalPane>();
 
     /**
      * this method will try to change the Look and Feel of the applcation,
      * using the system l&f. It means that the application will get the Windows
      * l&f on Windows, etc...
      */
-    private static void setNativeLookAndFeel()
-    {
-        try
-        {
+    private static void setNativeLookAndFeel() {
+        try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        }
-        catch(Exception e)
-        {
-          System.out.println("Error setting native LAF: " + e);
+        } catch (Exception e) {
+            System.out.println("Error setting native LAF: " + e);
         }
     }
 
-    
+
     /**
-    * @param args the command line arguments
-    */
-    public static void main(String args[]) 
-    {
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
         boolean runInstall = false;
         boolean runGui = true;
-        
-        if( args.length>=1 )
-        {
-            for(String arg:args)
-            {
-                if( arg.compareToIgnoreCase("-install")==0 )
-                {
+
+        if (args.length >= 1) {
+            for (String arg : args) {
+                if (arg.compareToIgnoreCase("-install") == 0) {
                     runInstall = true;
                     runGui = false;
+                    break;
                 }
             }
         }
 
-        if(runGui)
-        {
-            SwingUtilities.invokeLater(new Runnable() {
-                @Override
-                public void run() {
-                    //setNativeLookAndFeel();
-                    newFrame().setVisible(true);
-                }
+        if (runGui) {
+            SwingUtilities.invokeLater(() -> {
+                newFrame().setVisible(true);
             });
         }
-        
-        
     }
-
 
 
     /**
      * A JinternalFrame that contains a ModbusPalPane.
      */
     public static class ModbusPalInternalFrame
-    extends JInternalFrame
-    implements InternalFrameListener
-    {
+            extends JInternalFrame
+            implements InternalFrameListener {
         final ModbusPalPane modbusPal;
 
         /**
          * Creates a new instance of ModbusPalInternalFrame
          */
-        public ModbusPalInternalFrame()
-        {
+        public ModbusPalInternalFrame() {
             setTitle(ModbusPalPane.APP_STRING);
             setIconImage();
-            setLayout( new BorderLayout() );
+            setLayout(new BorderLayout());
             modbusPal = new ModbusPalPane(false);
-            add( modbusPal, BorderLayout.CENTER );
+            add(modbusPal, BorderLayout.CENTER);
             pack();
             addInternalFrameListener(this);
         }
 
-        private void setIconImage()
-        {
-            setFrameIcon( new ImageIcon(FileTools.getImage("/img/icon.png")));
+        private void setIconImage() {
+            setFrameIcon(new ImageIcon(FileTools.getImage("/img/icon.png")));
         }
 
         @Override
@@ -144,26 +126,23 @@ public class ModbusPalGui
      * A JFrame with a ModbusPalPane inside
      */
     public static class ModbusPalFrame
-    extends JFrame
-    {
+            extends JFrame {
         final ModbusPalPane modbusPal;
 
         /**
          * Creates a new instance of ModbusPalFrame
          */
-        public ModbusPalFrame()
-        {
+        public ModbusPalFrame() {
             setTitle(ModbusPalPane.APP_STRING);
             setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
             setIconImage();
-            setLayout( new BorderLayout() );
+            setLayout(new BorderLayout());
             modbusPal = new ModbusPalPane(true);
-            add( modbusPal, BorderLayout.CENTER );
+            add(modbusPal, BorderLayout.CENTER);
             pack();
         }
 
-        private void setIconImage()
-        {
+        private void setIconImage() {
             setIconImage(FileTools.getImage("/img/icon.png"));
         }
     }
@@ -172,10 +151,10 @@ public class ModbusPalGui
     /**
      * Creates a ModbusPalFrame. The internal
      * console of ModbusPal is enabled.
+     *
      * @return a new ModbusPalFrame
      */
-    public static JFrame newFrame()
-    {
+    public static JFrame newFrame() {
         ModbusPalFrame frame = new ModbusPalFrame();
         return frame;
     }
@@ -183,10 +162,10 @@ public class ModbusPalGui
     /**
      * Creates a ModbusPalInternalFrame. The internal
      * console of ModbusPal is enabled.
+     *
      * @return a new ModbusPalInternalFrame
      */
-    public static JInternalFrame newInternalFrame()
-    {
+    public static JInternalFrame newInternalFrame() {
         ModbusPalInternalFrame iframe = new ModbusPalInternalFrame();
         return iframe;
     }
@@ -194,33 +173,31 @@ public class ModbusPalGui
     /**
      * Creates a ModbusPalPane instance. The internal
      * console of ModbusPal is disabled.
+     *
      * @return a new ModbusPalPane instance
      */
-    public static ModbusPalPane newInstance()
-    {
+    public static ModbusPalPane newInstance() {
         return new ModbusPalPane(false);
     }
 
 
-    /** 
+    /**
      * Returns a ModbusPalPane instance that is associated with
      * the specified key, as in a HashMap. If there is no ModusPalPane
      * associated with that key, a new one is created. Otherwise, the existing
      * one is returned
+     *
      * @param key any object that can be used to uniquely identified a particular
-     * ModbusPalPane instance. usually a String.
+     *            ModbusPalPane instance. usually a String.
      * @return The ModbusPalPane instance identified by the key
      */
-    public static ModbusPalPane getInstance(Object key)
-    {
-        if( key==null )
-        {
+    public static ModbusPalPane getInstance(Object key) {
+        if (key == null) {
             throw new NullPointerException();
         }
 
-        if( instances.containsKey(key)==false )
-        {
-            instances.put(key, new ModbusPalPane(false) );
+        if (!instances.containsKey(key)) {
+            instances.put(key, new ModbusPalPane(false));
         }
 
         return instances.get(key);

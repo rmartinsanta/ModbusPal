@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import modbuspal.help.HelpViewer;
 
 /**
  *
@@ -21,12 +20,8 @@ public class SystemTools
         // retrieve path to JRE
         String osName = System.getProperty("os.name");
         System.out.printf("os.name returns \"%s\"\r\n", osName);
-        
-        if( osName.startsWith("Windows")==true )
-        {
-            return true;
-        }
-        return false;
+
+        return osName.startsWith("Windows");
     }
     
     

@@ -15,29 +15,11 @@
 
 package modbuspal.automation;
 
-import java.awt.CardLayout;
 import modbuspal.generator.Generator;
-import modbuspal.instanciator.Instantiable;
-import modbuspal.instanciator.InstantiableManagerListener;
 import modbuspal.generator.GeneratorRenderer;
-import java.awt.Component;
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.xml.parsers.ParserConfigurationException;
+import modbuspal.instanciator.Instantiable;
 import modbuspal.instanciator.InstantiableManager;
+import modbuspal.instanciator.InstantiableManagerListener;
 import modbuspal.main.ErrorMessage;
 import modbuspal.main.ListLayout;
 import modbuspal.main.ModbusPalPane;
@@ -49,6 +31,15 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import javax.swing.*;
+import javax.xml.parsers.ParserConfigurationException;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Build a dialog for creating/editing an automation.
@@ -62,7 +53,7 @@ implements AutomationEditionListener, AutomationExecutionListener, InstantiableM
     private final ListLayout listLayout;
     private final InstantiableManager<Generator> generatorFactory;
     private final ModbusPalPane modbusPalPane;
-    private JPanel chartPanel;
+    private final JPanel chartPanel;
 
     /** Creates new form AutomationEditor 
      * @param a the automation to edit
@@ -85,7 +76,7 @@ implements AutomationEditionListener, AutomationExecutionListener, InstantiableM
         pack();
 
         // try to install the ChartPanel
-        if( ModbusPalPane.verifyJFreeChart()==true )
+        if(ModbusPalPane.verifyJFreeChart())
         {
             chartPanel = new AutomationChart(a);
             jPanel1.add("chart",chartPanel);
@@ -131,9 +122,8 @@ implements AutomationEditionListener, AutomationExecutionListener, InstantiableM
         for(int i=0; i<max; i++)
         {
             Component comp = generatorsPanel.getComponent(i);
-            if( comp instanceof JButton )
+            if(comp instanceof JButton button)
             {
-                JButton button = (JButton)comp;
                 if( button.getText().compareTo(className)==0 )
                 {
                     generatorsPanel.remove(button);
@@ -149,7 +139,7 @@ implements AutomationEditionListener, AutomationExecutionListener, InstantiableM
     private void addGeneratorButtons()
     {
         // get the list of generators:
-        String list[] = generatorFactory.getList();
+        String[] list = generatorFactory.getList();
 
         // for each generator, add a button;
         for( int i=0; i<list.length; i++ )
@@ -193,7 +183,7 @@ implements AutomationEditionListener, AutomationExecutionListener, InstantiableM
 
     private void addAlreadyExistingGeneratorsToList()
     {
-        Generator generators[]=automation.getGenerators();
+        Generator[] generators =automation.getGenerators();
         if(generators==null)
         {
             return;
@@ -203,13 +193,13 @@ implements AutomationEditionListener, AutomationExecutionListener, InstantiableM
         {
             GeneratorRenderer renderer = new GeneratorRenderer(this, generators[i]);
             automation.addGeneratorListener(renderer);
-            generatorsListPanel.add( renderer, new Integer(i) );
+            generatorsListPanel.add( renderer, Integer.valueOf(i));
         }
         generatorsListScrollPane.validate();
     }
 
     private void exportAutomation(File target)
-    throws FileNotFoundException, IOException
+    throws IOException
     {
         OutputStream out = new FileOutputStream(target);
         exportAutomation(out);
@@ -236,12 +226,11 @@ implements AutomationEditionListener, AutomationExecutionListener, InstantiableM
 
     private GeneratorRenderer findComponent(Generator g1)
     {
-        Component comps[] = generatorsListPanel.getComponents();
+        Component[] comps = generatorsListPanel.getComponents();
         for(int i=0; i<comps.length; i++)
         {
-            if( comps[i] instanceof GeneratorRenderer )
+            if(comps[i] instanceof GeneratorRenderer renderer)
             {
-                GeneratorRenderer renderer = (GeneratorRenderer)comps[i];
                 if( renderer.getGenerator() == g1 )
                 {
                     return renderer;
@@ -670,7 +659,7 @@ implements AutomationEditionListener, AutomationExecutionListener, InstantiableM
 
     private void chartToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chartToggleButtonActionPerformed
         CardLayout cl = (CardLayout)jPanel1.getLayout();
-        if( chartToggleButton.isSelected()==true )
+        if(chartToggleButton.isSelected())
         {
             if( chartPanel==null )
             {
@@ -723,14 +712,14 @@ implements AutomationEditionListener, AutomationExecutionListener, InstantiableM
         if( source == automation )
         {
             // disable any button in "Add Generators" panel
-            Component buttons[] = generatorsPanel.getComponents();
+            Component[] buttons = generatorsPanel.getComponents();
             for(int i=0; i<buttons.length; i++)
             {
                 buttons[i].setEnabled(true);
             }
 
             // enable any control panel in "Generators list"
-            Component generators[] = generatorsListPanel.getComponents();
+            Component[] generators = generatorsListPanel.getComponents();
             for(int i=0; i<generators.length; i++)
             {
                 generators[i].setEnabled(true);
@@ -740,7 +729,7 @@ implements AutomationEditionListener, AutomationExecutionListener, InstantiableM
             playToggleButton.setSelected(false);
 
             // enable any input in "Settings" list
-            Component inputs[] = settingsPanel.getComponents();
+            Component[] inputs = settingsPanel.getComponents();
             for(int i=0; i<inputs.length; i++)
             {
                 if( inputs[i] instanceof JTextField )
@@ -755,14 +744,14 @@ implements AutomationEditionListener, AutomationExecutionListener, InstantiableM
     public void automationHasStarted(Automation aThis)
     {
         // disable any button in "Add Generators" panel
-        Component buttons[] = generatorsPanel.getComponents();
+        Component[] buttons = generatorsPanel.getComponents();
         for(int i=0; i<buttons.length; i++)
         {
             buttons[i].setEnabled(false);
         }
 
         // disable any control panel in "Generators list"
-        Component generators[] = generatorsListPanel.getComponents();
+        Component[] generators = generatorsListPanel.getComponents();
         for(int i=0; i<generators.length; i++)
         {
             generators[i].setEnabled(false);
@@ -776,7 +765,7 @@ implements AutomationEditionListener, AutomationExecutionListener, InstantiableM
         playToggleButton.setText("Pause");
 
         // disable any input in "Global settings" list
-        Component inputs[] = settingsPanel.getComponents();
+        Component[] inputs = settingsPanel.getComponents();
         for(int i=0; i<inputs.length; i++)
         {
             if( inputs[i] instanceof JTextField )
@@ -805,7 +794,7 @@ implements AutomationEditionListener, AutomationExecutionListener, InstantiableM
         // add slave panel into the gui and refresh gui
         GeneratorRenderer renderer = new GeneratorRenderer(this, generator);
         automation.addGeneratorListener(renderer);
-        generatorsListPanel.add( renderer, new Integer(index) );
+        generatorsListPanel.add( renderer, Integer.valueOf(index));
         generatorsListScrollPane.validate();
     }
 

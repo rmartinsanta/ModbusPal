@@ -11,16 +11,17 @@
 
 package modbuspal.slave;
 
-import java.awt.event.KeyEvent;
-import javax.swing.event.AncestorEvent;
-
+import modbuspal.main.AddSlaveDialog;
+import modbuspal.main.ModbusPalPane;
+import modbuspal.main.ModbusPalProject;
 import modbuspal.toolkit.FileTools;
 import modbuspal.toolkit.GUITools;
-import modbuspal.main.*;
+
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.File;
-import javax.swing.event.AncestorListener;
 
 /**
  * represents a modbus slave in the slaves list of the main interface
@@ -166,14 +167,7 @@ implements WindowListener, ModbusSlaveListener,AncestorListener
     }//GEN-LAST:event_enableToggleButtonActionPerformed
 
     private void showToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showToggleButtonActionPerformed
-        if( showToggleButton.isSelected() == true )
-        {
-            modbusSlaveDialog.setVisible(true);
-        }
-        else
-        {
-            modbusSlaveDialog.setVisible(false);
-        }
+        modbusSlaveDialog.setVisible(showToggleButton.isSelected());
     }//GEN-LAST:event_showToggleButtonActionPerformed
 
     private void deleteButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteButtonActionPerformed
@@ -208,7 +202,7 @@ implements WindowListener, ModbusSlaveListener,AncestorListener
 
         if( dialog.isAdded() )
         {
-            ModbusSlaveAddress ids[] = dialog.getTargetList();
+            ModbusSlaveAddress[] ids = dialog.getTargetList();
             String name = dialog.getTargetName();
             for( int i=0; i<ids.length; i++ )
             {

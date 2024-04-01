@@ -50,7 +50,7 @@ public class ModbusTools
      */
     public static int getUint8(byte[] data, int offset)
     {
-        int rc = (int)data[offset];
+        int rc = data[offset];
         if( rc < 0 )
             return rc + 256;
         else
@@ -80,7 +80,7 @@ public class ModbusTools
         // get byte
         int bitOffset = offset%8;
         int byteOffset = offset / 8;
-        int val = (int)buffer[byteOffset];
+        int val = buffer[byteOffset];
 
         // clear bit
         if( value==0 )
@@ -110,7 +110,7 @@ public class ModbusTools
         // get byte
         int bitOffset = offset%8;
         int byteOffset = offset / 8;
-        int val = (int)buffer[byteOffset];
+        int val = buffer[byteOffset];
 
         int mask = (1<<bitOffset);
         val &= mask;

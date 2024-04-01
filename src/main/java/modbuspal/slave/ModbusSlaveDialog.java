@@ -11,25 +11,24 @@
 
 package modbuspal.slave;
 
+import modbuspal.instanciator.InstantiableManager;
+import modbuspal.main.ModbusConst;
+import modbuspal.main.ModbusPalPane;
+import modbuspal.main.ModbusPalProject;
 import modbuspal.toolkit.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
-import java.awt.BorderLayout;
-import java.awt.Image;
-import java.awt.Toolkit;
-import modbuspal.main.*;
+import javax.swing.*;
+import javax.xml.parsers.ParserConfigurationException;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFileChooser;
-import javax.swing.JPanel;
-import javax.xml.parsers.ParserConfigurationException;
-import modbuspal.instanciator.InstantiableManager;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  * the dialog where the user edits the values and parameters of a particular
@@ -56,7 +55,7 @@ implements ModbusConst, ModbusSlaveListener
         
         ModbusSlaveAddress id = s.getSlaveId();
         String name = s.getName();
-        setTitle( String.valueOf(id) + ":" + name );
+        setTitle(id + ":" + name );
         setIconImage(FileTools.getImage("/img/icon32.png"));
         
         modbusSlave.addModbusSlaveListener(this);
@@ -70,7 +69,7 @@ implements ModbusConst, ModbusSlaveListener
         // adding the slave to the project, in which case
         // the modbusSlavePduProcessorChanged event has
         // not been triggered.
-        ModbusPduProcessor mpps[]= s.getPduProcessorInstances();
+        ModbusPduProcessor[] mpps = s.getPduProcessorInstances();
         for(int i=0; i<mpps.length; i++)
         {
             addPane(mpps[i]);
@@ -344,7 +343,7 @@ implements ModbusConst, ModbusSlaveListener
         boolean exportAutomations = false;
 
         // Any bindings ?
-        if( modbusSlave.hasBindings()==true )
+        if(modbusSlave.hasBindings())
         {
             // Create option dialog
             ExportSlaveDialog optionDialog = new ExportSlaveDialog(GUITools.findFrame(this));
@@ -352,7 +351,7 @@ implements ModbusConst, ModbusSlaveListener
             optionDialog.setVisible(true);
 
             // check that the option dialog has been validated
-            if( optionDialog.isOK()==false )
+            if(!optionDialog.isOK())
             {
                 return;
             }
@@ -512,7 +511,7 @@ implements ModbusConst, ModbusSlaveListener
         // check if old instance's panel must be removed
         if(old!=null)
         {
-            if( modbusSlave.containsPduProcessorInstance(old)==false )
+            if(!modbusSlave.containsPduProcessorInstance(old))
             {
                 removePane(old);
             }
@@ -521,7 +520,7 @@ implements ModbusConst, ModbusSlaveListener
         // check if new instance's panel must be added
         if(mspp!=null)
         {
-            if( modbusSlave.containsPduProcessorInstance(mspp)==false )
+            if(!modbusSlave.containsPduProcessorInstance(mspp))
             {
                 addPane(mspp);
             }

@@ -5,12 +5,12 @@
 
 package modbuspal.toolkit;
 
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.prefs.Preferences;
-import javax.swing.JFileChooser;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * a file chooser that keeps track of the last visited directory
@@ -31,12 +31,12 @@ implements ActionListener
     public static final String AUTOMATION_EXT = "xmpa";
     public static final String RECORDER_EXT = "xmpr";
 
-    private static final String REG_KEYS[] =   {"project_file", "slave_file",        "automation_file",        "recorder_file"};
-    private static final String PROF_TYPES[] = {"Project file", "Slave export file", "Automation export file", "Recorder file"};
-    private static final String PROF_EXT[] =   {PROJECT_EXT,    SLAVE_EXT,           AUTOMATION_EXT,           RECORDER_EXT};
+    private static final String[] REG_KEYS =   {"project_file", "slave_file",        "automation_file",        "recorder_file"};
+    private static final String[] PROF_TYPES = {"Project file", "Slave export file", "Automation export file", "Recorder file"};
+    private static final String[] PROF_EXT =   {PROJECT_EXT,    SLAVE_EXT,           AUTOMATION_EXT,           RECORDER_EXT};
 
-    private Preferences preferences;
-    private int selectedProfile;
+    private final Preferences preferences;
+    private final int selectedProfile;
 
     public XFileChooser(int profile)
     {
@@ -55,7 +55,7 @@ implements ActionListener
         if( dir != null )
         {
             File cwd = new File(dir);
-            if( (cwd.isDirectory()==true) && (cwd.exists()==true) )
+            if( (cwd.isDirectory()) && (cwd.exists()) )
             {
                 setCurrentDirectory(cwd);
             }
@@ -70,7 +70,7 @@ implements ActionListener
         if( file!=null )
         {
             String path = file.getPath();
-            if( path.endsWith(PROF_EXT[selectedProfile])==false )
+            if(!path.endsWith(PROF_EXT[selectedProfile]))
             {
                 return new File( path+"."+PROF_EXT[selectedProfile]);
             }

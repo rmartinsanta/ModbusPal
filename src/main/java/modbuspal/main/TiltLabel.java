@@ -7,11 +7,9 @@ package modbuspal.main;
 
 import modbuspal.toolkit.FileTools;
 
-import java.net.URL;
+import javax.swing.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 
 /**
  *
@@ -43,7 +41,6 @@ implements Runnable
     @Override
     public void setText(String text)
     {
-        return;
     }
 
 
@@ -87,7 +84,7 @@ implements Runnable
     {
         boolean tilted = false;
 
-        while(execute==true)
+        while(execute)
         {
             try
             {
@@ -100,7 +97,7 @@ implements Runnable
             
             synchronized(this)
             {
-                if( tilted==true )
+                if(tilted)
                 {
                     setIcon(grayIcon);
                     tilted=false;

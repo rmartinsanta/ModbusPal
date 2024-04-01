@@ -16,7 +16,7 @@ extends Automation
     /** name of the null automation. */
     public static final String NAME = "Null";
 
-    private static NullAutomation instance = new NullAutomation();
+    private static final NullAutomation instance = new NullAutomation();
 
     /**
      * returns the unique instance of the NullAutomation.

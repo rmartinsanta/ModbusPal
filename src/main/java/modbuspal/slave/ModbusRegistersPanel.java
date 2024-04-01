@@ -11,13 +11,14 @@
 
 package modbuspal.slave;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import modbuspal.automation.Automation;
 import modbuspal.binding.Binding;
 import modbuspal.binding.BindingEditor;
-import modbuspal.toolkit.GUITools;
 import modbuspal.main.ModbusConst;
+import modbuspal.toolkit.GUITools;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -27,8 +28,8 @@ class ModbusRegistersPanel
 extends javax.swing.JPanel
 implements ModbusConst
 {
-    private ModbusSlaveDialog slaveDialog;
-    private ModbusRegisters registers;
+    private final ModbusSlaveDialog slaveDialog;
+    private final ModbusRegisters registers;
     //private ModbusSlave modbusSlave;
 
     /** Creates new form ModbusRegistersPanel */
@@ -137,7 +138,7 @@ implements ModbusConst
         slaveDialog.setStatus("Adding "+getCaption_register()+"...");
         dialog.setVisible(true);
 
-        if( dialog.isAdded() == true )
+        if(dialog.isAdded())
         {
             int start = dialog.getStartingAddress();
             int q = dialog.getQuantity();
@@ -157,7 +158,6 @@ implements ModbusConst
         
         if( rowCount <= 0 )
         {
-            return;
         }
 
         else
@@ -182,7 +182,7 @@ implements ModbusConst
             String selectedClass = dialog.getSelectedClass();
 
             // get the selected rows
-            int selectedAddresses[] = ((ModbusRegistersTable)registersTable).getSelectedAddresses();
+            int[] selectedAddresses = ((ModbusRegistersTable)registersTable).getSelectedAddresses();
 
             // bind all selected registers
             for(int i=0;i<selectedAddresses.length;i++)
@@ -208,7 +208,7 @@ implements ModbusConst
     private void removeRegistersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeRegistersButtonActionPerformed
 
         // get the selected rows
-        int addresses[] = ((ModbusRegistersTable)registersTable).getSelectedAddresses();
+        int[] addresses = ((ModbusRegistersTable)registersTable).getSelectedAddresses();
 
         if( addresses.length<=0 )
         {
@@ -227,7 +227,7 @@ implements ModbusConst
     private void unbindRegistersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_unbindRegistersButtonActionPerformed
 
         // get the selected rows
-        int addresses[] = ((ModbusRegistersTable)registersTable).getSelectedAddresses();
+        int[] addresses = ((ModbusRegistersTable)registersTable).getSelectedAddresses();
 
         if( addresses.length<=0 )
         {

@@ -5,13 +5,14 @@
 
 package modbuspal.generator.sine;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import modbuspal.generator.Generator;
-import javax.swing.JPanel;
 import modbuspal.toolkit.XMLTools;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import javax.swing.*;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * the sine generator
@@ -20,7 +21,7 @@ import org.w3c.dom.NodeList;
 public class SineGenerator
 extends Generator
 {
-    private SineControlPanel panel;
+    private final SineControlPanel panel;
     private double initialAngle = 0.0;
     double amplitude = 1.0;
     double period = 1.0;
@@ -47,7 +48,7 @@ extends Generator
     public void setInitialValue(double value)
     {
         super.setInitialValue(value);
-        if( catchup==true )
+        if(catchup)
         {
         value -= offset;
         if( value > amplitude )
@@ -69,21 +70,13 @@ extends Generator
     public void saveGeneratorSettings(OutputStream out)
     throws IOException
     {
-        StringBuilder amp = new StringBuilder("<amplitude");
-        amp.append(" value=\"").append(amplitude).append("\" />\r\n");
-        out.write( amp.toString().getBytes() );
+        out.write( ("<amplitude" + " value=\"" + amplitude + "\" />\r\n").getBytes() );
 
-        StringBuilder per = new StringBuilder("<period");
-        per.append(" value=\"").append(period).append("\" />\r\n");
-        out.write( per.toString().getBytes() );
+        out.write( ("<period" + " value=\"" + period + "\" />\r\n").getBytes() );
 
-        StringBuilder off = new StringBuilder("<offset");
-        off.append(" value=\"").append(offset).append("\" />\r\n");
-        out.write( off.toString().getBytes() );
+        out.write( ("<offset" + " value=\"" + offset + "\" />\r\n").getBytes() );
 
-        StringBuilder cu = new StringBuilder("<catchup");
-        cu.append(" enabled=\"").append(catchup).append("\" />\r\n");
-        out.write( cu.toString().getBytes() );
+        out.write( ("<catchup" + " enabled=\"" + catchup + "\" />\r\n").getBytes() );
 
 }
 

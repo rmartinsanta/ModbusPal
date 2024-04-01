@@ -11,6 +11,11 @@
 
 package modbuspal.main;
 
+import modbuspal.help.HelpViewer;
+import modbuspal.master.ModbusMasterTarget;
+import modbuspal.slave.ModbusSlaveAddress;
+import modbuspal.toolkit.GUITools;
+
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -21,10 +26,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import modbuspal.help.HelpViewer;
-import modbuspal.master.ModbusMasterTarget;
-import modbuspal.slave.*;
-import modbuspal.toolkit.GUITools;
 
 /**
  * a dialog in which the user defines new modbus slave to add into the project
@@ -33,7 +34,7 @@ import modbuspal.toolkit.GUITools;
 public class AddSlaveDialog
 extends javax.swing.JDialog
 {
-    private static final String RTU_PATTERN = "([\\d]+)(?:[\\s]*-[\\s]*([\\d]+))?";
+    private static final String RTU_PATTERN = "(\\d+)(?:\\s*-\\s*(\\d+))?";
     private boolean added = false;
     
     /** 
@@ -88,7 +89,7 @@ extends javax.swing.JDialog
     {
         Pattern rtuPattern = Pattern.compile(RTU_PATTERN);
         Matcher m = rtuPattern.matcher(s.trim());
-        if(m.matches()==true)
+        if(m.matches())
         {
             String group1 =  m.group(1);
             int startIndex = Integer.parseInt(group1);
@@ -137,7 +138,7 @@ extends javax.swing.JDialog
     {
         Pattern ipv4Pattern = Pattern.compile("([\\d]{1,3})\\.([\\d]{1,3})\\.([\\d]{1,3})\\.([\\d]{1,3})");
         Matcher m = ipv4Pattern.matcher(s);
-        if(m.find()==true)
+        if(m.find())
         {
             String a = m.group(1);
             String b = m.group(2);
@@ -163,24 +164,24 @@ extends javax.swing.JDialog
         
     private List<ModbusSlaveAddress> tryParseIpAddress_1(String s)
     {
-        StringBuilder sb = new StringBuilder();
-        
+
         // part of the pattern that finds an ip v4 address
         // (group 1)
-        sb.append("([\\d\\.]+)"); 
-        
-        // part of the pattern that finds the optionnal second ip v4 address.
-        // that second ip address defines a range for multiple slave creation.
-        // (group 2)
-        sb.append("(?:[\\s]*-[\\s]*([\\d\\.]+))?");
-        
-        // part of the pattern that finds the optionnal rtu address
-        // associated with the ip
-        // (group 3&4)
-        sb.append("(?:[\\s]*\\([\\s]*([\\d]+)[\\s]*\\))?");
+
+        String sb = "([\\d\\.]+)" +
+
+                // part of the pattern that finds the optionnal second ip v4 address.
+                // that second ip address defines a range for multiple slave creation.
+                // (group 2)
+                "(?:[\\s]*-[\\s]*([\\d\\.]+))?" +
+
+                // part of the pattern that finds the optionnal rtu address
+                // associated with the ip
+                // (group 3&4)
+                "(?:[\\s]*\\([\\s]*([\\d]+)[\\s]*\\))?";
         
         //Pattern p = Pattern.compile("([\\d\\.]+)(?:[\\s]*-[\\s]*([\\d\\.]+))?");
-        Pattern p = Pattern.compile(sb.toString());
+        Pattern p = Pattern.compile(sb);
         Matcher m = p.matcher(s.trim());
         if( m.find() )
         {
@@ -241,22 +242,22 @@ extends javax.swing.JDialog
 
     private List<ModbusSlaveAddress> tryParseIpAddress_2(String s) throws UnknownHostException
     {
-        StringBuilder sb = new StringBuilder();
-        
+
         // part of the pattern that finds an ip v4 address
         // (group 1)
-        sb.append("([\\d\\.]+)"); 
-    
-        // ignore white spaces and match parenthesis
-        sb.append("[\\s]*\\([\\s]*");
-        
-        // match RTU PATTERN
-        sb.append(RTU_PATTERN); // = "([\\d]+)(?:[\\s]*-[\\s]*([\\d]+))?";
-        
-        // ignore white spaces and mathc parenthesis
-        sb.append("[\\s]*\\)");
 
-        Pattern p = Pattern.compile(sb.toString());
+        String sb = "([\\d\\.]+)" +
+
+                // ignore white spaces and match parenthesis
+                "[\\s]*\\([\\s]*" +
+
+                // match RTU PATTERN
+                RTU_PATTERN + // = "([\\d]+)(?:[\\s]*-[\\s]*([\\d]+))?";
+
+                // ignore white spaces and mathc parenthesis
+                "[\\s]*\\)";
+
+        Pattern p = Pattern.compile(sb);
         Matcher m = p.matcher(s.trim());
         if( m.find() )
         {

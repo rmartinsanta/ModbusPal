@@ -11,17 +11,11 @@
 
 package modbuspal.main;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PipedInputStream;
-import java.io.PipedOutputStream;
-import java.io.PrintStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
+import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * displays the content of the Java console into a dialog
@@ -36,9 +30,9 @@ extends javax.swing.JDialog
 
     class Redirector implements Runnable
     {
-        private PipedInputStream pin;
-        private PipedOutputStream pout;
-        private Thread thread;
+        private final PipedInputStream pin;
+        private final PipedOutputStream pout;
+        private final Thread thread;
 
         Redirector() throws IOException
         {
@@ -63,7 +57,7 @@ extends javax.swing.JDialog
             {
                 try 
                 {
-                    if (br.ready() == false)
+                    if (!br.ready())
                     {
                         Thread.sleep(100);
                         continue;

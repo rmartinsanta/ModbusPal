@@ -5,10 +5,11 @@
 
 package modbuspal.recorder;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import modbuspal.slave.ModbusSlaveAddress;
 import modbuspal.toolkit.HexaTools;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class represents an entry from a recorded MODBUS session. Basically,
@@ -26,7 +27,7 @@ public class ModbusPalRecord
     private int recordType = 0;
     private long recordTimestamp = 0;
     private int recordSlave = 0;
-    private byte recordData[] = null;
+    private byte[] recordData = null;
     private int recordDataLength = 0;
 
     

@@ -12,9 +12,9 @@ package modbuspal.main;
  */
 public class ModbusValuesMap
 {
-    private int indexedValues[] = new int[65536];
-    private boolean existingValues[] = new boolean[65536];
-    private int orderedIndexes[] = new int[65536];
+    private final int[] indexedValues = new int[65536];
+    private boolean[] existingValues = new boolean[65536];
+    private final int[] orderedIndexes = new int[65536];
     private int indexCount = 0;
 
     /**
@@ -33,7 +33,7 @@ public class ModbusValuesMap
             return;
         }
 
-        if( existingValues[index]==true )
+        if(existingValues[index])
         {
             int order = getOrderOf(index);
             for( int i=order; i<indexCount-1; i++)
@@ -51,7 +51,7 @@ public class ModbusValuesMap
      */
     public void addIndex(int index)
     {
-        if( existingValues[index]==false )
+        if(!existingValues[index])
         {
             existingValues[index]=true;
             indexedValues[index] = 0;
@@ -112,7 +112,7 @@ public class ModbusValuesMap
             return;
         }
 
-        if( existingValues[index]==false )
+        if(!existingValues[index])
         {
             return;
         }
@@ -138,7 +138,7 @@ public class ModbusValuesMap
             return 0;
         }
 
-        if( existingValues[index]==false )
+        if(!existingValues[index])
         {
             return 0;
         }
@@ -218,7 +218,7 @@ public class ModbusValuesMap
             index=65535;
         }
 
-        if( existingValues[index]==false )
+        if(!existingValues[index])
         {
             return 0;
         }

@@ -6,12 +6,13 @@
 package modbuspal.generator.random;
 
 import modbuspal.generator.Generator;
-import java.io.IOException;
-import java.io.OutputStream;
-import javax.swing.JPanel;
 import modbuspal.toolkit.XMLTools;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import javax.swing.*;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * the random generator
@@ -20,7 +21,7 @@ import org.w3c.dom.NodeList;
 public class RandomGenerator
 extends Generator
 {
-    private RandomControlPanel panel;
+    private final RandomControlPanel panel;
     double minValue = 0.0;
     double maxValue = 0.0;
     boolean relativeMin = false;
@@ -39,13 +40,13 @@ extends Generator
     public double getValue(double time)
     {
         double lowest = minValue;
-        if( relativeMin == true )
+        if(relativeMin)
         {
             lowest += getInitialValue();
         }
 
         double highest = maxValue;
-        if( relativeMax == true )
+        if(relativeMax)
         {
             highest += lowest;
         }
@@ -58,17 +59,15 @@ extends Generator
     public void saveGeneratorSettings(OutputStream out)
     throws IOException
     {
-        StringBuilder start = new StringBuilder("<min");
-        start.append(" value=\"").append(String.valueOf(minValue)).append("\"");
-        start.append(" relative=\"").append(Boolean.toString(relativeMin)).append("\"");
-        start.append("/>\r\n");
-        out.write( start.toString().getBytes() );
+        String start = "<min" + " value=\"" + minValue + "\"" +
+                " relative=\"" + relativeMin + "\"" +
+                "/>\r\n";
+        out.write(start.getBytes() );
 
-        StringBuilder end = new StringBuilder("<max");
-        end.append(" value=\"").append(String.valueOf(maxValue)).append("\"");
-        end.append(" relative=\"").append(Boolean.toString(relativeMax)).append("\"");
-        end.append("/>\r\n");
-        out.write( end.toString().getBytes() );
+        String end = "<max" + " value=\"" + maxValue + "\"" +
+                " relative=\"" + relativeMax + "\"" +
+                "/>\r\n";
+        out.write(end.getBytes() );
     }
 
     @Override
@@ -92,7 +91,7 @@ extends Generator
         relativeMax = Boolean.parseBoolean(maxRel);
 
         // update generator's panel
-        panel.maxTextField.setText( String.valueOf(maxVal) );
+        panel.maxTextField.setText(maxVal);
         panel.maxRelativeCheckBox.setSelected(relativeMax);
     }
 

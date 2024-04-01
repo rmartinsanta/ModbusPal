@@ -13,11 +13,9 @@ package modbuspal.main;
 
 import modbuspal.toolkit.FileTools;
 
-import java.awt.Image;
-import java.awt.Toolkit;
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JButton;
 
 /**
  * A dialog for displaying error messages or important warnings
@@ -27,7 +25,7 @@ public class ErrorMessage
 extends javax.swing.JDialog
 implements ActionListener
 {
-    private JButton buttons[];
+    private JButton[] buttons;
     private int selectedButton = -1;
 
 
@@ -71,7 +69,7 @@ implements ActionListener
         buttons = new JButton[nbButtons];
         for(int i=0; i<nbButtons; i++)
         {
-            buttons[i] = new JButton("Button "+ String.valueOf(i+1) );
+            buttons[i] = new JButton("Button "+ (i + 1));
             buttons[i].addActionListener(this);
             buttonsPanel.add(buttons[i]);
         }

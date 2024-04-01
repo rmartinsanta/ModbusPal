@@ -19,7 +19,7 @@ public interface InstantiableManagerListener
      * been added
      * @param def  the Instantiable that has been added
      */
-    public void instanciatorAdded(InstantiableManager factory, Instantiable def);
+    void instanciatorAdded(InstantiableManager factory, Instantiable def);
 
     /**
      * This method will be triggered when an Instantiable is remove from
@@ -27,6 +27,6 @@ public interface InstantiableManagerListener
      * @param factory the InstantiableManager from which the Instantiable has
      * been removed
      * @param def the Instantiable that has been removed
-     */    
-    public void instanciatorRemoved(InstantiableManager factory, Instantiable def);
+     */
+    void instanciatorRemoved(InstantiableManager factory, Instantiable def);
 }

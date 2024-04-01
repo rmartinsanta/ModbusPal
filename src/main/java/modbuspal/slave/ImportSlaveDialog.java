@@ -11,18 +11,15 @@
 
 package modbuspal.slave;
 
-import java.awt.Component;
-import java.util.Collection;
-import javax.swing.AbstractListModel;
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JList;
 import modbuspal.toolkit.XMLTools;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.Collection;
 
 /**
  *
@@ -65,7 +62,7 @@ extends javax.swing.JDialog
 
         int getSelectedSlaveID() {
             if( selected==null ) return -1;
-            Node slave = (Node)selected;
+            Node slave = selected;
             NamedNodeMap attributes = slave.getAttributes();
             String id = attributes.getNamedItem("id").getNodeValue();
             return Integer.valueOf(id);
@@ -90,7 +87,7 @@ extends javax.swing.JDialog
     private boolean validate = false;
     private final SlaveListModel model;
     //private NodeList slavesList;
-    private NodeList automationsList;
+    private final NodeList automationsList;
 
     /** Creates new form AddSlaveDialog */
     public ImportSlaveDialog(java.awt.Frame parent, Document doc)
@@ -118,7 +115,7 @@ extends javax.swing.JDialog
 
     public int getSelectedSlaveID()
     {
-        if( validate == false )
+        if(!validate)
         {
             return -1;
         }
@@ -127,24 +124,18 @@ extends javax.swing.JDialog
 
     boolean importBindings()
     {
-        if( bindingsCheckBox.isEnabled()==true )
+        if(bindingsCheckBox.isEnabled())
         {
-            if( bindingsCheckBox.isSelected()==true )
-            {
-                return true;
-            }
+            return bindingsCheckBox.isSelected();
         }
         return false;
     }
 
     boolean importAutomations()
     {
-        if( automationsCheckBox.isEnabled()==true )
+        if(automationsCheckBox.isEnabled())
         {
-            if( automationsCheckBox.isSelected()==true )
-            {
-                return true;
-            }
+            return automationsCheckBox.isSelected();
         }
         return false;
     }
@@ -245,14 +236,7 @@ extends javax.swing.JDialog
             bindingsCheckBox.setEnabled(true);
 
             // has automations ?
-            if( automationsList.getLength() > 0 )
-            {
-                automationsCheckBox.setEnabled(true);
-            }
-            else
-            {
-                automationsCheckBox.setEnabled(false);
-            }
+            automationsCheckBox.setEnabled(automationsList.getLength() > 0);
         }
         else
         {

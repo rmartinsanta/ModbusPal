@@ -59,7 +59,7 @@ public class InstantiableManager<T extends Instantiable<T>>
 
     private boolean add(String name, T gi)
     {
-        if( exists(name)==true )
+        if(exists(name))
         {
             return false;
         }
@@ -77,7 +77,7 @@ public class InstantiableManager<T extends Instantiable<T>>
      */
     public boolean remove(String name)
     {
-        if( instanciatorNames.contains(name)==false )
+        if(!instanciatorNames.contains(name))
         {
             return false;
         }
@@ -92,7 +92,7 @@ public class InstantiableManager<T extends Instantiable<T>>
      */
     public void clear()
     {
-        String list[] = getList();
+        String[] list = getList();
         for( int i=0; i<list.length; i++ )
         {
             remove( list[i] );
@@ -106,7 +106,7 @@ public class InstantiableManager<T extends Instantiable<T>>
      */
     public void addInstanciatorListener(InstantiableManagerListener l)
     {
-        if( listeners.contains(l)==false )
+        if(!listeners.contains(l))
             listeners.add(l);
     }
 
@@ -116,7 +116,7 @@ public class InstantiableManager<T extends Instantiable<T>>
      */
     public void removeInstanciatorListener(InstantiableManagerListener l)
     {
-        if( listeners.contains(l)==true )
+        if(listeners.contains(l))
             listeners.remove(l);
     }    
 
@@ -154,7 +154,7 @@ public class InstantiableManager<T extends Instantiable<T>>
      */
     public String[] getList()
     {
-        String list[] = new String[0];
+        String[] list = new String[0];
         list=instanciatorNames.toArray(list);
         return list;
     }

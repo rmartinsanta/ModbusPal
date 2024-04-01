@@ -11,21 +11,19 @@
 
 package modbuspal.binding;
 
-import java.awt.Image;
-import java.awt.Toolkit;
+import modbuspal.automation.Automation;
+import modbuspal.automation.AutomationListModel;
+import modbuspal.main.ModbusPalPane;
+import modbuspal.main.ModbusPalProject;
+import modbuspal.toolkit.FileTools;
+
+import javax.swing.*;
+import javax.swing.event.ListDataListener;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.AbstractListModel;
-import javax.swing.ComboBoxModel;
-import modbuspal.automation.*;
-import javax.swing.ListModel;
-import javax.swing.event.ListDataListener;
-import modbuspal.main.ModbusPalPane;
-import modbuspal.main.ModbusPalProject;
-import modbuspal.toolkit.FileTools;
 
 /**
  * dialog in which the user specifies which automation and which binding class
@@ -38,7 +36,7 @@ extends javax.swing.JDialog
     class BindingList
     implements ListModel
     {
-        private String[] bindings;
+        private final String[] bindings;
 
         public BindingList(String[] list) {
             bindings = list;
@@ -56,12 +54,10 @@ extends javax.swing.JDialog
 
         @Override
         public void addListDataListener(ListDataListener l) {
-            return;
         }
 
         @Override
         public void removeListDataListener(ListDataListener l) {
-            return;
         }
     }
 
@@ -87,7 +83,7 @@ extends javax.swing.JDialog
         @Override
         public Object getElementAt(int index) {
             if( index==0 ) return "0 (LSW)";
-            else if( index==maxOrder-1) return String.valueOf(maxOrder-1) + " (MSW)";
+            else if( index==maxOrder-1) return maxOrder - 1 + " (MSW)";
             else return String.valueOf(index);
         }
 

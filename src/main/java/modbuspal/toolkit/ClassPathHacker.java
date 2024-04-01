@@ -57,10 +57,10 @@ public class ClassPathHacker
 	URLClassLoader sysloader = (URLClassLoader)ClassLoader.getSystemClassLoader();
 
         // check if specified url is already in defined in the class loader:
-        URL urls[] = sysloader.getURLs();
+        URL[] urls = sysloader.getURLs();
         for( int i=0; i<urls.length; i++ )
         {
-            if( urls[i].sameFile(u) == true )
+            if(urls[i].sameFile(u))
             {
                 return;
             }
@@ -73,7 +73,7 @@ public class ClassPathHacker
 	try {
 		Method method = sysclass.getDeclaredMethod("addURL",parameters);
 		method.setAccessible(true);
-		method.invoke(sysloader,new Object[]{ u });
+		method.invoke(sysloader, u);
 	} catch (Throwable t) {
 		t.printStackTrace();
 		throw new IOException("Error, could not add URL to system classloader");

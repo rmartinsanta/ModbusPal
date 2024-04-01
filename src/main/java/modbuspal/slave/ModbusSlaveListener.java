@@ -20,7 +20,7 @@ public interface ModbusSlaveListener
      * @param slave the modbus slave 
      * @param enabled true if enabled, false if disabled
      */
-    public void modbusSlaveEnabled(ModbusSlave slave, boolean enabled);
+    void modbusSlaveEnabled(ModbusSlave slave, boolean enabled);
 
     /**
      * This method will be triggered to notify the listener that the implementation
@@ -29,7 +29,7 @@ public interface ModbusSlaveListener
      * @param impl the new implementation, one of IMPLEMENTATION_MODBUS or
      * IMPLEMENTATION_JBUS
      */
-    public void modbusSlaveImplChanged(ModbusSlave slave, int impl);
+    void modbusSlaveImplChanged(ModbusSlave slave, int impl);
 
     /**
      * This method will be triggered to notify the listener that the name of 
@@ -37,7 +37,7 @@ public interface ModbusSlaveListener
      * @param slave the modbus slave
      * @param newName the new name of the slave
      */
-    public void modbusSlaveNameChanged(ModbusSlave slave, String newName);
+    void modbusSlaveNameChanged(ModbusSlave slave, String newName);
 
     /**
      * This method will be triggered to notify the listener that the specified
@@ -47,7 +47,7 @@ public interface ModbusSlaveListener
      * @param old the old pdu processor that was assigned to the function code
      * @param mspp the new pdu processor that is now assigned to the function code
      */
-    public void modbusSlavePduProcessorChanged(ModbusSlave slave, byte functionCode, ModbusPduProcessor old, ModbusPduProcessor mspp);
+    void modbusSlavePduProcessorChanged(ModbusSlave slave, byte functionCode, ModbusPduProcessor old, ModbusPduProcessor mspp);
 
     /**
      * This method will be triggered to notify the listener that the reply
@@ -56,7 +56,7 @@ public interface ModbusSlaveListener
      * @param min the minimum reply delay, in milliseconds
      * @param max the maximum reply delay, in milliseconds
      */
-    public void modbusSlaveReplyDelayChanged(ModbusSlave slave, long min, long max);
+    void modbusSlaveReplyDelayChanged(ModbusSlave slave, long min, long max);
 
     /**
      * This method will be triggered to notify the listener that the 
@@ -64,6 +64,6 @@ public interface ModbusSlaveListener
      * @param slave the modbus slave
      * @param noReplyRate the "no reply" error rate, float value between 0f and 1f.
      */
-    public void modbusSlaveErrorRatesChanged(ModbusSlave slave, float noReplyRate);
+    void modbusSlaveErrorRatesChanged(ModbusSlave slave, float noReplyRate);
 
 }

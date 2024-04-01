@@ -5,16 +5,15 @@
 
 package modbuspal.slave;
 
-import java.awt.Component;
+import modbuspal.slave.ModbusRegisters.RegisterCopy;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.InputEvent;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.Icon;
-import javax.swing.JComponent;
-import javax.swing.TransferHandler;
-import modbuspal.slave.ModbusRegisters.RegisterCopy;
 
 /**
  *
@@ -63,11 +62,10 @@ extends TransferHandler
         }
 
         // First, check that the target component is a JTable
-        if( comp instanceof ModbusRegistersTable )
+        if(comp instanceof ModbusRegistersTable table)
         {
             // Second, check that the target JTable has a model
             // that is instance of ModbusRegisters
-            ModbusRegistersTable table = (ModbusRegistersTable)comp;
             return table.getModel();
         }
         return null;
@@ -118,14 +116,14 @@ extends TransferHandler
     @Override
     public boolean importData(TransferSupport support) 
     {
-        if( canImport(support)==false )
+        if(!canImport(support))
         {
             return false;
         }
 
         // get the target selection
         ModbusRegistersTable destination = (ModbusRegistersTable)support.getComponent();
-        int addresses[] = destination.getSelectedAddresses();
+        int[] addresses = destination.getSelectedAddresses();
 
         // get the target table model
         ModbusRegisters target = getRegisters(support.getComponent());

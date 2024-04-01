@@ -5,15 +5,16 @@
 
 package modbuspal.main;
 
+import modbuspal.slave.ModbusSlave;
+import modbuspal.slave.ModbusSlaveAddress;
+import modbuspal.toolkit.NetworkTools;
+
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import modbuspal.slave.ModbusSlave;
-import modbuspal.slave.ModbusSlaveAddress;
-import modbuspal.toolkit.NetworkTools;
 
 /**
  * takes care of some particularies of the management of the modbus slaves
@@ -22,7 +23,7 @@ import modbuspal.toolkit.NetworkTools;
  */
 public abstract class ModbusPalProject2
 {
-    final private HashMap<ModbusSlaveAddress, ModbusSlave> knownSlaves = new HashMap<ModbusSlaveAddress, ModbusSlave>();
+    final private HashMap<ModbusSlaveAddress, ModbusSlave> knownSlaves = new HashMap<>();
 
     // The MODBUS ADDRESS we are trying to match has an InetAddress.
     // 1/ A perfect match would be a MODBUS ADDRESS with the same InetAddress
@@ -54,7 +55,7 @@ public abstract class ModbusPalProject2
                 }
             }
             
-            else  if( address.getIpAddress().equals(id.getIpAddress()) == true )
+            else  if(address.getIpAddress().equals(id.getIpAddress()))
             {
                 // perfect IP address match. But now have to check the
                 // optional slave identifier.
@@ -80,7 +81,7 @@ public abstract class ModbusPalProject2
             {
                 try 
                 {
-                    if( NetworkTools.isLocalAddress(address.getIpAddress())==true )
+                    if(NetworkTools.isLocalAddress(address.getIpAddress()))
                     {
                         if( address.getRtuAddress() == id.getRtuAddress() )
                         {
@@ -136,7 +137,7 @@ public abstract class ModbusPalProject2
             {
                 try 
                 {
-                    if( NetworkTools.isLocalAddress(address.getIpAddress())==true )
+                    if(NetworkTools.isLocalAddress(address.getIpAddress()))
                     {
                         if( address.getRtuAddress() == id.getRtuAddress() )
                         {
@@ -206,7 +207,7 @@ public abstract class ModbusPalProject2
             {
                 return knownSlaves.get(matchedId);
             }
-            else if( createIfNotExist==true )
+            else if(createIfNotExist)
             {
                 setModbusSlave( id, new ModbusSlave(id) );
                 return knownSlaves.get(id);

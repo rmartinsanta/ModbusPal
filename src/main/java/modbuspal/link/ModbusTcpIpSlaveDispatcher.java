@@ -5,6 +5,10 @@
 
 package modbuspal.link;
 
+import modbuspal.main.ModbusPalProject;
+import modbuspal.slave.ModbusSlaveAddress;
+import modbuspal.toolkit.ModbusTools;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -13,9 +17,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import modbuspal.main.ModbusPalProject;
-import modbuspal.slave.ModbusSlaveAddress;
-import modbuspal.toolkit.ModbusTools;
 
 /**
  * Processes an incoming tcp/ip connection received by the ModbusTcpIpLink
@@ -28,11 +29,11 @@ implements Runnable
 
 
 
-    private static ArrayList<ModbusTcpIpSlaveDispatcher> dispatchers = new ArrayList<ModbusTcpIpSlaveDispatcher>();
+    private static final ArrayList<ModbusTcpIpSlaveDispatcher> dispatchers = new ArrayList<ModbusTcpIpSlaveDispatcher>();
 
     private static void register(ModbusTcpIpSlaveDispatcher dispatcher)
     {
-        if( dispatchers.contains(dispatcher)==false )
+        if(!dispatchers.contains(dispatcher))
         {
             dispatchers.add(dispatcher);
         }
@@ -40,7 +41,7 @@ implements Runnable
 
     private static void unregister(ModbusTcpIpSlaveDispatcher dispatcher)
     {
-        if( dispatchers.contains(dispatcher)==true )
+        if(dispatchers.contains(dispatcher))
         {
             dispatchers.remove(dispatcher);
         }
@@ -58,9 +59,9 @@ implements Runnable
 
 
     private Thread slaveThread;
-    private Socket slaveSocket;
-    private InputStream slaveInput;
-    private OutputStream slaveOutput;
+    private final Socket slaveSocket;
+    private final InputStream slaveInput;
+    private final OutputStream slaveOutput;
 
     /**
      * Creates a new instance of ModbusTcpIpSlaveDispatcher

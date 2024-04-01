@@ -5,12 +5,13 @@
 
 package modbuspal.main;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  *
@@ -43,7 +44,7 @@ class IdGenerator
         StringBuffer idGenTag = new StringBuffer("<idgen ");
         synchronized(this)
         {
-            idGenTag.append(" value=\""+ String.valueOf(idCreator) +"\"");
+            idGenTag.append(" value=\""+ idCreator +"\"");
         }
         idGenTag.append("/>\r\n");
         out.write( idGenTag.toString().getBytes() );

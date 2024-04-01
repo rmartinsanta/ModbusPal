@@ -5,24 +5,14 @@
 
 package modbuspal.main;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.xml.parsers.ParserConfigurationException;
 import modbuspal.automation.Automation;
 import modbuspal.automation.NullAutomation;
 import modbuspal.binding.Binding;
 import modbuspal.generator.Generator;
 import modbuspal.instanciator.InstantiableManager;
 import modbuspal.master.ModbusMasterTask;
-import modbuspal.slave.ModbusSlave;
 import modbuspal.slave.ModbusPduProcessor;
+import modbuspal.slave.ModbusSlave;
 import modbuspal.slave.ModbusSlaveAddress;
 import modbuspal.toolkit.FileTools;
 import modbuspal.toolkit.XMLTools;
@@ -31,6 +21,13 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * contains all the data related to a modbuspal project
@@ -217,7 +214,7 @@ implements ModbusPalXML
             String relativePath = rel.getTextContent();
             String absolutePath = FileTools.makeAbsolute(projectFile, relativePath);
             File file = new File(absolutePath);
-            if( file.exists()==true )
+            if(file.exists())
             {
                 linkReplayFile = file;
                 return;
@@ -230,10 +227,9 @@ implements ModbusPalXML
         {
             String path = abs.getTextContent();
             File file = new File(path);
-            if( file.exists()==true )
+            if(file.exists())
             {
                 linkReplayFile = file;
-                return;
             }
         }
     }
@@ -419,7 +415,7 @@ implements ModbusPalXML
     //==========================================================================
 
     public void save(File file)
-    throws FileNotFoundException, IOException
+    throws IOException
     {
         projectFile = file;
         save();
@@ -482,15 +478,15 @@ implements ModbusPalXML
     private void saveLinks(OutputStream out)
     throws IOException
     {
-        StringBuilder openTag = new StringBuilder("<links ");
 
         // fill "current" with "tcpip" or "serial" depending on the
         // currently selected tab
-        openTag.append("selected=\"").append(selectedLink).append("\" ");
 
-        // terminate open openTag and write it
-        openTag.append(">\r\n");
-        out.write( openTag.toString().getBytes() );
+        String openTag = "<links " + "selected=\"" + selectedLink + "\" " +
+
+                // terminate open openTag and write it
+                ">\r\n";
+        out.write(openTag.getBytes() );
 
         // write tcp/ip settings
         saveTcpIpLinkParameters(out);
@@ -506,10 +502,9 @@ implements ModbusPalXML
     private void saveTcpIpLinkParameters(OutputStream out)
     throws IOException
     {
-        StringBuilder tag = new StringBuilder("<tcpip ");
-        tag.append("port=\"").append(linkTcpipPort).append("\" ");
-        tag.append("/>\r\n");
-        out.write( tag.toString().getBytes() );
+        String tag = "<tcpip " + "port=\"" + linkTcpipPort + "\" " +
+                "/>\r\n";
+        out.write(tag.getBytes() );
     }
 
 
@@ -677,7 +672,7 @@ implements ModbusPalXML
 
     void removeAllAutomations()
     {
-        Automation list[] = new Automation[0];
+        Automation[] list = new Automation[0];
         list = automations.toArray(list);
         for( int i=0; i<list.length; i++ )
         {
@@ -725,7 +720,7 @@ implements ModbusPalXML
             if( (already != null) && (already != auto) )
             {
                 // check if the name to alter already end with "#n"
-                if( name.matches(".*#(\\d+)$")==true )
+                if(name.matches(".*#(\\d+)$"))
                 {
                     int pos = name.lastIndexOf('#');
                     name = name.substring(0, pos);
@@ -734,7 +729,7 @@ implements ModbusPalXML
                 {
                     name = name.trim() + " ";
                 }
-                name = name + "#" + String.valueOf( idGenerator.createID() );
+                name = name + "#" + idGenerator.createID();
             }
             auto.setName(name);
         }
@@ -781,7 +776,7 @@ implements ModbusPalXML
             }
         }
 
-        if( addAutomation(automation)==true )
+        if(addAutomation(automation))
         {
             return automation;
         }
@@ -1061,7 +1056,7 @@ implements ModbusPalXML
         }
         else
         {
-            ModbusSlave retval[] = new ModbusSlave[0];
+            ModbusSlave[] retval = new ModbusSlave[0];
             retval = found.toArray(retval);
             return retval;
         }
@@ -1106,7 +1101,7 @@ implements ModbusPalXML
             }
         }
 
-        if( addModbusSlave(slave)==true )
+        if(addModbusSlave(slave))
         {
             return slave;
         }
@@ -1254,9 +1249,9 @@ implements ModbusPalXML
         out.write( openTag.getBytes() );
 
         // if needed, first exportSlave automations (they need to be imported first!)
-        if( withAutomations == true )
+        if(withAutomations)
         {
-            String names[] = exportedSlave.getRequiredAutomations();
+            String[] names = exportedSlave.getRequiredAutomations();
             for(int i=0; i<names.length; i++)
             {
                 Automation automation = getAutomation( names[i] );
@@ -1345,14 +1340,14 @@ implements ModbusPalXML
         NodeList slaves = doc.getElementsByTagName("slave");
         Node slaveNode = slaves.item(0);
 
-        if( withAutomations==true )
+        if(withAutomations)
         {
             loadAutomations(doc);
         }
 
         target.load(this, slaveNode, true);
 
-        if( withBindings==true )
+        if(withBindings)
         {
             loadBindings(doc, target);
         }
@@ -1448,7 +1443,7 @@ implements ModbusPalXML
     {
         synchronized(listeners)
         {
-            if( listeners.contains(l)==false )
+            if(!listeners.contains(l))
             {
                 listeners.add(l);
             }
@@ -1463,7 +1458,7 @@ implements ModbusPalXML
     {
         synchronized(listeners)
         {
-            if( listeners.contains(l)==true )
+            if(listeners.contains(l))
             {
                 listeners.remove(l);
             }
@@ -1602,14 +1597,14 @@ implements ModbusPalXML
             }
 
             // automation not matched, remove the useless automation:
-            if( matched==false )
+            if(!matched)
             {
                 doc.removeChild(automationList.item(i));
             }
         }
         
 
-        if( fix==true )
+        if(fix)
         {
             // for each binding, check that the automation specified in the
             // "automation" attribute actually exists:
@@ -1629,7 +1624,7 @@ implements ModbusPalXML
                 }
 
                 // automation not matched, remove the invalid binding:
-                if( matched==false )
+                if(!matched)
                 {
                     doc.removeChild(doc);
                 }
@@ -1659,7 +1654,7 @@ implements ModbusPalXML
     
     public void addModbusMasterTask(ModbusMasterTask mmt)
     {
-        if( masterTasks.contains(mmt)==false )
+        if(!masterTasks.contains(mmt))
         {
             masterTasks.add(mmt);
             notifyModbusMasterTaskAdded(mmt);
@@ -1680,7 +1675,7 @@ implements ModbusPalXML
     
     public void removeModbusMasterTask(ModbusMasterTask mmt)
     {
-        if( masterTasks.contains(mmt)==true )
+        if(masterTasks.contains(mmt))
         {
             masterTasks.add(mmt);
             notifyModbusMasterTaskRemoved(mmt);

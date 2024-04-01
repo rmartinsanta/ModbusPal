@@ -20,7 +20,7 @@ public interface Instantiable<T>
      * a good-looking classname.
      * @return the classname of the objects that are instanciated.
      */
-    public String getClassName();
+    String getClassName();
 
     /**
      * Creates a new object instance.
@@ -28,7 +28,7 @@ public interface Instantiable<T>
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    public T newInstance() throws InstantiationException, IllegalAccessException;
+    T newInstance() throws InstantiationException, IllegalAccessException;
 
     /**
      * This function will be called by ModbusPal after the instantiation,
@@ -37,7 +37,7 @@ public interface Instantiable<T>
      * for example, cannot rely on the calling of the constructor in order
      * to initialize their members.
      */
-    public void init();
+    void init();
 
     /**
      * This function will be called by ModbusPal when the instance is no longer
@@ -46,5 +46,5 @@ public interface Instantiable<T>
      * Java destructor, because there no garantee as to if and when it will
      * be called.
      */
-    public void reset();
+    void reset();
 }

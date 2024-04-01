@@ -5,15 +5,16 @@
 
 package modbuspal.recorder;
 
+import modbuspal.slave.ModbusSlaveAddress;
+import modbuspal.toolkit.HexaTools;
+import modbuspal.toolkit.XFileChooser;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import modbuspal.slave.ModbusSlaveAddress;
-import modbuspal.toolkit.HexaTools;
-import modbuspal.toolkit.XFileChooser;
 
 /**
  * Records incoming and outgoing data
@@ -22,7 +23,7 @@ import modbuspal.toolkit.XFileChooser;
 public class ModbusPalRecorder
 //implements Runnable
 {
-    private static ModbusPalRecorder uniqInst = new ModbusPalRecorder();
+    private static final ModbusPalRecorder uniqInst = new ModbusPalRecorder();
     private Date start = null;
 
     /**
@@ -58,7 +59,6 @@ public class ModbusPalRecorder
      */
     public static void touch()
     {
-        return;
     }
 
     //private PipedInputStream input;

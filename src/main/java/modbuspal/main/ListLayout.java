@@ -5,10 +5,7 @@
 
 package modbuspal.main;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.LayoutManager2;
+import java.awt.*;
 import java.util.ArrayList;
 
 /**
@@ -19,7 +16,7 @@ public class ListLayout
 implements LayoutManager2
 {
     private Component[] indexedList = new Component[256];
-    private ArrayList<Component> componentList = new ArrayList<Component>();
+    private final ArrayList<Component> componentList = new ArrayList<Component>();
     private static final int borderThickness = 5;
 
     public void addLayoutComponent(Component comp, Object constraints)
@@ -69,7 +66,6 @@ implements LayoutManager2
 
     public void invalidateLayout(Container target)
     {
-        return;
     }
 
     public void addLayoutComponent(String name, Component comp)
@@ -218,10 +214,7 @@ implements LayoutManager2
     {
         Component[] newList = new Component[index];
         int max = Math.min(newList.length, indexedList.length);
-        for(int i=0; i<max; i++ )
-        {
-            newList[i] = indexedList[i];
-        }
+        System.arraycopy(indexedList, 0, newList, 0, max);
         indexedList = newList;
     }
 

@@ -5,16 +5,17 @@
 
 package modbuspal.link;
 
+import modbuspal.main.ModbusPalProject;
+import modbuspal.master.ModbusMasterRequest;
+import modbuspal.slave.ModbusSlaveAddress;
+import modbuspal.toolkit.ModbusTools;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import modbuspal.main.ModbusPalProject;
-import modbuspal.master.ModbusMasterRequest;
-import modbuspal.slave.ModbusSlaveAddress;
-import modbuspal.toolkit.ModbusTools;
 
 /**
  * This link waits for incoming requests on a particular TCP port
@@ -29,8 +30,8 @@ implements ModbusLink, Runnable
     private boolean executeThread;
     private ModbusLinkListener listener = null;
     private final ModbusPalProject modbusPalProject;
-    private HashMap<ModbusSlaveAddress, Socket> clientSockets;
-    private int tcpPort;
+    private final HashMap<ModbusSlaveAddress, Socket> clientSockets;
+    private final int tcpPort;
     
     /** Transcation identifier for the master's requests.  */
     private int clientTI;
@@ -94,7 +95,7 @@ implements ModbusLink, Runnable
             executeThread = false;
         }
         
-        while(executeThread == true)
+        while(executeThread)
         {
             // create client socket
             try
@@ -105,14 +106,14 @@ implements ModbusLink, Runnable
             }
             catch (IOException ex)
             {
-                if( Thread.interrupted() == false )
+                if(!Thread.interrupted())
                 {
                     Logger.getLogger(ModbusTcpIpLink.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }            
         }
 
-        if( serverSocket.isClosed() == false )
+        if(!serverSocket.isClosed())
         {
             try
             {
@@ -175,7 +176,7 @@ implements ModbusLink, Runnable
             clientSockets.put(dst, sock);
         }
         
-        byte buffer[] = new byte[2048];
+        byte[] buffer = new byte[2048];
         
         // genete PDU of the request, start at offset 7
         // (leave room for MBAP header).

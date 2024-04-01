@@ -20,28 +20,28 @@ public interface AutomationEditionListener
      * @param source
      * @param init
      */
-    public void automationInitialValueChanged(Automation source, double init);
+    void automationInitialValueChanged(Automation source, double init);
 
     /**
      * this event is triggered when the "loop" is enabled or disabled.
      * @param source
      * @param enabled
      */
-    public void automationLoopEnabled(Automation source, boolean enabled);
+    void automationLoopEnabled(Automation source, boolean enabled);
 
     /**
      * this event is triggered when the name of the automation is changed.
      * @param source
      * @param newName
      */
-    public void automationNameHasChanged(Automation source, String newName);
+    void automationNameHasChanged(Automation source, String newName);
 
     /**
      * this event is triggered when the duration of the step is modified.
      * @param source
      * @param step
      */
-    public void automationStepHasChanged(Automation source, double step);
+    void automationStepHasChanged(Automation source, double step);
 
     /**
      * this event is triggered when a generator is added into the automation.
@@ -49,14 +49,14 @@ public interface AutomationEditionListener
      * @param generator
      * @param index
      */
-    public void generatorHasBeenAdded(Automation source, Generator generator, int index);
+    void generatorHasBeenAdded(Automation source, Generator generator, int index);
 
     /**
      * this event is triggered when a generator is removed from the automation.
      * @param source
      * @param generator
      */
-    public void generatorHasBeenRemoved(Automation source, Generator generator);
+    void generatorHasBeenRemoved(Automation source, Generator generator);
 
     /**
      * this event is triggered when two generators are swapped (usually, when
@@ -65,5 +65,5 @@ public interface AutomationEditionListener
      * @param g1
      * @param g2
      */
-    public void generatorsHaveBeenSwapped(Automation source, Generator g1, Generator g2);
+    void generatorsHaveBeenSwapped(Automation source, Generator g1, Generator g2);
 }

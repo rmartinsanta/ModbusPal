@@ -5,6 +5,16 @@
 
 package modbuspal.slave;
 
+import modbuspal.automation.NullAutomation;
+import modbuspal.instanciator.InstantiableManager;
+import modbuspal.main.ModbusConst;
+import modbuspal.main.ModbusPalProject;
+import modbuspal.main.ModbusPalXML;
+import modbuspal.toolkit.InstanceCounter;
+import modbuspal.toolkit.XMLTools;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -13,24 +23,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import modbuspal.automation.NullAutomation;
-import modbuspal.instanciator.InstantiableManager;
-import modbuspal.main.ModbusConst;
-import static modbuspal.main.ModbusConst.FC_READ_COILS;
-import static modbuspal.main.ModbusConst.FC_READ_DISCRETE_INPUTS;
-import static modbuspal.main.ModbusConst.FC_READ_HOLDING_REGISTERS;
-import static modbuspal.main.ModbusConst.FC_READ_WRITE_MULTIPLE_REGISTERS;
-import static modbuspal.main.ModbusConst.FC_WRITE_MULTIPLE_COILS;
-import static modbuspal.main.ModbusConst.FC_WRITE_MULTIPLE_REGISTERS;
-import static modbuspal.main.ModbusConst.FC_WRITE_SINGLE_COIL;
-import static modbuspal.main.ModbusConst.FC_WRITE_SINGLE_REGISTER;
-import modbuspal.main.ModbusPalProject;
-import modbuspal.main.ModbusPalXML;
-import static modbuspal.main.ModbusPalXML.XML_SLAVE_ID_ATTRIBUTE;
-import modbuspal.toolkit.InstanceCounter;
-import modbuspal.toolkit.XMLTools;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * Modelization of a modbus slave
@@ -41,16 +33,16 @@ implements ModbusPalXML, ModbusConst
 {
     private ModbusSlaveAddress slaveId;
     private boolean enabled;
-    private ModbusRegisters holdingRegisters = new ModbusRegisters();
-    private ModbusCoils coils = new ModbusCoils();
+    private final ModbusRegisters holdingRegisters = new ModbusRegisters();
+    private final ModbusCoils coils = new ModbusCoils();
     private String customName;
-    private ArrayList<ModbusSlaveListener> listeners = new ArrayList<ModbusSlaveListener>();
+    private final ArrayList<ModbusSlaveListener> listeners = new ArrayList<ModbusSlaveListener>();
     private int modbusImplementation = IMPLEMENTATION_MODBUS;
     private long minReplyDelay = 0L;
     private long maxReplyDelay = 0L;
     private float noReplyRate = 0f;
-    private ModbusPduProcessor pduProcessors[] = new ModbusPduProcessor[128];
-    private InstanceCounter<ModbusPduProcessor> pduProcessorInstances = new InstanceCounter<ModbusPduProcessor>();
+    private final ModbusPduProcessor[] pduProcessors = new ModbusPduProcessor[128];
+    private final InstanceCounter<ModbusPduProcessor> pduProcessorInstances = new InstanceCounter<ModbusPduProcessor>();
 
     private ModbusSlave()
     {
@@ -146,7 +138,7 @@ implements ModbusPalXML, ModbusConst
     public ModbusPduProcessor[] getPduProcessorInstances()
     {
         Set<ModbusPduProcessor> instances = pduProcessorInstances.getInstanceSet();
-        ModbusPduProcessor output[] = new ModbusPduProcessor[0];
+        ModbusPduProcessor[] output = new ModbusPduProcessor[0];
         return instances.toArray(output);
     }
 
@@ -376,7 +368,7 @@ implements ModbusPalXML, ModbusConst
         // remove name of Null automation:
         automationNames.remove(NullAutomation.NAME);
 
-        String retval[] = new String[0];
+        String[] retval = new String[0];
         return automationNames.toArray(retval);
     }
 
@@ -506,7 +498,7 @@ implements ModbusPalXML, ModbusConst
     private void saveFunctions(OutputStream out)
     throws IOException
     {
-        ModbusPduProcessor instances[] = getPduProcessorInstances();
+        ModbusPduProcessor[] instances = getPduProcessorInstances();
 
         if( instances!=null )
         {
@@ -527,7 +519,7 @@ implements ModbusPalXML, ModbusConst
                         if( pduProcessors[j]==instances[i])
                         {
                             tag = new StringBuilder("<function ");
-                            tag.append("code=\"").append( String.valueOf(j) ).append("\" />\r\n");
+                            tag.append("code=\"").append(j).append("\" />\r\n");
                             out.write( tag.toString().getBytes() );
                         }
                     }
@@ -620,7 +612,7 @@ implements ModbusPalXML, ModbusConst
         // load the attributes of the slave
         //
 
-        if( importMode==false )
+        if(!importMode)
         {
             String id2 = XMLTools.getAttribute(XML_SLAVE_ID2_ATTRIBUTE, node);
             if( id2 != null )
@@ -712,7 +704,7 @@ implements ModbusPalXML, ModbusConst
     {
         StringBuilder openTag = new StringBuilder();
         openTag.append( "<slave "+ XML_SLAVE_ID_ATTRIBUTE +"=\"" );
-        openTag.append( String.valueOf(slaveId) );
+        openTag.append(slaveId);
 
         openTag.append("\" enabled=\"");
         if( enabled )
@@ -751,7 +743,7 @@ implements ModbusPalXML, ModbusConst
      * @param withBindings if true, the description of the bindings will be written, too
      * @throws IOException 
      */
-    public final void save(OutputStream out, boolean withBindings)
+    public void save(OutputStream out, boolean withBindings)
     throws IOException
     {
         String openTag = xmlOpenTag();
@@ -794,7 +786,7 @@ implements ModbusPalXML, ModbusConst
      */
     public void addModbusSlaveListener(ModbusSlaveListener l)
     {
-        if(listeners.contains(l)==false)
+        if(!listeners.contains(l))
         {
             listeners.add(l);
         }
@@ -806,7 +798,7 @@ implements ModbusPalXML, ModbusConst
      */
     public void removeModbusSlaveListener(ModbusSlaveListener l)
     {
-        if(listeners.contains(l)==true )
+        if(listeners.contains(l))
         {
             listeners.remove(l);
         }
@@ -901,14 +893,14 @@ implements ModbusPalXML, ModbusConst
 
         tag = new StringBuilder();
         tag.append("<").append(XML_REPLYDELAY_TAG);
-        tag.append(" min=\"").append(String.valueOf(minReplyDelay));
-        tag.append("\" max=\"").append( String.valueOf(maxReplyDelay) );
+        tag.append(" min=\"").append(minReplyDelay);
+        tag.append("\" max=\"").append(maxReplyDelay);
         tag.append("\" />\r\n");
         out.write( tag.toString().getBytes() );
 
         tag = new StringBuilder();
         tag.append("<").append(XML_ERRORRATES_TAG);
-        tag.append(" "+XML_ERRORRATES_NOREPLY_ATTRIBUTE+"=\"").append(String.valueOf(noReplyRate)).append("\"");
+        tag.append(" "+XML_ERRORRATES_NOREPLY_ATTRIBUTE+"=\"").append(noReplyRate).append("\"");
         tag.append(" />\r\n");
         out.write( tag.toString().getBytes() );
 

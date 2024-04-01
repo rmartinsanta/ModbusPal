@@ -18,5 +18,5 @@ public interface ModbusPalProjectListener
      * @param oldProject reference on the previous project, being replaced
      * @param newProject reference on the new project
      */
-    public void modbusPalProjectChanged(ModbusPalProject oldProject, ModbusPalProject newProject);
+    void modbusPalProjectChanged(ModbusPalProject oldProject, ModbusPalProject newProject);
 }

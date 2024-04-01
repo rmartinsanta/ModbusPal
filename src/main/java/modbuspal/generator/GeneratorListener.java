@@ -17,13 +17,13 @@ public interface GeneratorListener
      * values.
      * @param gen the generator that has just ended
      */
-    public void generatorHasEnded(Generator gen);
+    void generatorHasEnded(Generator gen);
 
     /**
      * A generator will trigger this method when it has started generating
      * values.
      * @param gen the generator that has just started
      */
-    public void generatorHasStarted(Generator gen);
+    void generatorHasStarted(Generator gen);
    
 }

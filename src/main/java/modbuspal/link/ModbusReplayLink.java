@@ -5,17 +5,14 @@
 
 package modbuspal.link;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import modbuspal.main.ModbusPalProject;
 import modbuspal.master.ModbusMasterRequest;
 import modbuspal.recorder.ModbusPalRecord;
 import modbuspal.slave.ModbusSlaveAddress;
+
+import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * The replay link reproduces the incoming requests from a previously recorded
@@ -98,7 +95,7 @@ implements ModbusLink, Runnable
 
         long prev_timestamp = 0;
 
-        while(executeThread == true)
+        while(executeThread)
         {
             try
             {
@@ -131,7 +128,7 @@ implements ModbusLink, Runnable
             }
             catch (Exception ex)
             {
-                if( Thread.interrupted() == false )
+                if(!Thread.interrupted())
                 {
                     Logger.getLogger(ModbusReplayLink.class.getName()).log(Level.SEVERE, null, ex);
                 }

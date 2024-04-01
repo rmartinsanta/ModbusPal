@@ -32,11 +32,9 @@ import org.xml.sax.SAXException;
 import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
-import java.awt.Dialog.ModalExclusionType;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -58,7 +56,7 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
      */
     public static final String BASE_REGISTRY_KEY = "modbuspal";
 
-    private ArrayList<ModbusPalProjectListener> listeners = new ArrayList<ModbusPalProjectListener>();
+    private final ArrayList<ModbusPalProjectListener> listeners = new ArrayList<ModbusPalProjectListener>();
 
     private ModbusMasterDialog modbusMasterDialog = null;
     private ModbusLink currentLink = null;
@@ -72,7 +70,7 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
      * @param l the listener to add
      */
     public void addModbusPalProjectListener(ModbusPalProjectListener l) {
-        if (listeners.contains(l) == false) {
+        if (!listeners.contains(l)) {
             listeners.add(l);
         }
     }
@@ -83,7 +81,7 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
      * @param l the listener to remove
      */
     public void removeModbusPalProjectListener(ModbusPalProjectListener l) {
-        if (listeners.contains(l) == true) {
+        if (listeners.contains(l)) {
             listeners.remove(l);
         }
     }
@@ -184,11 +182,11 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
     }
 
 
-    public void saveProject() throws FileNotFoundException, IOException {
+    public void saveProject() throws IOException {
         saveProject(modbusPalProject.projectFile);
     }
 
-    public void saveProject(File projectFile) throws FileNotFoundException, IOException {
+    public void saveProject(File projectFile) throws IOException {
         System.out.printf("[%s] Save project\r\n", modbusPalProject.getName());
 
         // update selected link tab:
@@ -308,10 +306,9 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
 
     private void installCommPorts() {
         // check if RXTX Comm lib is available
-        if (verifyRXTX() == false) {
+        if (!verifyRXTX()) {
             CardLayout layout = (CardLayout) jPanel1.getLayout();
             layout.show(jPanel1, "disabled");
-            return;
         }
     }
 
@@ -838,7 +835,6 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
             dialog.append("The following exception occured:" + ex.getClass().getSimpleName() + "\r\n");
             dialog.append("Message:" + ex.getLocalizedMessage());
             dialog.setVisible(true);
-            return;
         }
     }
 
@@ -868,7 +864,6 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
             dialog.append("The following exception occured:" + ex.getClass().getSimpleName() + "\r\n");
             dialog.append("Message:" + ex.getLocalizedMessage());
             dialog.setVisible(true);
-            return;
         }
     }
 
@@ -953,7 +948,7 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
     private void runToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_runToggleButtonActionPerformed
 
         // if run button is toggled, start the link
-        if (runToggleButton.isSelected() == true) {
+        if (runToggleButton.isSelected()) {
             startLink();
         }
 
@@ -974,7 +969,7 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
             //slave.setName(name);
             //ModbusPal.addModbusSlave(slave);
 
-            ModbusSlaveAddress ids[] = dialog.getTargetList();
+            ModbusSlaveAddress[] ids = dialog.getTargetList();
             String name = dialog.getTargetName();
             for (int i = 0; i < ids.length; i++) {
                 ModbusSlave slave = new ModbusSlave(ids[i]);
@@ -1094,7 +1089,7 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
 
     private void addAutomationButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addAutomationButtonActionPerformed
 
-        String name = Automation.DEFAULT_NAME + " #" + String.valueOf(modbusPalProject.idGenerator.createID());
+        String name = Automation.DEFAULT_NAME + " #" + modbusPalProject.idGenerator.createID();
         Automation automation = new Automation(name);
         modbusPalProject.addAutomation(automation);
 
@@ -1108,7 +1103,7 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
      */
     private void masterToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_masterToggleButtonActionPerformed
 
-        if (masterToggleButton.isSelected() == true) {
+        if (masterToggleButton.isSelected()) {
             if (modbusMasterDialog == null) {
                 modbusMasterDialog = new ModbusMasterDialog(this);
                 modbusMasterDialog.addWindowListener(this);
@@ -1144,7 +1139,7 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
      */
     private void enableAllSlavesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_enableAllSlavesButtonActionPerformed
 
-        ModbusSlave slaves[] = modbusPalProject.getModbusSlaves();
+        ModbusSlave[] slaves = modbusPalProject.getModbusSlaves();
         for (int i = 0; i < slaves.length; i++) {
             if (slaves[i] != null) {
                 slaves[i].setEnabled(true);
@@ -1158,7 +1153,7 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
 
     private void disableAllSlavesButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_disableAllSlavesButtonActionPerformed
 
-        ModbusSlave slaves[] = modbusPalProject.getModbusSlaves();
+        ModbusSlave[] slaves = modbusPalProject.getModbusSlaves();
         for (int i = 0; i < slaves.length; i++) {
             if (slaves[i] != null) {
                 slaves[i].setEnabled(false);
@@ -1175,7 +1170,7 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
      */
     public void startAllAutomations() {
         System.out.printf("[%s] Start all automations\r\n", modbusPalProject.getName());
-        Automation automations[] = modbusPalProject.getAutomations();
+        Automation[] automations = modbusPalProject.getAutomations();
         for (int i = 0; i < automations.length; i++) {
             automations[i].start();
         }
@@ -1186,7 +1181,7 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
      */
     public void stopAllAutomations() {
         System.out.printf("[%s] Stop all automations\r\n", modbusPalProject.getName());
-        Automation automations[] = modbusPalProject.getAutomations();
+        Automation[] automations = modbusPalProject.getAutomations();
         for (int i = 0; i < automations.length; i++) {
             automations[i].stop();
         }
@@ -1240,7 +1235,7 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
 
     private void consoleToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_consoleToggleButtonActionPerformed
 
-        if (consoleToggleButton.isSelected() == true) {
+        if (consoleToggleButton.isSelected()) {
             GUITools.align(this, console);
             console.setVisible(true);
         } else {
@@ -1411,10 +1406,9 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
 
 
     private ModbusSlavePanel findModbusSlavePanel(ModbusSlaveAddress slaveId) {
-        Component panels[] = slavesListPanel.getComponents();
+        Component[] panels = slavesListPanel.getComponents();
         for (int i = 0; i < panels.length; i++) {
-            if (panels[i] instanceof ModbusSlavePanel) {
-                ModbusSlavePanel panel = (ModbusSlavePanel) panels[i];
+            if (panels[i] instanceof ModbusSlavePanel panel) {
                 if (panel.getSlaveId().equals(slaveId)) {
                     return panel;
                 }
@@ -1457,10 +1451,9 @@ public class ModbusPalPane extends JPanel implements ModbusPalXML, WindowListene
 
 
     private AutomationPanel findAutomationPanel(Automation automation) {
-        Component panels[] = automationsListPanel.getComponents();
+        Component[] panels = automationsListPanel.getComponents();
         for (int i = 0; i < panels.length; i++) {
-            if (panels[i] instanceof AutomationPanel) {
-                AutomationPanel panel = (AutomationPanel) panels[i];
+            if (panels[i] instanceof AutomationPanel panel) {
                 if (panel.getAutomation() == automation) {
                     return panel;
                 }

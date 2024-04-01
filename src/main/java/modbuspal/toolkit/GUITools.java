@@ -5,18 +5,13 @@
 
 package modbuspal.toolkit;
 
-import java.awt.Component;
-import java.awt.Container;
-import java.awt.Font;
-import java.awt.Frame;
-import java.awt.Point;
-import java.awt.Window;
+import modbuspal.main.ErrorMessage;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.font.TextAttribute;
 import java.io.File;
 import java.util.Map;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import modbuspal.main.ErrorMessage;
 
 /**
  * various tools for Swing
@@ -36,9 +31,8 @@ public class GUITools
     {
         comp.setEnabled(b);
 
-        if( comp instanceof Container )
+        if(comp instanceof Container ct)
         {
-            Container ct = (Container)comp;
             Component[] comps = ct.getComponents();
             for( int i=0; i<comps.length; i++ )
             {

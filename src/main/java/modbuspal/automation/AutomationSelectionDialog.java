@@ -13,9 +13,6 @@ package modbuspal.automation;
 
 import modbuspal.toolkit.FileTools;
 
-import java.awt.Image;
-import java.awt.Toolkit;
-
 /**
  * A dialog for the user to select an automation from a list
  * @author nnovic
@@ -135,7 +132,7 @@ extends javax.swing.JDialog
      */
     public Automation getSelectedAutomation()
     {
-        if(isOK==false)
+        if(!isOK)
         {
             return null;
         }

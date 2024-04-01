@@ -5,7 +5,6 @@
 package modbuspal.master;
 
 import modbuspal.main.ModbusConst;
-import modbuspal.slave.ModbusCoils;
 
 /**
  *
@@ -597,9 +596,8 @@ extends javax.swing.JDialog
 
     void initializeWith(ModbusMasterRequest mmr) 
     {
-        if( mmr instanceof ModbusMasterDelay )
+        if(mmr instanceof ModbusMasterDelay mmd)
         {
-            ModbusMasterDelay mmd = (ModbusMasterDelay)mmr;
             actionSelectorTabbedPane.setSelectedComponent(delayPanel);
             delayTextField.setValue( mmd.getDelay() );
             return;

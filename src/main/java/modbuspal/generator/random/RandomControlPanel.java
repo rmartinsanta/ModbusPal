@@ -18,7 +18,7 @@ package modbuspal.generator.random;
 public class RandomControlPanel
 extends javax.swing.JPanel
 {
-    private RandomGenerator generator;
+    private final RandomGenerator generator;
     
     /** Creates new form RandomControlPanel 
      * @param gen the random generator whose parameters are being displayed by this component

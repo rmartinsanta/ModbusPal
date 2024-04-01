@@ -6,12 +6,13 @@
 package modbuspal.generator.linear;
 
 import modbuspal.generator.Generator;
-import java.io.IOException;
-import java.io.OutputStream;
-import javax.swing.JPanel;
 import modbuspal.toolkit.XMLTools;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import javax.swing.*;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * The Linear generator
@@ -20,7 +21,7 @@ import org.w3c.dom.NodeList;
 public class LinearGenerator
 extends Generator
 {
-    private LinearControlPanel panel;
+    private final LinearControlPanel panel;
     double startValue = 0.0;
     double endValue = 0.0;
     boolean relativeStart = false;
@@ -39,13 +40,13 @@ extends Generator
     public double getValue(double time)
     {
         double y1 = startValue;
-        if( relativeStart == true )
+        if(relativeStart)
         {
             y1 += getInitialValue();
         }
 
         double y2 = endValue;
-        if( relativeEnd == true )
+        if(relativeEnd)
         {
             y2 += y1;
         }
@@ -57,17 +58,15 @@ extends Generator
     public void saveGeneratorSettings(OutputStream out)
     throws IOException
     {
-        StringBuilder start = new StringBuilder("<start");
-        start.append(" value=\"").append(String.valueOf(startValue)).append("\"");
-        start.append(" relative=\"").append(Boolean.toString(relativeStart)).append("\"");
-        start.append("/>\r\n");
-        out.write( start.toString().getBytes() );
+        String start = "<start" + " value=\"" + startValue + "\"" +
+                " relative=\"" + relativeStart + "\"" +
+                "/>\r\n";
+        out.write(start.getBytes() );
 
-        StringBuilder end = new StringBuilder("<end");
-        end.append(" value=\"").append(String.valueOf(endValue)).append("\"");
-        end.append(" relative=\"").append(Boolean.toString(relativeEnd)).append("\"");
-        end.append("/>\r\n");
-        out.write( end.toString().getBytes() );
+        String end = "<end" + " value=\"" + endValue + "\"" +
+                " relative=\"" + relativeEnd + "\"" +
+                "/>\r\n";
+        out.write(end.getBytes() );
     }
 
     @Override
@@ -91,7 +90,7 @@ extends Generator
         relativeEnd = Boolean.parseBoolean(endRel);
 
         // update generator's panel
-        panel.endTextField.setText( String.valueOf(endVal) );
+        panel.endTextField.setText(endVal);
         panel.endRelativeCheckBox.setSelected(relativeEnd);
     }
 

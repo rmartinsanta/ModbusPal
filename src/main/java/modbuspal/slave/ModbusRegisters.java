@@ -5,33 +5,27 @@
 
 package modbuspal.slave;
 
+import modbuspal.binding.Binding;
+import modbuspal.link.ModbusSlaveProcessor;
+import modbuspal.main.ModbusConst;
+import modbuspal.main.ModbusPalXML;
+import modbuspal.main.ModbusValuesMap;
+import modbuspal.master.ModbusMasterRequest;
+import modbuspal.toolkit.ModbusTools;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.swing.*;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableModel;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
-import javax.swing.JPanel;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
-import modbuspal.binding.Binding;
-import modbuspal.link.ModbusSlaveProcessor;
-import modbuspal.main.ModbusConst;
-import static modbuspal.main.ModbusConst.FC_READ_HOLDING_REGISTERS;
-import static modbuspal.main.ModbusConst.FC_READ_WRITE_MULTIPLE_REGISTERS;
-import static modbuspal.main.ModbusConst.FC_WRITE_MULTIPLE_REGISTERS;
-import static modbuspal.main.ModbusConst.FC_WRITE_SINGLE_REGISTER;
-import static modbuspal.main.ModbusConst.XC_ILLEGAL_DATA_ADDRESS;
-import static modbuspal.main.ModbusConst.XC_ILLEGAL_DATA_VALUE;
-import static modbuspal.main.ModbusConst.XC_SUCCESSFUL;
-import modbuspal.main.ModbusValuesMap;
-import modbuspal.main.ModbusPalXML;
-import modbuspal.master.ModbusMasterRequest;
-import modbuspal.toolkit.ModbusTools;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * Storage for the holding registers of a modbus slave
@@ -77,10 +71,10 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
     /** defines the plural form of the TXT_REGISTER word. */
     protected String TXT_REGISTERS = "registers";
 
-    private ModbusValuesMap values = new ModbusValuesMap();
-    private HashMap<Integer,String> names = new HashMap<Integer,String>(65536);
-    private ArrayList<TableModelListener> tableModelListeners = new ArrayList<TableModelListener>();
-    private HashMap<Integer,Binding> bindings = new HashMap<Integer,Binding>(65536);
+    private final ModbusValuesMap values = new ModbusValuesMap();
+    private final HashMap<Integer,String> names = new HashMap<Integer,String>(65536);
+    private final ArrayList<TableModelListener> tableModelListeners = new ArrayList<TableModelListener>();
+    private final HashMap<Integer,Binding> bindings = new HashMap<Integer,Binding>(65536);
     private int addressOffset = 1;
 
     //==========================================================================
@@ -181,13 +175,13 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
         }
 
         // verify that registers to be read exist:
-        if( exist(readStartingAddress,quantityToRead,createIfNotExist) == false )
+        if(!exist(readStartingAddress, quantityToRead, createIfNotExist))
         {
             return ModbusSlaveProcessor.makeExceptionResponse(functionCode, XC_ILLEGAL_DATA_VALUE, buffer, offset);
         }
 
         // verify that registers to be written exist:
-        if( exist(writeStartingAddress,quantityToWrite,createIfNotExist) == false )
+        if(!exist(writeStartingAddress, quantityToWrite, createIfNotExist))
         {
             return ModbusSlaveProcessor.makeExceptionResponse(functionCode, XC_ILLEGAL_DATA_VALUE, buffer, offset);
         }
@@ -232,18 +226,18 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
         }
 
         // verify that registers to be read exist:
-        if( exist(readStartingAddress,quantityToRead,createIfNotExist) == false )
+        if(!exist(readStartingAddress, quantityToRead, createIfNotExist))
         {
             return -1;
         }
 
         // verify that registers to be written exist:
-        if( exist(writeStartingAddress,quantityToWrite,createIfNotExist) == false )
+        if(!exist(writeStartingAddress, quantityToWrite, createIfNotExist))
         {
             return -1;
         }
 
-        buffer[offset+0] = req.getFunctionCode();
+        buffer[offset] = req.getFunctionCode();
         ModbusTools.setUint16(buffer, offset+1, readStartingAddress);
         ModbusTools.setUint16(buffer, offset+3, quantityToRead);
         ModbusTools.setUint16(buffer, offset+5, writeStartingAddress);
@@ -273,16 +267,13 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
         }
 
         // verify that registers to be read exist:
-        if( exist(readStartingAddress,quantityToRead,createIfNotExist) == false )
+        if(!exist(readStartingAddress, quantityToRead, createIfNotExist))
         {
             return false;
         }
 
         byte rc = setValues(readStartingAddress, quantityToRead, buffer, offset+2);
-        if( rc != XC_SUCCESSFUL )
-        {
-            return false;
-        }
+        return rc == XC_SUCCESSFUL;
 
         /*// then perform read operation:
         buffer[offset+1] = (byte) (2*quantityToRead);
@@ -291,8 +282,6 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
             Integer reg = getValue(readStartingAddress+i);
             ModbusTools.setUint16(buffer, offset+2+(2*i), reg);
         }*/
-
-        return true;
     }
     
     
@@ -310,7 +299,7 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
             return ModbusSlaveProcessor.makeExceptionResponse(functionCode, XC_ILLEGAL_DATA_VALUE, buffer, offset);
         }
 
-        if( exist(startingAddress,quantity, createIfNotExist) == false )
+        if(!exist(startingAddress, quantity, createIfNotExist))
         {
             return ModbusSlaveProcessor.makeExceptionResponse(functionCode, XC_ILLEGAL_DATA_ADDRESS, buffer, offset);
         }
@@ -336,12 +325,12 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
             return -1;
         }
 
-        if( exist(startingAddress,quantity, createIfNotExist) == false )
+        if(!exist(startingAddress, quantity, createIfNotExist))
         {
             return -1;
         }
         
-        buffer[offset+0] = req.getFunctionCode();
+        buffer[offset] = req.getFunctionCode();
         ModbusTools.setUint16(buffer, offset+1, startingAddress);
         ModbusTools.setUint16(buffer, offset+3, quantity);
         ModbusTools.setUint8(buffer, offset+5, byteCount);
@@ -369,11 +358,8 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
         {
             return false;
         }
-                
-        if( exist(startingAddress,quantity, createIfNotExist) == false )
-        {
-            return false;
-        }
+
+        return exist(startingAddress, quantity, createIfNotExist);
 
         /*byte rc = setValues(startingAddress, quantity, buffer, offset+6);
         if( rc != XC_SUCCESSFUL )
@@ -382,7 +368,6 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
         }
 
         return 5;*/
-        return true;
     }
 
     
@@ -391,7 +376,7 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
     {
         int address = ModbusTools.getUint16(buffer, offset+1);
 
-        if( exist(address, 1, createIfNotExist) == false )
+        if(!exist(address, 1, createIfNotExist))
         {
             return ModbusSlaveProcessor.makeExceptionResponse(functionCode, XC_ILLEGAL_DATA_ADDRESS, buffer, offset);
         }
@@ -412,14 +397,14 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
     {
         int address = req.getWriteAddress();
 
-        if( exist(address, 1, createIfNotExist) == false )
+        if(!exist(address, 1, createIfNotExist))
         {
             return -1;
         }
 
         int value = getValue(address);
         
-        buffer[offset+0] = req.getFunctionCode();
+        buffer[offset] = req.getFunctionCode();
         ModbusTools.setUint16(buffer, offset+1, address);
         ModbusTools.setUint16(buffer, offset+3, value);
 
@@ -430,10 +415,7 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
     {
         int address = req.getWriteAddress();
 
-        if( exist(address, 1, createIfNotExist) == false )
-        {
-            return false;
-        }
+        return exist(address, 1, createIfNotExist);
 
         /*Integer reg = ModbusTools.getUint16(buffer, offset + 3);
         byte rc = setValue(address,reg);
@@ -443,7 +425,6 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
         }
 
         return 5;*/
-        return true;
     }
 
     
@@ -460,7 +441,7 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
             return ModbusSlaveProcessor.makeExceptionResponse(functionCode, XC_ILLEGAL_DATA_VALUE, buffer, offset);
         }
 
-        if( exist(startingAddress,quantity,createIfNotExist) == false )
+        if(!exist(startingAddress, quantity, createIfNotExist))
         {
             return ModbusSlaveProcessor.makeExceptionResponse(functionCode, XC_ILLEGAL_DATA_ADDRESS, buffer, offset);
         }
@@ -481,7 +462,7 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
     
     private int buildReadMultipleRegistersRequest(ModbusMasterRequest req, byte[] buffer, int offset, boolean createIfNotExist)
     {
-        ModbusTools.setUint8(buffer, offset+0, req.getFunctionCode()); // function code
+        ModbusTools.setUint8(buffer, offset, req.getFunctionCode()); // function code
         ModbusTools.setUint16(buffer, offset+1, req.getReadAddress()); // starting address
         ModbusTools.setUint16(buffer, offset+3, req.getReadQuantity()); // quantity of registers
         return 5;
@@ -500,7 +481,7 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
             return false;
         }
 
-        if( exist(startingAddress,quantity,createIfNotExist) == false )
+        if(!exist(startingAddress, quantity, createIfNotExist))
         {
             return false;
         }
@@ -661,7 +642,7 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
      */
     byte setValueSilent(int index, int val)
     {
-        if( values.indexExists(index) == false )
+        if(!values.indexExists(index))
         {
             return XC_ILLEGAL_DATA_ADDRESS;
         }
@@ -831,9 +812,9 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
         for( int i=0; i<quantity; i++ )
         {
             int address = startingIndex + i;
-            if( exist(address) == false )
+            if(!exist(address))
             {
-                if( createIfNotExist==true )
+                if(createIfNotExist)
                 {
                     create(address, 1);
                 }
@@ -858,11 +839,7 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
     {
         assert( index >= 0 );
 
-        if( values.indexExists(index) == false )
-        {
-            return false;
-        }
-        return true;
+        return values.indexExists(index);
     }
 
 
@@ -919,7 +896,7 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
     RegisterCopy copy (ModbusRegisters source, int sourceIndex)
     {
         // AddIndexes the register if necessary
-        if( values.indexExists(sourceIndex) == false )
+        if(!values.indexExists(sourceIndex))
         {
             return null;
         }
@@ -997,7 +974,7 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
     public void removeAllBindings(String classname)
     {
         Set<Integer> addressesSet = bindings.keySet();
-        Integer addressesArray[] = new Integer[0];
+        Integer[] addressesArray = new Integer[0];
         addressesArray = addressesSet.toArray(addressesArray);
         for(int i=0; i<addressesArray.length; i++)
         {
@@ -1038,7 +1015,7 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
             case VALUE_COLUMN_INDEX: return "Value";
             case NAME_COLUMN_INDEX: return "Name";
             case BINDING_COLUMN_INDEX: return "Binding";
-            default: return "Column " + String.valueOf(columnIndex);
+            default: return "Column " + columnIndex;
         }
     }
 
@@ -1145,9 +1122,8 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
 
             case NAME_COLUMN_INDEX:
             {
-                if( aValue instanceof String )
+                if(aValue instanceof String val)
                 {
-                    String val = (String)aValue;
                     names.put(index, val);
                     notifyTableChanged(rowIndex,columnIndex);
                 }
@@ -1210,7 +1186,7 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
         for(Binding b:en)
         {
             String n = b.getAutomationName();
-            if( automationNames.contains(n)==false )
+            if(!automationNames.contains(n))
             {
                 automationNames.add(n);
             }
@@ -1255,11 +1231,11 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
             int index = values.getIndexOf(i);
 
             StringBuilder tag = new StringBuilder("<"+TXT_REGISTER+" "+ XML_ADDRESS_ATTRIBUTE +"=\"");
-            tag.append(String.valueOf(index));
+            tag.append(index);
             tag.append("\" value=\"");
             
             int val = values.getByIndex(index);
-            tag.append(String.valueOf(val));
+            tag.append(val);
             tag.append("\"");
 
             String name= names.get(index);
@@ -1271,7 +1247,7 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
             }
 
             Binding binding = bindings.get(index);
-            if( (binding==null) || (withBindings==false) )
+            if( (binding==null) || (!withBindings) )
             {
                 tag.append("/>\r\n");
                 out.write( tag.toString().getBytes() );
@@ -1319,11 +1295,11 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
 
             if( nodeName.compareTo(XML_ADDRESS_ATTRIBUTE)==0 )
             {
-                address = new Integer( attr.getNodeValue() );
+                address = Integer.valueOf(attr.getNodeValue());
             }
             else if( nodeName.compareTo("value")==0 )
             {
-                value = new Integer( attr.getNodeValue() );
+                value = Integer.valueOf(attr.getNodeValue());
             }
             else if( nodeName.compareTo("name")==0 )
             {
@@ -1335,7 +1311,7 @@ implements ModbusPduProcessor, TableModel, ModbusPalXML, ModbusConst
         assert( address != null );
         assert( value != null );
 
-        if( values.indexExists(address)==false )
+        if(!values.indexExists(address))
         {
             values.addIndex(address);
         }

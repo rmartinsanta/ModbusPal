@@ -14,12 +14,10 @@
  */
 package modbuspal.generator;
 
-import modbuspal.automation.*;
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.awt.Container;
-import javax.swing.JPanel;
-import javax.swing.UIManager;
+import modbuspal.automation.AutomationEditor;
+
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Builds a Swing panel which is embedded into the AutomationEditor and represents
@@ -31,9 +29,9 @@ extends javax.swing.JPanel
 implements GeneratorListener
 {
 
-    private Generator generator;
-    private JPanel customPanel;
-    private AutomationEditor editor;
+    private final Generator generator;
+    private final JPanel customPanel;
+    private final AutomationEditor editor;
 
 
     /** Creates new form GeneratorRenderer
@@ -66,9 +64,8 @@ implements GeneratorListener
     {
         comp.setEnabled(enabled);
 
-        if( comp instanceof Container )
+        if(comp instanceof Container container)
         {
-            Container container = (Container)comp;
             int nb = container.getComponentCount();
             for( int i=0; i<nb; i++ )
             {

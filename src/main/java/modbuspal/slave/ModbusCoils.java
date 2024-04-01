@@ -7,12 +7,6 @@ package modbuspal.slave;
 
 import modbuspal.binding.Binding;
 import modbuspal.link.ModbusSlaveProcessor;
-import static modbuspal.main.ModbusConst.FC_READ_COILS;
-import static modbuspal.main.ModbusConst.FC_READ_DISCRETE_INPUTS;
-import static modbuspal.main.ModbusConst.FC_WRITE_MULTIPLE_COILS;
-import static modbuspal.main.ModbusConst.FC_WRITE_SINGLE_COIL;
-import static modbuspal.main.ModbusConst.XC_ILLEGAL_DATA_ADDRESS;
-import static modbuspal.main.ModbusConst.XC_ILLEGAL_DATA_VALUE;
 import modbuspal.master.ModbusMasterRequest;
 import modbuspal.toolkit.ModbusTools;
 
@@ -85,7 +79,7 @@ extends ModbusRegisters
             return ModbusSlaveProcessor.makeExceptionResponse(functionCode, XC_ILLEGAL_DATA_VALUE, buffer, offset);
         }
 
-        if( exist(startingAddress,quantity,createIfNotExist) == false )
+        if(!exist(startingAddress, quantity, createIfNotExist))
         {
             return ModbusSlaveProcessor.makeExceptionResponse(functionCode, XC_ILLEGAL_DATA_ADDRESS, buffer, offset);
         }
@@ -112,12 +106,12 @@ extends ModbusRegisters
             return -1;
         }
 
-        if( exist(startingAddress,quantity,createIfNotExist) == false )
+        if(!exist(startingAddress, quantity, createIfNotExist))
         {
             return -1;
         }
 
-        buffer[offset+0] = req.getFunctionCode();
+        buffer[offset] = req.getFunctionCode();
         ModbusTools.setUint16(buffer, offset+1, startingAddress);
         ModbusTools.setUint16(buffer, offset+3, quantity);
         ModbusTools.setUint8(buffer, offset+5, byteCount);
@@ -143,7 +137,7 @@ extends ModbusRegisters
             return ModbusSlaveProcessor.makeExceptionResponse(functionCode, XC_ILLEGAL_DATA_VALUE, buffer, offset);
         }
 
-        if( exist(outputAddress, 1, createIfNotExist) == false )
+        if(!exist(outputAddress, 1, createIfNotExist))
         {
             return ModbusSlaveProcessor.makeExceptionResponse(functionCode, XC_ILLEGAL_DATA_ADDRESS, buffer, offset);
         }
@@ -162,12 +156,12 @@ extends ModbusRegisters
     {
         int outputAddress = req.getWriteAddress();
 
-        if( exist(outputAddress, 1, createIfNotExist) == false )
+        if(!exist(outputAddress, 1, createIfNotExist))
         {
             return -1;
         }
 
-        buffer[offset+0] = req.getFunctionCode();
+        buffer[offset] = req.getFunctionCode();
         ModbusTools.setUint16(buffer, offset+1, outputAddress);
         
         int outputValue = getValue(outputAddress);
@@ -197,7 +191,7 @@ extends ModbusRegisters
             return ModbusSlaveProcessor.makeExceptionResponse(functionCode, XC_ILLEGAL_DATA_VALUE, buffer, offset);
         }
 
-        if( exist(startingAddress,quantity, createIfNotExist) == false )
+        if(!exist(startingAddress, quantity, createIfNotExist))
         {
             return ModbusSlaveProcessor.makeExceptionResponse(functionCode, XC_ILLEGAL_DATA_ADDRESS, buffer, offset);
         }
@@ -223,12 +217,12 @@ extends ModbusRegisters
             return -1;
         }
 
-        if( exist(startingAddress,quantity, createIfNotExist) == false )
+        if(!exist(startingAddress, quantity, createIfNotExist))
         {
             return -1;
         }
 
-        buffer[offset+0] = req.getFunctionCode();
+        buffer[offset] = req.getFunctionCode();
         ModbusTools.setUint16(buffer, offset+1, startingAddress);
         ModbusTools.setUint16(buffer, offset+3, quantity);
         
@@ -251,7 +245,7 @@ extends ModbusRegisters
             return false;
         }
 
-        if( exist(startingAddress,quantity,createIfNotExist) == false )
+        if(!exist(startingAddress, quantity, createIfNotExist))
         {
             return false;
         }
@@ -269,7 +263,7 @@ extends ModbusRegisters
     @Override
     protected int getValue(Binding binding)
     {
-        if( binding.getCoil()==true )
+        if(binding.getCoil())
         {
             return 1;
         }

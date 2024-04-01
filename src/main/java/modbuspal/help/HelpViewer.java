@@ -13,14 +13,12 @@ package modbuspal.help;
 
 import modbuspal.toolkit.FileTools;
 
-import java.awt.Image;
-import java.awt.Toolkit;
+import javax.swing.*;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
-import javax.swing.JFrame;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
 /**
  * The JFrame that contains the HelpViewerPane
@@ -101,7 +99,7 @@ implements HyperlinkListener
     /**
     * @param args the command line arguments
     */
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 HelpViewer hv = new HelpViewer();
@@ -122,7 +120,7 @@ implements HyperlinkListener
     throws IOException
     {
         String file = url.getFile();
-        String parts[] = file.split("[/\\\\]");
+        String[] parts = file.split("[/\\\\]");
         addTab(parts[parts.length-1], url);
     }
     

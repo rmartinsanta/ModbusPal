@@ -5,13 +5,13 @@
 
 package modbuspal.automation;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import javax.swing.ComboBoxModel;
-import javax.swing.ListModel;
+import modbuspal.main.ModbusPalProject;
+
+import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
-import modbuspal.main.ModbusPalProject;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Defines a list of automations
@@ -20,7 +20,7 @@ import modbuspal.main.ModbusPalProject;
 public class AutomationListModel
 implements ListModel, ComboBoxModel
 {    
-    private ArrayList<Automation> automations = new ArrayList<Automation>();
+    private final ArrayList<Automation> automations = new ArrayList<Automation>();
     private String selectedAutomation = null;
     private final ArrayList<ListDataListener> listeners = new ArrayList<ListDataListener>();
 
@@ -119,14 +119,14 @@ implements ListModel, ComboBoxModel
 
     @Override
     public void addListDataListener(ListDataListener l) {
-        if(listeners.contains(l)==false){
+        if(!listeners.contains(l)){
             listeners.add(l);
         }
     }
 
     @Override
     public void removeListDataListener(ListDataListener l) {
-        if( listeners.contains(l)==true ){
+        if(listeners.contains(l)){
             listeners.remove(l);
         }
     }
@@ -145,9 +145,9 @@ implements ListModel, ComboBoxModel
         // check that the object to select actually belongs to the list:
         for(Automation a:automations )
         {
-            if( a.getName().compareTo(s)==0 )
-            {
+            if (a.getName().compareTo(s) == 0) {
                 selectedAutomation = s;
+                break;
             }
         }
     }

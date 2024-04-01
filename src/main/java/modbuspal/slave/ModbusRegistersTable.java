@@ -5,7 +5,7 @@
 
 package modbuspal.slave;
 
-import javax.swing.JTable;
+import javax.swing.*;
 import javax.swing.table.TableModel;
 
 /**
@@ -43,8 +43,8 @@ extends JTable
 
     public int[] getSelectedAddresses()
     {
-        int rows[] = getSelectedRows();
-        int addresses[] = new int[ rows.length ];
+        int[] rows = getSelectedRows();
+        int[] addresses = new int[ rows.length ];
 
         int col = findColumn(ModbusRegisters.ADDRESS_COLUMN_NAME);
         for(int i=0; i<rows.length; i++ )

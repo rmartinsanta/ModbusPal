@@ -11,13 +11,14 @@
 
 package modbuspal.slave;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JTable;
-import javax.swing.table.AbstractTableModel;
 import modbuspal.instanciator.InstantiableManager;
 import modbuspal.main.ModbusConst;
 import modbuspal.toolkit.GUITools;
+
+import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -180,7 +181,6 @@ implements ModbusConst
         
         if( rowCount <= 0 )
         {
-            return;
         }
 
         else
@@ -200,7 +200,7 @@ implements ModbusConst
 
              // get the selected rows
             //int selectedAddresses[] = ((ModbusRegistersTable)functionsTable).getSelectedAddresses();
-            int selectedRows[] = functionsTable.getSelectedRows();
+            int[] selectedRows = functionsTable.getSelectedRows();
 
             // bind all selected registers
             for(int i=0;i<selectedRows.length;i++)
@@ -233,14 +233,13 @@ implements ModbusConst
 
         if( rowCount <= 0 )
         {
-            return;
         }
 
         else
         {
              // get the selected rows
             //int selectedAddresses[] = ((ModbusRegistersTable)functionsTable).getSelectedAddresses();
-            int selectedRows[] = functionsTable.getSelectedRows();
+            int[] selectedRows = functionsTable.getSelectedRows();
 
             // bind all selected registers
             for(int i=0;i<selectedRows.length;i++)

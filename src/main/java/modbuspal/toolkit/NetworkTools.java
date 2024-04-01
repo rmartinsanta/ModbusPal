@@ -26,7 +26,7 @@ public class NetworkTools
             while(addresses.hasMoreElements())
             {
                 InetAddress address = addresses.nextElement();
-                if(a.equals(address)==true)
+                if(a.equals(address))
                 {
                     return true;
                 }

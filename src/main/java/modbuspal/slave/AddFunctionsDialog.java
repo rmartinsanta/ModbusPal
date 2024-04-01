@@ -11,17 +11,14 @@
 
 package modbuspal.slave;
 
-import java.awt.Frame;
-import java.awt.Image;
-import java.awt.Toolkit;
+import modbuspal.instanciator.InstantiableManager;
+import modbuspal.toolkit.FileTools;
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.AbstractListModel;
-import javax.swing.ComboBoxModel;
-import javax.swing.DefaultComboBoxModel;
-import modbuspal.instanciator.InstantiableManager;
-import modbuspal.toolkit.FileTools;
 
 /**
  * the dialog where the user selects a ModbusPduProcessor to associate with
@@ -43,7 +40,7 @@ extends javax.swing.JDialog
         private final String[] names;
         private String selectedInstance;
 
-        ListOfInstances(ModbusPduProcessor tab[])
+        ListOfInstances(ModbusPduProcessor[] tab)
         {
             names = new String[tab.length];
             for(int i=0; i<tab.length; i++)
@@ -246,7 +243,7 @@ extends javax.swing.JDialog
 
     ModbusPduProcessor getInstance()
     {
-        if( isOK == false )
+        if(!isOK)
         {
             return null;
         }

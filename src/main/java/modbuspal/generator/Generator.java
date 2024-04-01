@@ -5,20 +5,18 @@
 
 package modbuspal.generator;
 
-import java.awt.BorderLayout;
+import modbuspal.instanciator.Instantiable;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import modbuspal.instanciator.Instantiable;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * A generator creates a dynamic value to be used in automations. This class
@@ -33,7 +31,7 @@ implements Instantiable<Generator>
     private ImageIcon icon;
     private double duration = 10;
     private double initialValue = 0.0;
-    private JPanel controlPanel;
+    private final JPanel controlPanel;
 
     /**
      * Constructor of the Generator class. Creates a generator with default
@@ -258,11 +256,10 @@ implements Instantiable<Generator>
     
     private String createOpenTag()
     {
-        StringBuilder tag = new StringBuilder("<generator");
-        tag.append(" class=\"").append(getClassName()).append("\"");
-        tag.append(" duration=\"").append(String.valueOf(duration)).append("\"");
-        tag.append(">\r\n");
-        return tag.toString();
+        String tag = "<generator" + " class=\"" + getClassName() + "\"" +
+                " duration=\"" + duration + "\"" +
+                ">\r\n";
+        return tag;
     }
 
     @Override

@@ -5,16 +5,16 @@
 
 package modbuspal.link;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import modbuspal.main.*;
 import modbuspal.main.ModbusConst;
-import static modbuspal.main.ModbusConst.XC_ILLEGAL_FUNCTION;
+import modbuspal.main.ModbusPalProject;
 import modbuspal.master.ModbusMasterRequest;
 import modbuspal.recorder.ModbusPalRecorder;
 import modbuspal.slave.ModbusPduProcessor;
 import modbuspal.slave.ModbusSlave;
 import modbuspal.slave.ModbusSlaveAddress;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -56,7 +56,7 @@ implements ModbusConst
         ModbusPalRecorder.recordIncoming(slaveID,buffer,offset,pduLength);
 
         // check if the slave is enabled
-        if( modbusPalProject.isSlaveEnabled(slaveID) == false )
+        if(!modbusPalProject.isSlaveEnabled(slaveID))
         {
             System.err.println("Slave "+slaveID+" is not enabled");
             modbusPalProject.notifyPDUnotServiced();
@@ -74,7 +74,7 @@ implements ModbusConst
             return 0;
         }
 
-        byte functionCode = buffer[offset+0];
+        byte functionCode = buffer[offset];
         ModbusPduProcessor mspp = slave.getPduProcessor(functionCode);
         if( mspp == null )
         {
@@ -92,7 +92,7 @@ implements ModbusConst
             length = makeExceptionResponse(functionCode,XC_ILLEGAL_FUNCTION, buffer, offset);
         }
 
-        if( isExceptionResponse(buffer,offset)==true )
+        if(isExceptionResponse(buffer, offset))
         {
             modbusPalProject.notifyExceptionResponse();
         }
@@ -121,7 +121,7 @@ implements ModbusConst
         // ModbusPalRecorder.recordIncoming(slaveID,buffer,offset,pduLength);
 
         // check if the slave is enabled
-        if( modbusPalProject.isSlaveEnabled(slaveID) == false )
+        if(!modbusPalProject.isSlaveEnabled(slaveID))
         {
             System.err.println("Slave "+slaveID+" is not enabled");
             req.notifyPDUnotServiced();
@@ -183,7 +183,7 @@ implements ModbusConst
         // ModbusPalRecorder.recordIncoming(slaveID,buffer,offset,pduLength);
 
         // check if the slave is enabled
-        if( modbusPalProject.isSlaveEnabled(slaveID) == false )
+        if(!modbusPalProject.isSlaveEnabled(slaveID))
         {
             System.err.println("Slave "+slaveID+" is not enabled");
             req.notifyPDUnotServiced();
@@ -194,10 +194,10 @@ implements ModbusConst
         // get the slave:
         ModbusSlave slave = modbusPalProject.getModbusSlave(slaveID);
 
-        byte functionCode = buffer[offset+0];
+        byte functionCode = buffer[offset];
         
         // 
-        if( isExceptionResponse(buffer,offset)==true )
+        if(isExceptionResponse(buffer, offset))
         {
             req.notifyExceptionResponse();
             modbusPalProject.notifyExceptionResponse();
@@ -219,7 +219,7 @@ implements ModbusConst
         }
 
         boolean result = mspp.processPDU(req, slaveID, buffer, offset, modbusPalProject.isLeanModeEnabled());
-        if(result==false)
+        if(!result)
         {
             System.err.println("Illegal function code "+functionCode);
             req.notifyPDUnotServiced();
@@ -243,7 +243,7 @@ implements ModbusConst
      */
     public static int makeExceptionResponse(byte functionCode, byte exceptionCode, byte[] buffer, int offset)
     {
-        buffer[offset+0] = (byte) (((byte)0x80) | functionCode);
+        buffer[offset] = (byte) (((byte)0x80) | functionCode);
         buffer[offset+1] = exceptionCode;
         return 2;
     }
@@ -258,7 +258,7 @@ implements ModbusConst
      */
     public static int makeExceptionResponse(byte exceptionCode, byte[] buffer, int offset)
     {
-        buffer[offset+0] |= (byte)0x80;
+        buffer[offset] |= (byte)0x80;
         buffer[offset+1] = exceptionCode;
         return 2;
     }

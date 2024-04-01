@@ -5,12 +5,13 @@
 
 package modbuspal.slave;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import javax.swing.JPanel;
 import modbuspal.instanciator.Instantiable;
 import modbuspal.master.ModbusMasterRequest;
 import org.w3c.dom.NodeList;
+
+import javax.swing.*;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * The interface that a class must implement in order to
@@ -40,7 +41,7 @@ extends Instantiable<ModbusPduProcessor>
      * forget that the reply is at least one byte long, because the first byte
      * contains the function code.
      */
-    public int processPDU(byte functionCode, ModbusSlaveAddress slaveID, byte[] buffer, int offset, boolean createIfNotExist);
+    int processPDU(byte functionCode, ModbusSlaveAddress slaveID, byte[] buffer, int offset, boolean createIfNotExist);
 
     /**
      * This function is called to process the *REPLY* PDU contained in the provided
@@ -55,10 +56,10 @@ extends Instantiable<ModbusPduProcessor>
      * @param createIfNotExist true is the "Learn mode" is active, false otherwise.
      * @return true if the data has been processed successfully, false otherwise.
      */
-    public boolean processPDU(ModbusMasterRequest mmr, ModbusSlaveAddress slaveID, byte[] buffer, int offset, boolean createIfNotExist);
+    boolean processPDU(ModbusMasterRequest mmr, ModbusSlaveAddress slaveID, byte[] buffer, int offset, boolean createIfNotExist);
     
     
-    public int buildPDU(ModbusMasterRequest mmr, ModbusSlaveAddress slaveID, byte[] buffer, int offset, boolean createIfNotExist);
+    int buildPDU(ModbusMasterRequest mmr, ModbusSlaveAddress slaveID, byte[] buffer, int offset, boolean createIfNotExist);
     
     /**
      * Returns a JPanel that is designed to graphically reflect the settings
@@ -66,7 +67,7 @@ extends Instantiable<ModbusPduProcessor>
      * values that will compose the reply to the request. 
      * @return a JPanel to edit the settings of the PduProcessor
      */
-    public JPanel getPduPane();
+    JPanel getPduPane();
 
     /**
      * saves the parameter of the instance into the provided output stream,
@@ -74,13 +75,13 @@ extends Instantiable<ModbusPduProcessor>
      * @param out
      * @throws IOException
      */
-    public void savePduProcessorSettings(OutputStream out) throws IOException;
+    void savePduProcessorSettings(OutputStream out) throws IOException;
 
     /**
      * XML nodes that may contain settings that were previously saved
      * with saveSettings()
      * @param list
      */
-    public void loadPduProcessorSettings(NodeList list);
+    void loadPduProcessorSettings(NodeList list);
 
 }

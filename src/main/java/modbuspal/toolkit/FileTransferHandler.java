@@ -5,21 +5,17 @@
 
 package modbuspal.toolkit;
 
-import java.awt.Component;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DropTargetDragEvent;
-import java.awt.dnd.DropTargetDropEvent;
-import java.awt.dnd.DropTargetEvent;
-import java.awt.dnd.DropTargetListener;
+import java.awt.dnd.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.TransferHandler;
 
 /**
  * a ready-to-use file drag and drop support
@@ -42,11 +38,11 @@ implements DropTargetListener
          * @param files list of the files dropped on the component
          * @return true if import successful.
          */
-        public boolean importFiles(Component target, List<File> files);
+        boolean importFiles(Component target, List<File> files);
     }
     
 
-    private FileTransferTarget target;
+    private final FileTransferTarget target;
     private boolean allowMultipleFiles = true;
 
     /**
@@ -101,11 +97,7 @@ implements DropTargetListener
         {
             return false;
         }
-        if( (files.size()>1) && (allowMultipleFiles==false) )
-        {
-            return false;
-        }
-        return true;
+        return (files.size() <= 1) || (allowMultipleFiles);
     }
 
     @Override

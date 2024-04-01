@@ -11,22 +11,22 @@
 
 package modbuspal.master;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.MutableTreeNode;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeSelectionModel;
 import modbuspal.automation.Automation;
 import modbuspal.link.ModbusLink;
 import modbuspal.main.AddSlaveDialog;
 import modbuspal.main.ModbusPalListener;
-import modbuspal.main.ModbusPalProject;
 import modbuspal.main.ModbusPalPane;
+import modbuspal.main.ModbusPalProject;
 import modbuspal.slave.ModbusSlave;
 import modbuspal.slave.ModbusSlaveAddress;
 import modbuspal.toolkit.GUITools;
+
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -40,7 +40,7 @@ implements ModbusPalListener
     private ModbusPalProject modbusPalProject;
     private ModbusMasterRoot modbusMasterRoot;
     private DefaultTreeModel mmTreeModel;
-    private ArrayList<Thread> threads;
+    private final ArrayList<Thread> threads;
     private boolean isRunning = false;
     
     /** Creates new form ModbusMasterDialog */
@@ -87,7 +87,7 @@ implements ModbusPalListener
     {
         NewTaskDialog ntd = new NewTaskDialog(null, true);
         ntd.setVisible(true);
-        if( ntd.isOK() == true )
+        if(ntd.isOK())
         {
             // obtain data from the form
             String taskName = ntd.getTaskName();
@@ -107,7 +107,7 @@ implements ModbusPalListener
         NewTaskDialog ntd = new NewTaskDialog(null, true);
         ntd.initializeWith(mmt);
         ntd.setVisible(true);
-        if( ntd.isOK() == true )
+        if(ntd.isOK())
         {
             // obtain data from the form
             String taskName = ntd.getTaskName();
@@ -140,7 +140,7 @@ implements ModbusPalListener
         // create dialog for target selection
         AddSlaveDialog asd = new AddSlaveDialog("Target slave(s)");
         asd.setVisible(true);
-        if( asd.isAdded() == false )
+        if(!asd.isAdded())
         {
             return;
         }
@@ -167,7 +167,7 @@ implements ModbusPalListener
         AddSlaveDialog asd = new AddSlaveDialog("Target slave(s)");
         asd.initializeWith(mmt);
         asd.setVisible(true);
-        if( asd.isAdded() == false )
+        if(!asd.isAdded())
         {
             return;
         }        
@@ -204,7 +204,7 @@ implements ModbusPalListener
         // create dialog for request selection
         ModbusRequestDialog mrd = new ModbusRequestDialog();
         mrd.setVisible(true);
-        if( mrd.isOK() == false )
+        if(!mrd.isOK())
         {
             return;
         }
@@ -220,7 +220,7 @@ implements ModbusPalListener
         ModbusRequestDialog mrd = new ModbusRequestDialog();
         mrd.initializeWith(mmr);
         mrd.setVisible(true);
-        if( mrd.isOK() == false )
+        if(!mrd.isOK())
         {
             return;
         }                
@@ -321,9 +321,8 @@ implements ModbusPalListener
             {
                 addNewRequestWizard( (ModbusMasterTarget)lastCpnt );
             }
-            else if( lastCpnt instanceof ModbusMasterRequest )
+            else if(lastCpnt instanceof ModbusMasterRequest req)
             {
-                ModbusMasterRequest req = (ModbusMasterRequest)lastCpnt;
                 addNewRequestWizard( (ModbusMasterTarget)req.getParent() );
             }
         }
@@ -383,9 +382,8 @@ implements ModbusPalListener
             {
                 removeTarget( (ModbusMasterTarget)lastCpnt );
             }
-            else if( lastCpnt instanceof ModbusMasterRequest )
+            else if(lastCpnt instanceof ModbusMasterRequest req)
             {
-                ModbusMasterRequest req = (ModbusMasterRequest)lastCpnt;
                 removeRequest(req);
             }
         }       
@@ -406,9 +404,8 @@ implements ModbusPalListener
             {
                 modifyTarget( (ModbusMasterTarget)lastCpnt );
             }
-            else if( lastCpnt instanceof ModbusMasterRequest )
+            else if(lastCpnt instanceof ModbusMasterRequest req)
             {
-                ModbusMasterRequest req = (ModbusMasterRequest)lastCpnt;
                 modifyRequest(req);
             }
         }    

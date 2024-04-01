@@ -5,12 +5,13 @@
 
 package modbuspal.binding;
 
-import java.io.IOException;
-import java.io.OutputStream;
 import modbuspal.automation.Automation;
 import modbuspal.automation.AutomationExecutionListener;
 import modbuspal.instanciator.Instantiable;
 import modbuspal.slave.ModbusRegisters;
+
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Defines a binding
@@ -104,12 +105,11 @@ implements AutomationExecutionListener, Cloneable, Instantiable<Binding>
     public final void save(OutputStream out)
     throws IOException
     {
-        StringBuilder tag = new StringBuilder("<binding");
-        tag.append(" automation=\"").append(automation.getName()).append("\"");
-        tag.append(" class=\"").append(getClassName()).append("\"");
-        tag.append(" order=\"").append(String.valueOf(order)).append("\"");
-        tag.append("/>\r\n");
-        out.write( tag.toString().getBytes() );
+        String tag = "<binding" + " automation=\"" + automation.getName() + "\"" +
+                " class=\"" + getClassName() + "\"" +
+                " order=\"" + order + "\"" +
+                "/>\r\n";
+        out.write(tag.getBytes() );
     }
 
     /**
@@ -182,7 +182,7 @@ implements AutomationExecutionListener, Cloneable, Instantiable<Binding>
     @Override
     public String toString()
     {
-        return automation.getName() + " (" + getClassName() + ":" + String.valueOf(order) + ")";
+        return automation.getName() + " (" + getClassName() + ":" + order + ")";
     }
 
     /**

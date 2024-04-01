@@ -8,14 +8,7 @@ package modbuspal.toolkit;
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URI;
 
 /**
@@ -32,7 +25,7 @@ public class FileTools
     public static String getExtension(File file)
     {
         // check if its a real file !
-        if( file.isFile()==false )
+        if(!file.isFile())
         {
             return null;
         }
@@ -85,7 +78,7 @@ public class FileTools
     public static String makeAbsolute(File reference, String target)
     {
         // if reference is a file, extract the directory of that file:
-        if( reference.isDirectory()==false )
+        if(!reference.isDirectory())
         {
             String directory = reference.getParent();
             reference = new File(directory);
@@ -99,7 +92,7 @@ public class FileTools
         result.normalize();
 
         // check that the resulting uri is absolute
-        if( result.isAbsolute()==false )
+        if(!result.isAbsolute())
         {
             // if not, return null;
             return null;
@@ -120,7 +113,7 @@ public class FileTools
     public static String makeRelative(File reference, File target)
     {
         // if reference is a file, extract the directory of that file:
-        if( reference.isDirectory()==false )
+        if(!reference.isDirectory())
         {
             String directory = reference.getParent();
             reference = new File(directory);
@@ -176,7 +169,7 @@ public class FileTools
         String l = br.readLine();
         while( l!=null )
         {
-            if( l.contains(line)==true )
+            if(l.contains(line))
             {
                 rc = true;
             }
@@ -188,7 +181,7 @@ public class FileTools
     
     
     public static void copyTo(InputStream src, File dst) 
-    throws FileNotFoundException, IOException
+    throws IOException
     {
         FileOutputStream fos = new FileOutputStream(dst);
         try

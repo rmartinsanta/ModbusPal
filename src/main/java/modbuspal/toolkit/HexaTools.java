@@ -39,7 +39,7 @@ public class HexaTools
     public static byte[] toByte(String data)
     {
         int nbBytes = ( data.length()+1 ) / 2;
-        byte output[] = new byte[nbBytes];
+        byte[] output = new byte[nbBytes];
         return toByte(data,output);
     }
 

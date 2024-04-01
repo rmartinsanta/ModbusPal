@@ -4,8 +4,9 @@
  */
 package modbuspal.slave;
 
-import java.net.InetAddress;
 import modbuspal.main.ModbusConst;
+
+import java.net.InetAddress;
 
 /**
  *
@@ -116,9 +117,8 @@ public class ModbusSlaveAddress
     @Override
     public boolean equals(Object o) 
     {
-        if(o instanceof ModbusSlaveAddress)
+        if(o instanceof ModbusSlaveAddress other)
         {
-            ModbusSlaveAddress other = (ModbusSlaveAddress)o;
             return toString().compareTo(other.toString())==0;
         }
         return false;

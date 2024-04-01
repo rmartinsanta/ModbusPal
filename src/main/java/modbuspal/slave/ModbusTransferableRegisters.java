@@ -5,13 +5,14 @@
 
 package modbuspal.slave;
 
+import modbuspal.slave.ModbusRegisters.RegisterCopy;
+
+import javax.swing.table.TableModel;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.util.ArrayList;
-import javax.swing.table.TableModel;
-import modbuspal.slave.ModbusRegisters.RegisterCopy;
 
 /**
  *
@@ -22,18 +23,17 @@ implements Transferable
 {
 
     public static final DataFlavor DATA_FLAVOR = new DataFlavor(ModbusRegisters.class,"registers");
-    public static final DataFlavor SUPPORTED_DATA_FLAVORS[] = { DATA_FLAVOR };
-    private ArrayList<RegisterCopy> registers = new ArrayList<RegisterCopy>();
+    public static final DataFlavor[] SUPPORTED_DATA_FLAVORS = { DATA_FLAVOR };
+    private final ArrayList<RegisterCopy> registers = new ArrayList<RegisterCopy>();
 
 
     public ModbusTransferableRegisters(ModbusRegistersTable table)
     {
         TableModel model = table.getModel();
-        if( model instanceof ModbusRegisters )
+        if(model instanceof ModbusRegisters source)
         {
-            ModbusRegisters source = (ModbusRegisters)model;
 
-            int addresses[] = table.getSelectedAddresses();
+            int[] addresses = table.getSelectedAddresses();
             for(int i=0; i<addresses.length; i++)
             {
                 RegisterCopy copy = source.copy( source, addresses[i] );
@@ -55,7 +55,7 @@ implements Transferable
     public Object getTransferData(DataFlavor flavor)
     throws UnsupportedFlavorException, IOException
     {
-        if( flavor.equals(DATA_FLAVOR)==false )
+        if(!flavor.equals(DATA_FLAVOR))
         {
             throw new UnsupportedFlavorException(flavor);
         }

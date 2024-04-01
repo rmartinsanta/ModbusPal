@@ -12,15 +12,17 @@
 
 package modbuspal.automation;
 
-import java.awt.event.KeyEvent;
-import javax.swing.event.AncestorEvent;
-import modbuspal.main.*;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import javax.swing.event.AncestorListener;
 import modbuspal.generator.Generator;
 import modbuspal.instanciator.InstantiableManager;
+import modbuspal.main.ModbusPalPane;
+import modbuspal.main.ModbusPalProject;
 import modbuspal.toolkit.FileTools;
+
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 /**
  * Represents the automation in the main interface
@@ -67,7 +69,7 @@ implements WindowListener, AutomationExecutionListener, AncestorListener
         automationEditor.removeWindowListener(this);
         automationEditor.setVisible(false);
         //automationEditor.disconnect();
-        assert(automation.removeAutomationExecutionListener(this)==false);
+        assert(!automation.removeAutomationExecutionListener(this));
     }
 
     /**
@@ -170,19 +172,12 @@ implements WindowListener, AutomationExecutionListener, AncestorListener
     }// </editor-fold>//GEN-END:initComponents
 
     private void showToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showToggleButtonActionPerformed
-        if( showToggleButton.isSelected() == true )
-        {
-            automationEditor.setVisible(true);
-        }
-        else
-        {
-            automationEditor.setVisible(false);
-        }
+        automationEditor.setVisible(showToggleButton.isSelected());
     }//GEN-LAST:event_showToggleButtonActionPerformed
 
     private void playToggleButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_playToggleButtonActionPerformed
 
-        if( playToggleButton.isSelected()==true )
+        if(playToggleButton.isSelected())
         {
             /* "Play" button has been pushed, it starts the automation
              * and the button becomes a "Stop" button. */
